@@ -36,9 +36,15 @@ public class PathOnMesh : MonoBehaviour
         // get triangleDictionary
         triangleDict = meshManager.GetNeighbouringTrianglesDict();
 
+        // get all the variables we need to make a step
         var corners = GetRandomTriangleOnMesh();
+        Vector3 startPoint = getStartPoint(corners.Item1, corners.Item2, corners.Item3);
         Vector3 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
         Vector3 step = GetStepVector(stepDirection, normal, stepSize);
+        Vector3 nextPoint = startPoint + step;
+
+        // check if step brings us to next triangle
+        
     }
 
     // calculate one path
@@ -54,6 +60,19 @@ public class PathOnMesh : MonoBehaviour
         var key = triangleDict.Keys.ElementAt(rand);
         Vector3 value = triangleDict[key][0];
         return (key.Item1, key.Item2, value);
+    }
+
+
+    // get start point on start triangle based on the three corners
+    public Vector3 getStartPoint(Vector3 a, Vector3 b, Vector3 c)
+    {
+        Vector3 ab = b - a;
+        Vector3 ac = c - a;
+
+        // just using arbitrary values for mulitplication so point is inside the triangle
+        Vector3 pointOnTriangle = a + 0.3f * ab + 0.3f * ac;
+
+        return pointOnTriangle;
     }
 
     // calculate normal vector of triangle
@@ -75,10 +94,10 @@ public class PathOnMesh : MonoBehaviour
         return step;
     }
 
-    // finds if and with which triangle edge the step vector intersects
-    public int FindIntersection (Vector3 edge, Vector3 step)
+    // finds if and where with the triangle the step intersects
+    public Vector3 FindIntersection(Vector3 a, Vector3 b, Vector3 c, Vector3 step)
     {
-        return 0;
+        return Vector3.up;
     }
 
 
