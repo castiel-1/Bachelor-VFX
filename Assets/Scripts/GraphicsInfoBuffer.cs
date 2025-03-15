@@ -4,7 +4,7 @@ using UnityEngine.VFX;
 
 /* 
 
- IF IN SCENE
+IF IN SCENE
 - provides the blueprint for letterStructs
 - sets up the graphicsBuffer based on how many letters are supposed to be saved in it
 
