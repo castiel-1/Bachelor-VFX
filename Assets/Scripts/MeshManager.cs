@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MeshManager : MonoBehaviour
 {
@@ -12,12 +13,20 @@ public class MeshManager : MonoBehaviour
     private Vector3[] vertices;
     private int[] triangles;
 
-    public void Start()
+    public void Awake()
     {
         vertices = mesh.vertices;
         triangles = mesh.triangles;
 
         triangleDict = CreateNeighbouringTrianglesDict();
+
+
+
+        // Debugging
+        Debug.Log("number of edges in dict: " + triangleDict.Keys.Count);
+
+        // Debugging
+        Debug.Log("mesh dictionary created");
 
         //Debugging
 
@@ -34,6 +43,16 @@ public class MeshManager : MonoBehaviour
         Debug.Log("number of edges: " + triangleDict.Keys.Count);
         */
     }
+
+    // debugging mesh
+    /*private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        foreach(Vector3 vertex in vertices)
+        {
+            Gizmos.DrawSphere(vertex, 0.02f);
+        }
+    }*/
 
     public Dictionary<(Vector3, Vector3), List<Vector3>> CreateNeighbouringTrianglesDict()
     {
@@ -79,10 +98,14 @@ public class MeshManager : MonoBehaviour
 
     public Dictionary<(Vector3, Vector3), List<Vector3>> GetNeighbouringTrianglesDict()
     {
+        // Debugging
+        Debug.Log("triangleDict requested");
+
         return triangleDict;
     }
     public int[] GetTriangles()
     {
+
         return triangles;
     }
 
