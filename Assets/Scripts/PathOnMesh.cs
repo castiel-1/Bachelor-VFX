@@ -27,20 +27,16 @@ public class PathOnMesh : MonoBehaviour
     public float stepSize;
     public GraphicsInfoBuffer buffer;
 
-    public Vector3[] path;
-
    // private bool HadIntersection = false;
    // private (Vector3, Vector3) intersectionEdge = (Vector3.zero, Vector3.zero);
 
     public MeshManager meshManager;
 
+    private Vector3[] path;
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
 
     // Debugging
-    Vector3 A;
-    Vector3 B;
-    Vector3 C;
-    Vector3 D;
+    public GameObject vertex;
 
     // struct for intersection information
     public struct IntersectionInfo
@@ -54,6 +50,9 @@ public class PathOnMesh : MonoBehaviour
 
     void Start()
     {
+        // create path
+        CreatePath();
+
         /*
         // Debugging
         A = new Vector3(0.5f, 0.5f, 0.5f);
@@ -244,6 +243,7 @@ public class PathOnMesh : MonoBehaviour
     // Debugging display of path
     private void OnDrawGizmos()
     {
+        /*
         float r = 0.01f;
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(A, r);
@@ -254,9 +254,9 @@ public class PathOnMesh : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawLine(A, B);
         Gizmos.DrawLine(C, D);
+        */
 
-
-        /*
+        
         // display points
         Gizmos.color = Color.red;
         foreach (Vector3 point in path)
@@ -269,7 +269,7 @@ public class PathOnMesh : MonoBehaviour
         for (int i = 0; i < path.Length - 1; i++)
         {
             Gizmos.DrawLine(path[i], path[i + 1]);
-        }*/
+        }
 
         
         /*
@@ -280,9 +280,97 @@ public class PathOnMesh : MonoBehaviour
     // TODO
 
     // calculate one path
-    public Vector3[] CreatePath()
+    public void CreatePath()
     {
-        return path;
+
+        // set up path array
+        int numPoints = buffer.text.Length;
+        path = new Vector3[numPoints];
+
+        // get triangleDictionary
+        triangleDict = meshManager.GetNeighbouringTrianglesDict();
+
+        // get all the variables we need to make the initial step
+        var corners = GetRandomTriangleOnMesh();
+        Vector3 startPoint = getStartPoint(corners.Item1, corners.Item2, corners.Item3);
+        Vector3 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
+        Vector3 step = GetStepVector(stepDirection, normal, stepSize);
+        Vector3 nextTheoreticalPoint = startPoint + step;
+
+        /*
+        // Debugging
+        Instantiate(vertex, corners.Item1, quaternion.identity);
+        Instantiate(vertex, corners.Item2, quaternion.identity);
+        Instantiate(vertex, corners.Item3, quaternion.identity);
+        */
+
+        // set up previousEdge
+        (Vector3, Vector3)? previousEdge = null;
+
+        // add startPoint to path
+        path[0] = startPoint;
+
+        // for as many letters as we want to display (starting at 2 because of startPoint)
+        for (int i = 1; i < numPoints; i++)
+        {
+            // Debugging
+            Debug.Log("previous edge: " + previousEdge);
+
+            // calculate next point (either on the triangle or on an edge)
+            IntersectionInfo info = NextStepInfo(corners.Item1, corners.Item2, corners.Item3, startPoint, nextTheoreticalPoint, previousEdge);
+
+            // update startPoint
+            startPoint = info.nextPoint;
+
+            if (info.hasIntersection)
+            {
+                // debugging
+                Debug.Log("in if statement: has intersection");
+
+                // get corners of neighbouring triangle
+                corners = GetNeighbouringTriangle(info.edge, info.lastCorner);
+
+                // calculate normal of new triangle
+                normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
+
+                // calculate step
+                step = GetStepVector(stepDirection, normal, info.newStepSize);
+
+                // Debugging
+                Debug.Log("calculate new step with normal: " + normal + " and stepSize: " + stepSize + " = " + step);
+
+                // Debugging
+                Debug.Log("calculating next theoretical point with: " + startPoint + " + " + step);
+
+                // calculate next theoretical point
+                nextTheoreticalPoint = startPoint + step;
+
+                // debugging
+                if (nextTheoreticalPoint == startPoint)
+                {
+                    Debug.Log("start and nextTheoretical point identical. calculation: " + startPoint + " + " + step);
+                }
+
+                // update previousEdge
+                previousEdge = info.edge;
+
+                // add point to path
+                path[i] = startPoint;
+
+            }
+            else
+            {
+                // debugging
+                Debug.Log("in if statement: has no intersection");
+
+                // calculate next theoretical point
+                nextTheoreticalPoint = startPoint + step;
+
+                // add new point to path
+                path[i] = info.nextPoint;
+
+            }
+        }
     }
 
     // used to get a random start triangle
@@ -322,11 +410,67 @@ public class PathOnMesh : MonoBehaviour
     public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize)
     {
         Vector3 projected = direction - (Vector3.Dot(direction, normal) * normal);
+
+        // default up direction if normal and stepDirection are almost parallel
+        if (projected.sqrMagnitude < 1e-6f) 
+        {
+            projected = Vector3.up;  
+        }
+
         Vector3 step = projected.normalized * stepSize;
         return step;
     }
 
+    // get all information needed to make the next step
+    public IntersectionInfo NextStepInfo(Vector3 corner1, Vector3 corner2, Vector3 corner3, Vector3 stepStart, Vector3 stepEnd, (Vector3, Vector3)? previousEdge = null) 
+    {
+        // set up list of all corner combinations
+        List<(Vector3, Vector3)> cornerCombinations = new List<(Vector3, Vector3)> { (corner1, corner2), (corner1, corner3), (corner2, corner3) };
 
+        // remove previousEdge if it exists
+        if (previousEdge.HasValue)
+        {
+            cornerCombinations.Remove(previousEdge.Value);
+        }
+
+        // Debugging
+        Debug.Log("checking " + cornerCombinations.Count + " edges: " + cornerCombinations[0] + ", " + cornerCombinations[1]);
+
+        // set up intersectionInfo
+        IntersectionInfo info = new IntersectionInfo();
+
+        // for each edge
+        foreach ((Vector3, Vector3) edge in cornerCombinations)
+        {
+            // calculate the intersection 
+            info = CalculateIntersectionInfo(edge.Item1, edge.Item2, stepStart, stepEnd); 
+
+            // find last corner
+            List<Vector3> corners = new List<Vector3> { corner1, corner2, corner3 };
+            corners.Remove(edge.Item1);
+            corners.Remove(edge.Item2);
+            Vector3 lastCorner = corners[0];
+
+            // if there is an intersection with an edge
+            if (info.hasIntersection)
+            {
+                // Debugging
+                Debug.Log("Has intersection with edge: (" + info.edge.Item1 + ", " + info.edge.Item2 + ")");
+
+                // add lastCorner to info
+                info.lastCorner = lastCorner;
+
+                return info;
+            }
+        }
+
+        // if there is no intersection with an edge
+
+        // Debugging
+        Debug.Log("no intersection with any edge");
+
+        return info;
+    }
 
     // returns information about the intersection of an edge and a step vector
 
@@ -340,6 +484,10 @@ public class PathOnMesh : MonoBehaviour
         Vector3 ev = ev2 - ev1;
         Vector3 sv = sv2 - sv1;
 
+        // Debugging
+        Debug.Log("edge vector = " + ev1 + ", " + ev2 + ", = " + ev);
+        Debug.Log("step vector = " + sv1 + ", " + sv2 + ", = " + sv);
+
         // calculate sv x ev
         Vector3 svXev = math.cross(sv, ev);
 
@@ -347,11 +495,15 @@ public class PathOnMesh : MonoBehaviour
         IntersectionInfo info = new IntersectionInfo()
         {
             hasIntersection = false,
+            nextPoint = sv1 + sv,
         };
 
         // if the crossproduct is zero, the vector are parallel or identical, both cases in which we want to count it as no intersection
         if (svXev == Vector3.zero)
         {
+            // Debugging
+            Debug.Log("no intersection because of cross product being zero");
+
             return info;
         }
 
@@ -386,17 +538,26 @@ public class PathOnMesh : MonoBehaviour
             // calcualte nextPoint
             Vector3 nextPoint = sv1 + s * sv;
 
-            // calculate |sv|
-            float svMAG = sv.magnitude;
+            // calculate new sv
+            Vector3 newsv = nextPoint - sv1;
+
+            // calculate |newsv|
+            float newsvMAG = newsv.magnitude;
 
             // assign stepSize for return
             float remainingStep = stepSize;
 
-            // if we don't happen to do a full step to get to the intersection
-            if (!(s == 1))
+            // Debugging 
+            Debug.Log("s: " + s);
+
+            // if we don't happen to do a full step to get to the intersection (account for fpp)
+            if (Mathf.Abs(s - 1) > 1e6f)
             {
                 // reduce the stepSize (used for the next step)
-                remainingStep = stepSize - svMAG;
+                remainingStep = stepSize - newsvMAG;
+
+                // Debugging
+                Debug.Log("calculating remaning step size: " + stepSize + " - " + newsvMAG);
             }
 
             // get intersected edge in correct order
@@ -411,9 +572,16 @@ public class PathOnMesh : MonoBehaviour
                 edge = intersectedEdge,
             };
 
+
+            // Debugging
+            Debug.Log("intersection is within bounds, therefor valid");
+            
             return intersectionInfo;
 
         }
+
+        // Debugging
+        Debug.Log("intersection is not within bounds, therefore not valid");
 
         return info;
 

@@ -707,10 +707,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   stepDirection: {x: 1, y: 0, z: 0}
-  stepSize: 0.7
+  stepSize: 0.1
   buffer: {fileID: 1581312791}
-  path: []
   meshManager: {fileID: 579008185}
+  vertex: {fileID: 7232164320203899052, guid: 38fb6d127dbe9d94998c37c5da25870f, type: 3}
 --- !u!4 &1424770717
 Transform:
   m_ObjectHideFlags: 0
