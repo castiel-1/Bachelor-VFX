@@ -33,6 +33,7 @@ public class PathOnMesh : MonoBehaviour
     public MeshManager meshManager;
 
     private Vector3[] path;
+    private List<Vector3> debugPath = new List<Vector3>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
 
     // Debugging
@@ -52,193 +53,7 @@ public class PathOnMesh : MonoBehaviour
     {
         // create path
         CreatePath();
-
-        /*
-        // Debugging
-        A = new Vector3(0.5f, 0.5f, 0.5f);
-        B = new Vector3(-0.5f, 0.5f, 0.5f);
-        C = new Vector3(0, 0.5f, 0.3f);
-        D = new Vector3(0, 0.5f, 0.7f);
-
-        bool intersection = Testing(A, B, C, D);
-
-        Debug.Log("has intersection: " + intersection);
-        */
-        
-        /*
-        // set up path array
-        int numLetters = buffer.text.Length;
-        path = new Vector3[numLetters];
-
-        // get triangleDictionary
-        triangleDict = meshManager.GetNeighbouringTrianglesDict();
-
-
-        // get all the variables we need to make a step
-        var corners = GetRandomTriangleOnMesh();
-        Vector3 startPoint = getStartPoint(corners.Item1, corners.Item2, corners.Item3);
-        Vector3 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
-        Vector3 step = GetStepVector(stepDirection, normal, stepSize);
-        Vector3 nextTheoreticalPoint = startPoint + step;
-
-        // add startPoint to path
-        path[0] = startPoint;
-
-        // for as many letters as we want to display (starting at 2 because of startPoint)
-        for (int i = 1; i < numLetters; i++)
-        {
-
-            // calculate next point (either on the triangle or on an edge)
-            IntersectionInfo info = CalculateIntersection(corners.Item1, corners.Item2, corners.Item3, startPoint, nextTheoreticalPoint);
-
-            // update startPoint
-            startPoint = info.nextPoint;
-            
-            // Debugging
-
-
-            if (info.hasIntersection)
-            {
-                // debugging
-                Debug.Log("has intersection");
-
-                // get corners of neighbouring triangle
-                corners = GetNeighbouringTriangle(info.edge, info.lastCorner);
-
-                // calculate normal of new triangle
-                normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
-
-                // calculate step
-                step = GetStepVector(stepDirection, normal, info.newStepSize);
-
-                // calculate next theoretical point
-                nextTheoreticalPoint = startPoint + step;
-
-                // debugging
-                if(nextTheoreticalPoint == startPoint)
-                {
-                    Debug.Log("start and nextTheoretical point identical. calculation: " + startPoint + " + " + step);
-                }
-
-                // add point to path
-                path[i] = startPoint;
-
-            }
-            else
-            {
-                // debugging
-                Debug.Log("has no intersection");
-
-                // calculate next theoretical point
-                nextTheoreticalPoint = startPoint + step;
-
-                // add new point to path
-                path[i] = info.nextPoint;
-
-            }
-        }*/
-
-
-        
     }
-
-    /*
-    public bool Testing(Vector3 A, Vector3 B, Vector3 C, Vector3 D)
-    {
-        // set up variables for matrices
-        Vector3 edgeStart = A;
-        Vector3 edgeEnd = B;
-
-        Vector3 edgeV = edgeEnd - edgeStart;
-
-        Vector3 stepV = D - C;
-        Vector3 startPoint = C;
-
-        // set up matrices
-        float2x2 matrixA = new float2x2(new float2(edgeV.x, edgeV.y), new float2(-stepV.x, -stepV.y));
-        float2 matrixB = new float2(startPoint.x - edgeStart.x, startPoint.y - edgeStart.y);
-
-        // check if there is an inverse
-        float determinantA = matrixA.c0.x * matrixA.c1.y - matrixA.c1.x * matrixA.c0.y;
-
-        // Debugging
-        Debug.Log("determinant: " + determinantA);
-
-        if(!(math.abs(determinantA) > 1e-6))
-            {
-            // Debugging
-            Debug.Log("matrix inverse not found, no intersection with edge: " + edgeStart + ", " + edgeEnd);
-
-            // go next edge if there is no inverse
-            return false;
-        }
-
-        // calculate inverse
-        float2x2 inverseA = math.inverse(matrixA);
-
-        // calculate intersection
-        float2 result = math.mul(inverseA, matrixB);
-        float triangleInters = result.x;
-        float stepInters = result.y;
-
-        // if intersection is within bounds of line segments
-        if (triangleInters >= 0 && triangleInters <= 1 && stepInters >= 0 && stepInters <= 1)
-        {
-            // Debugging
-            Debug.Log("intersection within bounds");
-
-            // calculate intersection position
-            Vector3 intersection = startPoint + stepInters * stepV;
-
-            // setup remaining stepSize
-            float newStepSize = stepSize;
-
-            // account for edge case where we land directly on the edge and don't want to reduce step size
-            if (!(stepInters == 1))
-            {
-                // reduce remaining stepSize
-                Vector3 newStep = intersection - startPoint;
-                newStepSize = stepSize - newStep.magnitude;
-
-            }
-
-            // get edge in correct order
-            var intersectedEdge = meshManager.GetEdgeOrder(edgeStart, edgeEnd);
-
-            // set up struct for return
-            IntersectionInfo intersectionInfo = new IntersectionInfo
-            {
-                nextPoint = intersection,
-                edge = intersectedEdge,
-                hasIntersection = true,
-                newStepSize = newStepSize,
-            };
-
-            //Debugging
-            Debug.Log("from: " + startPoint);
-            Debug.Log("to: " + intersectionInfo.nextPoint);
-            Debug.Log("with remaining step size: " + newStepSize);
-
-            return intersectionInfo.hasIntersection;
-        }
-
-        // set up struct for return
-        IntersectionInfo info = new IntersectionInfo
-        {
-            nextPoint = D,
-            hasIntersection = false,
-            newStepSize = stepSize,
-        };
-
-        // Debugging
-        Debug.Log("from: " + startPoint);
-        Debug.Log("to: " + info.nextPoint);
-
-        return info.hasIntersection;
-
-    }
-    */
-
 
     // Debugging display of path
     private void OnDrawGizmos()
@@ -264,6 +79,13 @@ public class PathOnMesh : MonoBehaviour
             Gizmos.DrawSphere(point, 0.03f);
         }
 
+        Gizmos.color = Color.blue;
+        // display all points
+        foreach(Vector3 point in debugPath)
+        {
+            Gizmos.DrawSphere(point, 0.03f);
+        }
+
         // draw lines between points
         Gizmos.color = Color.green;
         for (int i = 0; i < path.Length - 1; i++)
@@ -271,7 +93,12 @@ public class PathOnMesh : MonoBehaviour
             Gizmos.DrawLine(path[i], path[i + 1]);
         }
 
-        
+        for (int i = 0; i < debugPath.Count - 1; i++)
+        {
+            Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
+        }
+
+
         /*
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(startPoint, 0.02f);
@@ -294,7 +121,7 @@ public class PathOnMesh : MonoBehaviour
         var corners = GetRandomTriangleOnMesh();
         Vector3 startPoint = getStartPoint(corners.Item1, corners.Item2, corners.Item3);
         Vector3 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
-        Vector3 step = GetStepVector(stepDirection, normal, stepSize);
+        Vector3 step = GetStepVector(stepDirection, normal, stepSize, startPoint); 
         Vector3 nextTheoreticalPoint = startPoint + step;
 
         /*
@@ -333,8 +160,14 @@ public class PathOnMesh : MonoBehaviour
                 // calculate normal of new triangle
                 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
 
+                // get furthest corner from next trianlge (so we can orient our step in the right direction)
+                List<Vector3> cornerList = new List<Vector3> { corners.Item1, corners.Item2, corners.Item3 };
+                cornerList.Remove(info.edge.Item1);
+                cornerList.Remove(info.edge.Item2);
+                Vector3 furhtestCorner = cornerList[0];
+
                 // calculate step
-                step = GetStepVector(stepDirection, normal, info.newStepSize);
+                step = GetStepVector(stepDirection, normal, info.newStepSize, startPoint, furhtestCorner);
 
                 // Debugging
                 Debug.Log("calculate new step with normal: " + normal + " and stepSize: " + stepSize + " = " + step);
@@ -354,8 +187,23 @@ public class PathOnMesh : MonoBehaviour
                 // update previousEdge
                 previousEdge = info.edge;
 
-                // add point to path
-                path[i] = startPoint;
+                // Debugging
+                Debug.Log("newStepSize: " + info.newStepSize);
+                Debug.Log("stepSize: " + stepSize);
+
+                // check if we've done a full step, if not, don't add point to path
+                if(info.newStepSize == stepSize)
+                {
+                    // add point to path
+                    path[i] = startPoint;
+                }
+                else
+                {
+                    // add point to debug path
+                    debugPath.Add(startPoint);
+
+                    i--;
+                }
 
             }
             else
@@ -407,7 +255,7 @@ public class PathOnMesh : MonoBehaviour
     }
 
     // returns step vector parallel to triangle and with stepsize as length
-    public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize)
+    public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize, Vector3 startPoint, Vector3? furhtestCorner = null)
     {
         Vector3 projected = direction - (Vector3.Dot(direction, normal) * normal);
 
@@ -418,6 +266,21 @@ public class PathOnMesh : MonoBehaviour
         }
 
         Vector3 step = projected.normalized * stepSize;
+
+
+        if (furhtestCorner.HasValue)
+        {
+            // check distance to opposite corner so we don't accidentally step away from our triangle
+            float currentDistance = Vector3.Distance(startPoint, furhtestCorner.Value);
+            float newDistance = Vector3.Distance(startPoint + step, furhtestCorner.Value);
+
+            // if we step away, we reverse the step vector
+            if (newDistance > currentDistance)
+            {
+                step = -step;
+            }
+        }
+       
         return step;
     }
 
@@ -551,7 +414,7 @@ public class PathOnMesh : MonoBehaviour
             Debug.Log("s: " + s);
 
             // if we don't happen to do a full step to get to the intersection (account for fpp)
-            if (Mathf.Abs(s - 1) > 1e6f)
+            if (Mathf.Abs(s - 1) > 1e-6f)
             {
                 // reduce the stepSize (used for the next step)
                 remainingStep = stepSize - newsvMAG;
@@ -586,118 +449,6 @@ public class PathOnMesh : MonoBehaviour
         return info;
 
     }
-
-
-    /*
-    // finds intersection information about the triangle and step
-    public IntersectionInfo CalculateIntersection(Vector3 a, Vector3 b, Vector3 c, Vector3 startPoint, Vector3 nextPoint)
-    {
-
-        // list of all edges
-        List<(Vector3, Vector3)> edges = new List<(Vector3, Vector3)> { (a,b) , (b,c), (c,a) };
-
-        // step vector
-        Vector3 stepV = nextPoint - startPoint;
-
-        // for each edge
-        foreach ((Vector3, Vector3) edge in edges)
-        {
-            // set up variables for matrices
-            Vector3 edgeStart = edge.Item1;
-            Vector3 edgeEnd = edge.Item2;
-
-            Vector3 edgeV = edgeEnd - edgeStart;
-
-            // set up matrices
-            float2x2 matrixA = new float2x2(new float2(edgeV.x, edgeV.y), new float2(-stepV.x, -stepV.y));
-            float2 matrixB = new float2(startPoint.x - edgeStart.x, startPoint.y - edgeStart.y);
-
-            // check if there is an inverse
-            float determinantA = matrixA.c0.x * matrixA.c1.y - matrixA.c1.x * matrixA.c0.y;
-
-            if(!(math.abs(determinantA) > 1e-6))
-            {
-                // Debugging
-                Debug.Log("matrix inverse not found, no intersection with edge: " + edgeStart + ", " + edgeEnd);
-
-                // go next edge if there is no inverse
-                continue;
-            }
-
-            // calculate inverse
-            float2x2 inverseA = math.inverse(matrixA);
-
-            // calculate intersection
-            float2 result = math.mul(inverseA, matrixB);
-            float triangleInters = result.x;
-            float stepInters = result.y;
-
-            // if intersection is within bounds of line segments
-            if(triangleInters >= 0 && triangleInters <= 1 && stepInters >=0 && stepInters <= 1)
-            {
-                // Debugging
-                Debug.Log("intersection within bounds");
-
-                // calculate intersection position
-                Vector3 intersection = startPoint + stepInters * stepV;
-
-                // setup remaining stepSize
-                float newStepSize = stepSize;
-
-                // account for edge case where we land directly on the edge and don't want to reduce step size
-                if(!(stepInters == 1))
-                {
-                    // reduce remaining stepSize
-                    Vector3 newStep = intersection - startPoint;
-                    newStepSize = stepSize - newStep.magnitude;
-                   
-                }
-
-                // get last corner
-                List<Vector3> allCorners = new List<Vector3> { a, b, c };
-                allCorners.Remove(edgeStart);
-                allCorners.Remove(edgeEnd);
-                Vector3 lastCorner = allCorners[0];
-
-                // get edge in correct order
-                var intersectedEdge = meshManager.GetEdgeOrder(edgeStart, edgeEnd);
-
-                // set up struct for return
-                IntersectionInfo intersectionInfo = new IntersectionInfo
-                {
-                    nextPoint = intersection,
-                    edge = intersectedEdge,
-                    hasIntersection = true,
-                    lastCorner = lastCorner,
-                    newStepSize = newStepSize,
-                };
-
-                //Debugging
-                Debug.Log("from: " + startPoint);
-                Debug.Log("to: " + intersectionInfo.nextPoint);
-                Debug.Log("intersection? " + intersectionInfo.hasIntersection);
-                Debug.Log("with remaining step size: " + newStepSize);
-
-                return intersectionInfo;
-            }
-        }
-
-        // set up struct for return
-        IntersectionInfo info = new IntersectionInfo
-        {
-            nextPoint = nextPoint,
-            hasIntersection = false,
-            newStepSize = stepSize,
-        };
-
-        // Debugging
-        Debug.Log("from: " + startPoint);
-        Debug.Log("to: " + info.nextPoint);
-
-        return info;
-    }
-    */
-
 
     // returns neighbouring triangle
     public (Vector3, Vector3, Vector3) GetNeighbouringTriangle((Vector3, Vector3) edge, Vector3 corner)
