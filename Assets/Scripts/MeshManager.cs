@@ -28,6 +28,28 @@ public class MeshManager : MonoBehaviour
         // Debugging
         Debug.Log("mesh dictionary created");
 
+
+        /*
+        // Debugging
+
+        foreach(var key in triangleDict.Keys)
+        {
+
+            GameObject lineObject = new GameObject("LineRendererObject");
+            LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+
+            lineRenderer.startWidth = 0.005f;
+            lineRenderer.endWidth = 0.005f;
+            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            lineRenderer.positionCount = 2;
+
+            lineRenderer.SetPosition(0, key.Item1);
+            lineRenderer.SetPosition(1, key.Item2);
+
+        }
+        */
+
+
         //Debugging
 
         /*
@@ -53,6 +75,7 @@ public class MeshManager : MonoBehaviour
             Gizmos.DrawSphere(vertex, 0.02f);
         }
     }*/
+
 
     public Dictionary<(Vector3, Vector3), List<Vector3>> CreateNeighbouringTrianglesDict()
     {

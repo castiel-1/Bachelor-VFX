@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.Rendering.VirtualTexturing;
 using static PathOnMesh;
 
 public class PathOnMesh : MonoBehaviour
@@ -22,7 +23,6 @@ public class PathOnMesh : MonoBehaviour
 
       */
 
-    public Mesh mesh;
     public Vector3 stepDirection;
     public float stepSize;
     public GraphicsInfoBuffer buffer;
@@ -55,6 +55,7 @@ public class PathOnMesh : MonoBehaviour
         CreatePath();
     }
 
+    
     // Debugging display of path
     private void OnDrawGizmos()
     {
@@ -76,14 +77,14 @@ public class PathOnMesh : MonoBehaviour
         Gizmos.color = Color.red;
         foreach (Vector3 point in path)
         {
-            Gizmos.DrawSphere(point, 0.03f);
+            Gizmos.DrawSphere(point, 0.008f);
         }
 
         Gizmos.color = Color.blue;
         // display all points
         foreach(Vector3 point in debugPath)
         {
-            Gizmos.DrawSphere(point, 0.03f);
+            Gizmos.DrawSphere(point, 0.008f);
         }
 
         // draw lines between points
@@ -104,6 +105,8 @@ public class PathOnMesh : MonoBehaviour
         Gizmos.DrawSphere(startPoint, 0.02f);
         */
     }
+    
+
     // TODO
 
     // calculate one path
@@ -119,6 +122,10 @@ public class PathOnMesh : MonoBehaviour
 
         // get all the variables we need to make the initial step
         var corners = GetRandomTriangleOnMesh();
+   
+        // Debugging
+        Debug.Log("random corners chosen: " + corners.Item1 + ", " + corners.Item2 + ", " +  corners.Item3);
+
         Vector3 startPoint = getStartPoint(corners.Item1, corners.Item2, corners.Item3);
         Vector3 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
         Vector3 step = GetStepVector(stepDirection, normal, stepSize, startPoint); 
@@ -146,6 +153,21 @@ public class PathOnMesh : MonoBehaviour
             // calculate next point (either on the triangle or on an edge)
             IntersectionInfo info = NextStepInfo(corners.Item1, corners.Item2, corners.Item3, startPoint, nextTheoreticalPoint, previousEdge);
 
+            // Debugging
+            if(i == 1)
+            {
+                GameObject lineObject = new GameObject("LineRendererObject");
+                LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+
+                lineRenderer.startWidth = 0.005f;
+                lineRenderer.endWidth = 0.005f;
+                lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                lineRenderer.positionCount = 2;
+
+                lineRenderer.SetPosition(0, info.edge.Item1);
+                lineRenderer.SetPosition(1, info.edge.Item2);
+            }
+
             // update startPoint
             startPoint = info.nextPoint;
 
@@ -160,29 +182,49 @@ public class PathOnMesh : MonoBehaviour
                 // calculate normal of new triangle
                 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
 
+                /*
+                // Debugging
+                GameObject lineObject = new GameObject("LineRendererObject");
+                LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+
+                lineRenderer.startWidth = 0.005f;
+                lineRenderer.endWidth = 0.005f;
+                lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+                lineRenderer.positionCount = 2;
+
+                Vector3 normalStart = (corners.Item1 + corners.Item2 + corners.Item3) / 3f;
+                lineRenderer.SetPosition(0, normalStart);
+                lineRenderer.SetPosition(1, normalStart + normal);
+                */
+
                 // get furthest corner from next trianlge (so we can orient our step in the right direction)
                 List<Vector3> cornerList = new List<Vector3> { corners.Item1, corners.Item2, corners.Item3 };
                 cornerList.Remove(info.edge.Item1);
                 cornerList.Remove(info.edge.Item2);
-                Vector3 furhtestCorner = cornerList[0];
+                Vector3 furthestCorner = cornerList[0];
+                
 
                 // calculate step
-                step = GetStepVector(stepDirection, normal, info.newStepSize, startPoint, furhtestCorner);
+                step = GetStepVector(stepDirection, normal, info.newStepSize, startPoint, furthestCorner);
 
+                /*
                 // Debugging
                 Debug.Log("calculate new step with normal: " + normal + " and stepSize: " + stepSize + " = " + step);
 
                 // Debugging
                 Debug.Log("calculating next theoretical point with: " + startPoint + " + " + step);
+                */
 
                 // calculate next theoretical point
                 nextTheoreticalPoint = startPoint + step;
 
-                // debugging
+                /*
+                // Debugging
                 if (nextTheoreticalPoint == startPoint)
                 {
                     Debug.Log("start and nextTheoretical point identical. calculation: " + startPoint + " + " + step);
                 }
+                */
 
                 // update previousEdge
                 previousEdge = info.edge;
@@ -194,11 +236,17 @@ public class PathOnMesh : MonoBehaviour
                 // check if we've done a full step, if not, don't add point to path
                 if(info.newStepSize == stepSize)
                 {
+                    // Debugging
+                    Debug.Log("point is path point, intersection with edge: " + info.edge);
+
                     // add point to path
                     path[i] = startPoint;
                 }
                 else
                 {
+                    // Debugging
+                    Debug.Log("point is debug point, intersection with edge: " + info.edge);
+
                     // add point to debug path
                     debugPath.Add(startPoint);
 
@@ -225,6 +273,12 @@ public class PathOnMesh : MonoBehaviour
     public (Vector3, Vector3, Vector3) GetRandomTriangleOnMesh()
     {
         int rand = UnityEngine.Random.Range(0, triangleDict.Keys.Count);
+
+        /*
+        // Debugging
+        int rand = 750;
+        */
+
         var key = triangleDict.Keys.ElementAt(rand);
         Vector3 value = triangleDict[key][0];
         return (key.Item1, key.Item2, value);
@@ -255,29 +309,57 @@ public class PathOnMesh : MonoBehaviour
     }
 
     // returns step vector parallel to triangle and with stepsize as length
-    public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize, Vector3 startPoint, Vector3? furhtestCorner = null)
+    public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize, Vector3 startPoint, Vector3? furthestCorner = null)
     {
+        normal = normal.normalized;
         Vector3 projected = direction - (Vector3.Dot(direction, normal) * normal);
 
         // default up direction if normal and stepDirection are almost parallel
         if (projected.sqrMagnitude < 1e-6f) 
         {
+            // Debugging
+            Debug.Log("step direction replaced with up because otherwise it would be zero");
+
             projected = Vector3.up;  
         }
 
         Vector3 step = projected.normalized * stepSize;
 
+        // Debugging
+        Debug.Log("step with previous normal: " + step);
 
-        if (furhtestCorner.HasValue)
+
+        if (furthestCorner.HasValue)
         {
             // check distance to opposite corner so we don't accidentally step away from our triangle
-            float currentDistance = Vector3.Distance(startPoint, furhtestCorner.Value);
-            float newDistance = Vector3.Distance(startPoint + step, furhtestCorner.Value);
+            float currentDistance = Vector3.Distance(startPoint, furthestCorner.Value);
+            float newDistance = Vector3.Distance(startPoint + step, furthestCorner.Value);
 
+            
             // if we step away, we reverse the step vector
             if (newDistance > currentDistance)
             {
-                step = -step;
+
+                // Debugging
+                Debug.Log("reversing normal direction");
+
+                normal = -normal.normalized;
+                projected = direction - (Vector3.Dot(direction, normal) * normal);
+
+                // default up direction if normal and stepDirection are almost parallel
+                if (projected.sqrMagnitude < 1e-6f)
+                {
+                    // Debugging
+                    Debug.Log("step direction replaced with up because otherwise it would be zero");
+
+                    projected = Vector3.up;
+                }
+
+                step = projected.normalized * stepSize;
+
+
+                // Debugging
+                Debug.Log("step with reversed normal: " + step);
             }
         }
        
@@ -290,10 +372,18 @@ public class PathOnMesh : MonoBehaviour
         // set up list of all corner combinations
         List<(Vector3, Vector3)> cornerCombinations = new List<(Vector3, Vector3)> { (corner1, corner2), (corner1, corner3), (corner2, corner3) };
 
+        
         // remove previousEdge if it exists
         if (previousEdge.HasValue)
         {
             cornerCombinations.Remove(previousEdge.Value);
+
+            //Debugging 
+            foreach (var corner in cornerCombinations)
+            {
+                Debug.Log("number of edges after removing previous: " + cornerCombinations.Count);
+                Debug.Log("edges after removign previous: " + corner);
+            }
         }
 
         // Debugging
@@ -396,7 +486,7 @@ public class PathOnMesh : MonoBehaviour
         float t = math.dot(((sv1 - ev1) + (sv * s)), ev) / evDOTev;
 
         // if intersection is within bounds of line segment
-        if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+        if (s >= -1e-6 && s <= 1 + 1e-6 && t >= -1e-6 && t <= 1 + 1e-6)
         {
             // calcualte nextPoint
             Vector3 nextPoint = sv1 + s * sv;
