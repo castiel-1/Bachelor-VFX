@@ -6,9 +6,9 @@ using UnityEngine.UIElements;
 
 public class MeshManager : MonoBehaviour
 {
-
     public Mesh mesh;
 
+    private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
     private Vector3[] vertices;
     private int[] triangles;
@@ -17,8 +17,9 @@ public class MeshManager : MonoBehaviour
     {
         vertices = mesh.vertices;
         triangles = mesh.triangles;
-
+        
         triangleDict = CreateNeighbouringTrianglesDict();
+        sortedTrianglesDict = CreateSortedTrianglesDictionary();
 
 
 
@@ -107,6 +108,7 @@ public class MeshManager : MonoBehaviour
 
     }
 
+
     public (Vector3, Vector3) GetEdgeOrder(Vector3 v1, Vector3 v2)
     {
         if((v1.x < v2.x) || (v1.x == v2.x && v1.y < v2.y) || (v1.x == v2.x && v1.y == v2.y && v1.z < v2.z))
@@ -119,7 +121,47 @@ public class MeshManager : MonoBehaviour
         }
     }
 
-    public Dictionary<(Vector3, Vector3), List<Vector3>> GetNeighbouringTrianglesDict()
+    public Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> CreateSortedTrianglesDictionary()
+    {
+
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            Vector3 corner1 = vertices[triangles[i]];
+            Vector3 corner2 = vertices[triangles[i + 1]];
+            Vector3 corner3 = vertices[triangles[i + 2]];
+
+            // the correct order to tell us if it's inward or outward facing
+            (Vector3, Vector3, Vector3) orderedCorners = (corner1, corner2, corner3);
+
+            // the sorted corners to make it so they can be looked up
+            var sortedCorners = GetVertexOrder(corner1, corner2, corner3);
+
+            sortedTrianglesDict.Add(sortedCorners, orderedCorners);
+        }
+
+        return sortedTrianglesDict;
+    }
+
+    public (Vector3, Vector3, Vector3) GetVertexOrder(Vector3 v1, Vector3 v2, Vector3 v3)
+    {
+        var orderedV1V2 = GetEdgeOrder(v1, v2);
+        var orderedV1V3 = GetEdgeOrder(v1, v3);
+        var orderedV2V3 = GetEdgeOrder(v2, v3);
+
+        var first = orderedV1V2.Item1; 
+        var second = orderedV1V2.Item2;
+
+        if (GetEdgeOrder(second, v3).Item1 == second)
+        {
+            return (first, second, v3);
+        }
+        else
+        {
+            return (first, v3, second);
+        }
+    }
+
+public Dictionary<(Vector3, Vector3), List<Vector3>> GetNeighbouringTrianglesDict()
     {
         // Debugging
         Debug.Log("triangleDict requested");
@@ -135,5 +177,10 @@ public class MeshManager : MonoBehaviour
     public Vector3[] GetVertices()
     {
         return vertices;
+    }
+
+    public Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> GetSortedTrianglesDict()
+    {
+        return sortedTrianglesDict;
     }
 }
