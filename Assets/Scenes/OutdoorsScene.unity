@@ -605,7 +605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 228656551f2500042b2a25a29972d58d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &579008186
 Transform:
   m_ObjectHideFlags: 0
@@ -639,7 +639,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &671672832
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stepDirection: {x: 1, y: 0, z: 0}
-  stepSize: 0.08
+  stepSize: 0.2
   buffer: {fileID: 1581312791}
   meshManager: {fileID: 579008185}
   startPointP: {fileID: 7232164320203899052, guid: 38fb6d127dbe9d94998c37c5da25870f, type: 3}
@@ -1205,7 +1205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8baf48b4af8321e439f209991f3288dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: hello world, lets go
+  text: hello world
   visualEffect: {fileID: 1710612303}
   charSet: ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.!,'
 --- !u!4 &1581312792
@@ -1682,7 +1682,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!136 &2091976270
 CapsuleCollider:
   m_ObjectHideFlags: 0
