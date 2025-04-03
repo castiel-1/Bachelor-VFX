@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,6 +12,7 @@ public class MeshManager : MonoBehaviour
     public Mesh mesh;
 
     private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
+    private Dictionary<(Vector3, Vector3), (Vector3, Vector3)> sortedEdgesDict = new Dictionary<(Vector3, Vector3), (Vector3, Vector3)>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
     private Vector3[] vertices;
     private int[] triangles;
@@ -22,6 +24,25 @@ public class MeshManager : MonoBehaviour
         
         triangleDict = CreateNeighbouringTrianglesDict();
         sortedTrianglesDict = CreateSortedTrianglesDictionary();
+        sortedEdgesDict = CreateSortedEdgesDictionary();
+        /*
+        // Debugging
+        foreach(var tri in sortedTrianglesDict.Keys)
+        {
+            GameObject lineObject = new GameObject("LineRendererObject");
+            LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+
+            lineRenderer.startWidth = 0.005f;
+            lineRenderer.endWidth = 0.005f;
+            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+            lineRenderer.positionCount = 3;
+            lineRenderer.startColor = Color.red;
+            lineRenderer.endColor = Color.yellow;
+
+            lineRenderer.SetPosition(0, sortedTrianglesDict[tri].Item1);
+            lineRenderer.SetPosition(1, sortedTrianglesDict[tri].Item2);
+            lineRenderer.SetPosition(2, sortedTrianglesDict[tri].Item3);
+        }*/
 
         /*
         // Debugging
@@ -145,37 +166,41 @@ public class MeshManager : MonoBehaviour
         return sortedTrianglesDict;
     }
 
-    /*
-    public (Vector3, Vector3, Vector3) GetVertexOrder(Vector3 v1, Vector3 v2, Vector3 v3)
+    public Dictionary<(Vector3, Vector3), (Vector3, Vector3)> CreateSortedEdgesDictionary()
     {
-        var orderedV1V2 = GetEdgeOrder(v1, v2);
-        var orderedV1V3 = GetEdgeOrder(v1, v3);
-        var orderedV2V3 = GetEdgeOrder(v2, v3);
 
-        var first = orderedV1V2.Item1; 
-        var second = orderedV1V2.Item2;
+        for (int i = 0; i < triangles.Length; i += 3)
+        {
+            Vector3 corner1 = vertices[triangles[i]];
+            Vector3 corner2 = vertices[triangles[i + 1]];
+            Vector3 corner3 = vertices[triangles[i + 2]];
 
-        if (GetEdgeOrder(second, v3).Item1 == second)
-        {
-            return (first, second, v3);
+            List<(Vector3, Vector3)> cornerCombinations = new List<(Vector3, Vector3)> { (corner1, corner2), (corner2, corner3), (corner3, corner1) };
+
+            foreach(var cornerCombo in cornerCombinations)
+            {
+                // the correct order from the mesh
+                var orderedEdge = (cornerCombo.Item1, cornerCombo.Item2);
+
+                // the sorted edge for lookup
+                var sortedEdge = GetEdgeOrder(cornerCombo.Item1, cornerCombo.Item2);
+
+                if (!sortedEdgesDict.ContainsKey(sortedEdge))
+                {
+                    sortedEdgesDict.Add(sortedEdge, orderedEdge);
+                }
+
+            }
+
         }
-        else
-        {
-            return (first, v3, second);
-        }
+
+        return sortedEdgesDict;
     }
-    */
 
     public (Vector3, Vector3) GetEdgeOrder(Vector3 v1, Vector3 v2)
     {
-        // Debugging
-        Debug.Log("in get edge order");
-
         List<Vector3> vectors = new List<Vector3> {v1, v2};
         List<Vector3> orderedVectors = Order(vectors);
-
-        // Debugging
-        Debug.Log("leaving get edge order");
 
         return (orderedVectors[0], orderedVectors[1]);
     }
@@ -219,4 +244,9 @@ public class MeshManager : MonoBehaviour
     {
         return sortedTrianglesDict;
     }
+    public Dictionary<(Vector3, Vector3), (Vector3, Vector3)> GetSortedEdgesDict()
+    {
+        return sortedEdgesDict;
+    }
+
 }
