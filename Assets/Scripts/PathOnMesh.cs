@@ -411,6 +411,8 @@ public class PathOnMesh : MonoBehaviour
         // see if we need to flip step direction when we start from the edge of a triangle
         if (edge.HasValue)
         {
+            // TODO
+
             // get inward pointing normal of edge
             Vector3 inwardNormal = math.cross(edge.Value, normal);
 
@@ -436,29 +438,27 @@ public class PathOnMesh : MonoBehaviour
     // get all information needed to make the next step
     public IntersectionInfo NextStepInfo(Vector3 corner1, Vector3 corner2, Vector3 corner3, Vector3 stepStart, Vector3 stepEnd, (Vector3, Vector3)? previousEdge = null) 
     {
+        // get correct order of corners
+        var cornersKey = meshManager.GetCornerOrder(corner1, corner2, corner3);
+        var orderedCorners = sortedTrianglesDict[cornersKey];
 
         // set up list of all corner combinations
         List<(Vector3, Vector3)> cornerCombinations = new List<(Vector3, Vector3)> { 
-             meshManager.GetEdgeOrder(corner1, corner2),
-             meshManager.GetEdgeOrder(corner2, corner3),
-             meshManager.GetEdgeOrder(corner3, corner1)};
+            (orderedCorners.Item1, orderedCorners.Item2),
+            (orderedCorners.Item2, orderedCorners.Item3),
+            (orderedCorners.Item3, orderedCorners.Item1),
+        };
 
         // remove previousEdge if it exists
         if (previousEdge.HasValue)
         {
-            cornerCombinations.Remove(previousEdge.Value);
+            // get correct order of edge
+            var orderedPreviousEdge = GetEdgeOrderOnTriangle(previousEdge.Value.Item1, previousEdge.Value.Item2, corner1, corner2, corner3);
 
-            //Debugging 
-            /*
-            foreach (var corner in cornerCombinations)
-            {
-                Debug.Log("number of edges after removing previous: " + cornerCombinations.Count);
-                Debug.Log("edges after removign previous: " + corner);
-            }*/
+            // remove edge from list we check for intersections
+            cornerCombinations.Remove(orderedPreviousEdge);
+
         }
-
-        // Debugging
-        //Debug.Log("checking " + cornerCombinations.Count + " edges: " + cornerCombinations[0] + ", " + cornerCombinations[1]);
 
         // set up intersectionInfo
         IntersectionInfo info = new IntersectionInfo();
@@ -466,8 +466,6 @@ public class PathOnMesh : MonoBehaviour
         // for each edge
         foreach ((Vector3, Vector3) edge in cornerCombinations)
         {
-            // Debugging
-            Debug.Log("edge: " + edge.Item1 + ", " + edge.Item2);
 
             // calculate the intersection 
             info = CalculateIntersectionInfo(edge.Item1, edge.Item2, stepStart, stepEnd); 
@@ -481,9 +479,6 @@ public class PathOnMesh : MonoBehaviour
             // if there is an intersection with an edge
             if (info.hasIntersection)
             {
-                // Debugging
-                Debug.Log(" in next step info: Has intersection with edge: (" + info.edge.Item1 + ", " + info.edge.Item2 + ")");
-
                 // add lastCorner to info
                 info.lastCorner = lastCorner;
 
@@ -492,10 +487,6 @@ public class PathOnMesh : MonoBehaviour
         }
 
         // if there is no intersection with an edge
-
-        // Debugging
-        Debug.Log("in next step info: no intersection with any edge");
-
         return info;
     }
 
@@ -507,14 +498,9 @@ public class PathOnMesh : MonoBehaviour
     // ev2 = end of edge vector
     public IntersectionInfo CalculateIntersectionInfo(Vector3 ev1, Vector3 ev2, Vector3 sv1, Vector3 sv2) 
     {
-
         // set up direction vectors
         Vector3 ev = ev2 - ev1;
         Vector3 sv = sv2 - sv1;
-
-        // Debugging
-        //Debug.Log("edge vector = " + ev1 + ", " + ev2 + ", = " + ev);
-        //Debug.Log("step vector = " + sv1 + ", " + sv2 + ", = " + sv);
 
         // calculate sv x ev
         Vector3 svXev = math.cross(sv, ev);
@@ -531,9 +517,6 @@ public class PathOnMesh : MonoBehaviour
         // if the crossproduct is zero, the vector are parallel or identical, both cases in which we want to count it as no intersection
         if (svXev == Vector3.zero)
         {
-            // Debugging
-            //Debug.Log("no intersection because of cross product being zero");
-
             return info;
         }
 
@@ -577,25 +560,17 @@ public class PathOnMesh : MonoBehaviour
             // assign stepSize for return
             float remainingStep = stepSize;
 
-            // Debugging 
-           // Debug.Log("s: " + s);
-
+            // TODO FIX REMAINING STEP SIZE
             // if we don't happen to do a full step to get to the intersection (account for fpp)
             if (Mathf.Abs(s - 1) > 1e-6f)
             {
                 // reduce the stepSize (used for the next step)
                 remainingStep = stepSize - newsvMAG;
-
-                // Debugging
-               // Debug.Log("calculating remaning step size: " + stepSize + " - " + newsvMAG);
             }
-
+            
+            // TODO THIS SHOULD NOT BE NECESSARY
             // get intersected edge in correct order
-            Debug.Log("edge before meshmanager: " + ev1 + ", " + ev2);
-
             var intersectedEdge = meshManager.GetEdgeOrder(ev1, ev2);
-
-            Debug.Log("after mesh manager");
 
             // return intersection info
             IntersectionInfo intersectionInfo = new IntersectionInfo()
@@ -607,17 +582,10 @@ public class PathOnMesh : MonoBehaviour
                 nextPoint = nextPoint,
                 edge = intersectedEdge,
             };
-
-
-            // Debugging
-            //Debug.Log("intersection is within bounds, therefor valid");
             
             return intersectionInfo;
 
         }
-
-        // Debugging
-        //Debug.Log("intersection is not within bounds, therefore not valid");
 
         return info;
 
@@ -626,19 +594,45 @@ public class PathOnMesh : MonoBehaviour
     // returns neighbouring triangle
     public (Vector3, Vector3, Vector3) GetNeighbouringTriangle((Vector3, Vector3) edge, Vector3 corner)
     {
-
         List<Vector3> corners = new List<Vector3> (triangleDict[edge]);
 
         corners.Remove(corner);
 
         Vector3 lastCorner = corners[0];
 
-
-        // technically not needed but better to order it anyways
+        // Debugging
+        // technically not needed but better to order it anyways - remove later
         var correctOrder = meshManager.GetCornerOrder(edge.Item1, edge.Item2, lastCorner);
 
         return correctOrder;
         
+    }
+
+    // returns order of edge based on triangle
+    public (Vector3, Vector3) GetEdgeOrderOnTriangle(Vector3 edgeStart, Vector3 edgeEnd, Vector3 corner1, Vector3 corner2, Vector3 corner3)
+    {
+        // get correct order of corners
+        var cornerKey = meshManager.GetCornerOrder(corner1, corner2, corner3);
+        var orderedCorners = sortedTrianglesDict[cornerKey];
+        Vector3[] orderedCornersArray = new Vector3[] {orderedCorners.Item1, orderedCorners.Item2, orderedCorners.Item3 };
+
+        // find correct order of edge
+        for (int i = 0; i <= 3; i++)
+        {
+            Vector3 cornerStart = orderedCornersArray[i];
+            Vector3 cornerEnd = orderedCornersArray[(i + 1) % 3];
+
+            if ( cornerStart == edgeStart && cornerEnd == edgeEnd)
+            {
+                return (cornerStart, cornerEnd);
+            }
+            
+        }
+
+        // Debugging
+        Debug.Log("ERROR, COULDNT FIND THE CORRECT EDGE ORDER");
+
+        return (edgeStart, edgeEnd);
     }
 
 }
