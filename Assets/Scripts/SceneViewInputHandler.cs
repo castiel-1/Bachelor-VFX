@@ -7,6 +7,9 @@ public class SceneViewInputHandler : MonoBehaviour
 {
     public PathOnMesh pathScript;
     private int stepCount = 0;
+    private GameObject previousLineObject;
+    private GameObject previousLineObject2;
+    bool previousHadIntersection = false;
 
     private void OnEnable()
     {
@@ -23,10 +26,27 @@ public class SceneViewInputHandler : MonoBehaviour
         Event e = Event.current;
         if (e != null && e.type == EventType.KeyDown && e.keyCode == KeyCode.Space)
         {
-            Debug.Log("Space pressed in Scene View!");
+            if (previousLineObject != null)
+            {
+                DestroyImmediate(previousLineObject);
+            }
+            if (previousLineObject2 != null)
+            {
+                DestroyImmediate(previousLineObject2);
+            }
 
-                pathScript.Visualize(stepCount);
-                stepCount++; 
+            // Create a new GameObject for the triangle visualization
+            previousLineObject = new GameObject("TriangleRenderer");
+            LineRenderer lineRenderer2 = previousLineObject.AddComponent<LineRenderer>();
+
+            previousLineObject2 = new GameObject("TriangleRenderer");
+            LineRenderer lineRenderer3 = previousLineObject2.AddComponent<LineRenderer>();
+
+            Debug.Log("Space pressed in Scene View!");
+            Debug.Log("previousHadIntersection: " + previousHadIntersection);
+
+            previousHadIntersection = pathScript.Visualize(stepCount, lineRenderer2, lineRenderer3, previousHadIntersection);
+            stepCount++;
 
             e.Use();
         }
