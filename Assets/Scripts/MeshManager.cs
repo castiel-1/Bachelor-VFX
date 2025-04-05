@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 
 // When ordering the triangle, the rule is, we return the order (1, 2, 3) and the edge would then be (1, 2) and calculated as 2 - 1
 
+// When interacting with neighbhouring triangles dict, the keys can be found by using GetEdgeOrder 
 public class MeshManager : MonoBehaviour
 {
     public Mesh mesh;
