@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 
 // When ordering the triangle, the rule is, we return the order (1, 2, 3) and the edge would then be (1, 2) and calculated as 2 - 1
 
+// When interacting with neighbhouring triangles dict, the keys can be found by using GetEdgeOrder 
+
 public class MeshManager : MonoBehaviour
 {
     public Mesh mesh;
@@ -145,37 +147,11 @@ public class MeshManager : MonoBehaviour
         return sortedTrianglesDict;
     }
 
-    /*
-    public (Vector3, Vector3, Vector3) GetVertexOrder(Vector3 v1, Vector3 v2, Vector3 v3)
-    {
-        var orderedV1V2 = GetEdgeOrder(v1, v2);
-        var orderedV1V3 = GetEdgeOrder(v1, v3);
-        var orderedV2V3 = GetEdgeOrder(v2, v3);
-
-        var first = orderedV1V2.Item1; 
-        var second = orderedV1V2.Item2;
-
-        if (GetEdgeOrder(second, v3).Item1 == second)
-        {
-            return (first, second, v3);
-        }
-        else
-        {
-            return (first, v3, second);
-        }
-    }
-    */
-
     public (Vector3, Vector3) GetEdgeOrder(Vector3 v1, Vector3 v2)
     {
-        // Debugging
-        Debug.Log("in get edge order");
 
         List<Vector3> vectors = new List<Vector3> {v1, v2};
         List<Vector3> orderedVectors = Order(vectors);
-
-        // Debugging
-        Debug.Log("leaving get edge order");
 
         return (orderedVectors[0], orderedVectors[1]);
     }

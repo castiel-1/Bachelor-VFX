@@ -628,11 +628,11 @@ public class PathOnMesh : MonoBehaviour
         var orderedCorners = sortedTrianglesDict[cornerKey];
         Vector3[] orderedCornersArray = new Vector3[] {orderedCorners.Item1, orderedCorners.Item2, orderedCorners.Item3 };
 
-        // find correct order of edge
-        for (int i = 0; i <= 3; i++)
+        // find correct order of edge (we start at 1 because we need to do modulo to wrap around the list)
+        for (int i = 1; i < 4; i++)
         {
-            Vector3 cornerStart = orderedCornersArray[i];
-            Vector3 cornerEnd = orderedCornersArray[(i + 1) % 3];
+            Vector3 cornerStart = orderedCornersArray[i - 1];
+            Vector3 cornerEnd = orderedCornersArray[i % 3];
 
             if ( cornerStart == edgeStart && cornerEnd == edgeEnd)
             {
