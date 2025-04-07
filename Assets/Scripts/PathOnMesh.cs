@@ -135,8 +135,6 @@ public class PathOnMesh : MonoBehaviour
             previousHadIntersection = false;
         }
 
-        Instantiate(nextPointP, currentInfo.lastCorner, quaternion.identity);
-
         // draw next point orange
         Instantiate(nextPointP, currentInfo.nextPoint, quaternion.identity);
 
@@ -149,7 +147,7 @@ public class PathOnMesh : MonoBehaviour
         return previousHadIntersection;
     }
 
-    
+    /*
     // Debugging display of path
     private void OnDrawGizmos()
     {
@@ -179,7 +177,7 @@ public class PathOnMesh : MonoBehaviour
         {
             Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
         }
-    }
+    }*/
 
     // calculate one path
     public void CreatePath()
@@ -324,10 +322,9 @@ public class PathOnMesh : MonoBehaviour
     // used to get a random start triangle
     public (Vector3, Vector3, Vector3) GetRandomTriangleOnMesh()
     {
-        // int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
-        
         // Debugging
-        int rand = 2;
+        //int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
+        int rand = 50;
 
         var key = sortedTrianglesDict.Keys.ElementAt(rand);
         return (key.Item1, key.Item2, key.Item3);
@@ -421,7 +418,13 @@ public class PathOnMesh : MonoBehaviour
                 // Debugging
                 Debug.Log("step was flipped");
 
-                step = -step;
+                // Test
+                Vector3 projection = (math.dot(step, edge.Value) / math.dot(edge.Value, edge.Value)) * edge.Value;
+                step = 2f * projection - step;
+
+
+                // Debugging - this should no longer be needed and was replaced
+                //step = -step;
             }
 
         }
