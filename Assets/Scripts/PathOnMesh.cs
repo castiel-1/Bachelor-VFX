@@ -149,7 +149,7 @@ public class PathOnMesh : MonoBehaviour
         return previousHadIntersection;
     }
 
-    /*
+    
     // Debugging display of path
     private void OnDrawGizmos()
     {
@@ -179,7 +179,7 @@ public class PathOnMesh : MonoBehaviour
         {
             Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
         }
-    }*/
+    }
 
     // calculate one path
     public void CreatePath()
@@ -416,7 +416,7 @@ public class PathOnMesh : MonoBehaviour
             float dot = Vector3.Dot(step, inwardNormal);
 
             // if the dot product is greater than zero we need to flip the step vector
-            if(dot < 0)
+            if(dot > 0)
             {
                 // Debugging
                 Debug.Log("step was flipped");
@@ -442,6 +442,12 @@ public class PathOnMesh : MonoBehaviour
             (orderedCorners.Item2, orderedCorners.Item3),
             (orderedCorners.Item3, orderedCorners.Item1),
         };
+
+        // Debugging
+        Debug.Log("numberCornerCombinations: " + cornerCombinations.Count);
+        Debug.Log("corners: " + orderedCorners.Item1 + ", " + orderedCorners.Item2);
+        Debug.Log("corners: " + orderedCorners.Item2 + ", " + orderedCorners.Item3);
+        Debug.Log("corners: " + orderedCorners.Item3 + ", " + orderedCorners.Item1);
 
         // remove previousEdge if it exists
         if (previousEdge.HasValue)
@@ -623,6 +629,9 @@ public class PathOnMesh : MonoBehaviour
     // returns order of edge based on triangle
     public (Vector3, Vector3) GetEdgeOrderOnTriangle(Vector3 edgeStart, Vector3 edgeEnd, Vector3 lastCorner)
     {
+        // Debugging
+        Debug.Log("in GetEdgeOrderOnTriangle with edge: " + edgeStart + ", " + edgeEnd);
+
         // get correct order of corners
         var cornerKey = meshManager.GetCornerOrder(edgeStart, edgeEnd, lastCorner);
         var orderedCorners = sortedTrianglesDict[cornerKey];
@@ -634,7 +643,7 @@ public class PathOnMesh : MonoBehaviour
             Vector3 cornerStart = orderedCornersArray[i - 1];
             Vector3 cornerEnd = orderedCornersArray[i % 3];
 
-            if ( cornerStart == edgeStart && cornerEnd == edgeEnd)
+            if ((cornerStart == edgeStart && cornerEnd == edgeEnd) || (cornerStart == edgeEnd && cornerEnd == edgeStart))
             {
                 return (cornerStart, cornerEnd);
             }
