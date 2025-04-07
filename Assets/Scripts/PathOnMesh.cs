@@ -147,7 +147,7 @@ public class PathOnMesh : MonoBehaviour
         return previousHadIntersection;
     }
 
-    /*
+    
     // Debugging display of path
     private void OnDrawGizmos()
     {
@@ -177,7 +177,7 @@ public class PathOnMesh : MonoBehaviour
         {
             Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
         }
-    }*/
+    }
 
     // calculate one path
     public void CreatePath()
@@ -323,8 +323,8 @@ public class PathOnMesh : MonoBehaviour
     public (Vector3, Vector3, Vector3) GetRandomTriangleOnMesh()
     {
         // Debugging
-        //int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
-        int rand = 50;
+        int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
+        //int rand = 50;
 
         var key = sortedTrianglesDict.Keys.ElementAt(rand);
         return (key.Item1, key.Item2, key.Item3);
@@ -357,6 +357,7 @@ public class PathOnMesh : MonoBehaviour
 
         Vector3 normal = Vector3.Cross(edge1, edge2).normalized;
 
+        /*
         // Debugging
         GameObject lineObject = new GameObject("LineRendererObject");
         LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
@@ -369,6 +370,7 @@ public class PathOnMesh : MonoBehaviour
         Vector3 centre = (a + b + c) / 3f;
         lineRenderer.SetPosition(0, centre);
         lineRenderer.SetPosition(1, centre + normal*0.06f);
+        */
 
         return normal;
     }
@@ -418,7 +420,7 @@ public class PathOnMesh : MonoBehaviour
                 // Debugging
                 Debug.Log("step was flipped");
 
-                // Test
+                // we mirror vector along the edge we just came from so it still points in the correct direction while going into the triangle
                 Vector3 projection = (math.dot(step, edge.Value) / math.dot(edge.Value, edge.Value)) * edge.Value;
                 step = 2f * projection - step;
 

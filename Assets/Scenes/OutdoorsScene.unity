@@ -605,7 +605,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 228656551f2500042b2a25a29972d58d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  mesh: {fileID: -7196802604745430461, guid: 3cd50af30c5abb24cadd6096d297f404, type: 3}
 --- !u!4 &579008186
 Transform:
   m_ObjectHideFlags: 0
@@ -970,7 +970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stepDirection: {x: 1, y: 1, z: 0}
-  originalStepSize: 0.2
+  originalStepSize: 0.08
   buffer: {fileID: 1581312791}
   meshManager: {fileID: 579008185}
   startPointP: {fileID: 7232164320203899052, guid: 38fb6d127dbe9d94998c37c5da25870f, type: 3}
@@ -1666,7 +1666,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &2091976270
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1772,7 +1772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2289980102065232141, guid: 5e78518142e38114bbd72175432feac2, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2971061214943080950, guid: 5e78518142e38114bbd72175432feac2, type: 3}
       propertyPath: m_LocalPosition.x
