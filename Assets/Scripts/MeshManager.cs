@@ -4,13 +4,14 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-// When ordering the triangle, the rule is, we return the order (1, 2, 3) and the edge would then be (1, 2) and calculated as 2 - 1
+// When ordering the triangle, the rule is, we return the order (1, 2, 3) and one edge would then be (1, 2) and calculated as 2 - 1
 
 // When interacting with neighbhouring triangles dict, the keys can be found by using GetEdgeOrder 
 
 public class MeshManager : MonoBehaviour
 {
-    public Mesh mesh;
+    public GameObject meshHolder;
+    private Mesh mesh;
 
     private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
@@ -19,9 +20,23 @@ public class MeshManager : MonoBehaviour
 
     public void Awake()
     {
+        // get mesh
+        mesh = meshHolder.GetComponent<MeshFilter>().mesh;
+
+        // get transforms for mesh
+        Transform transform = meshHolder.transform;
+
+        // get vertices and triangles list
         vertices = mesh.vertices;
         triangles = mesh.triangles;
         
+        // apply transform to vertices
+        for(int i = 0; i < vertices.Length; i++) 
+        {
+            vertices[i] = transform.TransformPoint(vertices[i]);
+        }
+
+        // create dictionaries
         triangleDict = CreateNeighbouringTrianglesDict();
         sortedTrianglesDict = CreateSortedTrianglesDictionary();
 

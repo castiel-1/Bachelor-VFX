@@ -408,7 +408,7 @@ public class PathOnMesh : MonoBehaviour
 
         Vector3 step = projected.normalized * stepSize;
 
-        
+        // TODO this should no longer be necessary since we are now using the previous direction
         // see if we need to flip step direction when we start from the edge of a triangle
         if (edge.HasValue)
         {
