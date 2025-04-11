@@ -39,6 +39,8 @@ public class PathOnMesh : MonoBehaviour
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
     private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
     private float currentStepSize;
+    private Vector3 previousStepDirection;
+
 
     // Debugging
     private List<IntersectionInfo> intersectionInfos = new List<IntersectionInfo>();
@@ -70,6 +72,13 @@ public class PathOnMesh : MonoBehaviour
     {
         // create path
         CreatePath();
+
+        // Debugging
+        Debug.Log("number of points in path:" + path.Length);
+        foreach(Vector3 point in path)
+        {
+            Debug.Log(point);
+        }
     }
 
     // Debugging
@@ -207,6 +216,9 @@ public class PathOnMesh : MonoBehaviour
         // set up previousEdge
         (Vector3, Vector3)? previousEdge = null;
 
+        // set up previousStepDirection
+        previousStepDirection = step;
+
         // add startPoint to path
         path[0] = startPoint;
 
@@ -223,6 +235,9 @@ public class PathOnMesh : MonoBehaviour
             // calculate next point (either on the triangle or on an edge)
             IntersectionInfo info = NextStepInfo(corners.Item1, corners.Item2, corners.Item3, startPoint, nextTheoreticalPoint, previousEdge);
 
+            // update previousStepDirection
+            previousStepDirection = (info.nextPoint - info.startPoint).normalized;
+
             // Debugging
             intersectionInfos.Add(info);
 
@@ -230,9 +245,9 @@ public class PathOnMesh : MonoBehaviour
             count++;
             j++;
 
-            if (j >= 50)
+            if (j >= 5000)
             {
-                Debug.Log("more than " + j + " times in loop");
+                Debug.Log("ERROR more than " + j + " times in loop");
                 return;
             }
 
@@ -267,7 +282,7 @@ public class PathOnMesh : MonoBehaviour
                 var cornerNextTriangle = GetNeighbouringTriangleLastCorner(info.edge, info.lastCorner);
                 var orderedEdge = GetEdgeOrderOnTriangle(info.edge.Item1, info.edge.Item2, cornerNextTriangle);
                 edge = orderedEdge.Item2 - orderedEdge.Item1;
-                step = GetStepVector(stepDirection, normal, currentStepSize, startPoint, edge);
+                step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, edge);
 
                 // calculate next theoretical point
                 nextTheoreticalPoint = startPoint + step;
@@ -301,12 +316,12 @@ public class PathOnMesh : MonoBehaviour
                 if (edge != Vector3.zero)
                 {
                     // calculate step with edge
-                    step = GetStepVector(stepDirection, normal, currentStepSize, startPoint, edge);
+                    step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, edge);
                 }
                 else
                 {
                     // calculate step without edge
-                    step = GetStepVector(stepDirection, normal, currentStepSize, startPoint);
+                    step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint);
                 }
 
                 // calculate next theoretical point
@@ -381,10 +396,14 @@ public class PathOnMesh : MonoBehaviour
     {
         Vector3 projected = direction - (Vector3.Dot(direction, normal) * normal);
 
+
+        // TODO this should no longer be needed since we are now using the previous stepdireciton instead of a global one
         // default up direction if normal and stepDirection are almost parallel
         if (projected.sqrMagnitude < 1e-6f) 
         {
-            projected = Vector3.up;  
+            Vector3 a = new Vector3(0, 1, 0.2f);
+            a = a.normalized;
+            projected = a - (Vector3.Dot(a, normal) * a);
         }
 
         Vector3 step = projected.normalized * stepSize;
@@ -420,10 +439,10 @@ public class PathOnMesh : MonoBehaviour
                 // Debugging
                 Debug.Log("step was flipped");
 
+                
                 // we mirror vector along the edge we just came from so it still points in the correct direction while going into the triangle
                 Vector3 projection = (math.dot(step, edge.Value) / math.dot(edge.Value, edge.Value)) * edge.Value;
                 step = 2f * projection - step;
-
 
                 // Debugging - this should no longer be needed and was replaced
                 //step = -step;
@@ -525,7 +544,7 @@ public class PathOnMesh : MonoBehaviour
         };
 
         // if the crossproduct is zero, the vector are parallel or identical, both cases in which we want to count it as no intersection
-        if (svXev == Vector3.zero)
+        if (svXev.magnitude < 1e-8f)
         {
             return info;
         }
@@ -556,8 +575,11 @@ public class PathOnMesh : MonoBehaviour
         float t = math.dot(((sv1 - ev1) + (sv * s)), ev) / evDOTev;
 
         // if intersection is within bounds of line segment
-        if (s >= -1e-6 && s <= 1 + 1e-6 && t >= -1e-6 && t <= 1 + 1e-6)
+        if (s > 1e-6 && s <= 1 + 1e-6 && t > 1e-6 && t <= 1 + 1e-6)
         {
+            // Debugging
+            Debug.Log("s: " + s + ", t:" + t);
+
             // calcualte nextPoint
             Vector3 nextPoint = sv1 + s * sv;
 
