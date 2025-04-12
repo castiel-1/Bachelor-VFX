@@ -28,10 +28,6 @@ public class PathOnMesh : MonoBehaviour
     public Vector3 stepDirection;
     public float originalStepSize;
     public GraphicsInfoBuffer buffer;
-
-   // private bool HadIntersection = false;
-   // private (Vector3, Vector3) intersectionEdge = (Vector3.zero, Vector3.zero);
-
     public MeshManager meshManager;
 
     private Vector3[] path;
@@ -73,11 +69,10 @@ public class PathOnMesh : MonoBehaviour
         public Vector3 normal;
     }
 
-
     // Debugging
     private int count = 0;
 
-    void Start()
+    void Awake()
     {
         // create path
         CreatePath();

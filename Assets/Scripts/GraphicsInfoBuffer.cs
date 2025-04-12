@@ -32,10 +32,6 @@ public class GraphicsInfoBuffer : MonoBehaviour
     public string text = "";
     public VisualEffect visualEffect;
     public GraphicsBuffer graphicsBuffer;
-    /*
-    public Vector3 startPoint;
-    public Vector3 endPoint;
-    */
     public string charSet;
 
     public void Awake()

@@ -38,6 +38,9 @@ public class DisplayPath : MonoBehaviour
 
         }
 
+        // update buffer
+        graphicsBuffer.UpdateBuffer(letterStructs);
+
     }
 }
 
