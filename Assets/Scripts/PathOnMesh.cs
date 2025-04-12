@@ -35,6 +35,7 @@ public class PathOnMesh : MonoBehaviour
     public MeshManager meshManager;
 
     private Vector3[] path;
+    private PathInfo[] pathInfo;
     private List<Vector3> debugPath = new List<Vector3>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
     private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
@@ -64,6 +65,14 @@ public class PathOnMesh : MonoBehaviour
         public bool hasIntersection;
         public float newStepSize;
     }
+    
+    // struct for path information
+    public struct PathInfo
+    {
+        public Vector3 point;
+        public Vector3 normal;
+    }
+
 
     // Debugging
     private int count = 0;
@@ -72,13 +81,6 @@ public class PathOnMesh : MonoBehaviour
     {
         // create path
         CreatePath();
-
-        // Debugging
-        Debug.Log("number of points in path:" + path.Length);
-        foreach(Vector3 point in path)
-        {
-            Debug.Log(point);
-        }
     }
 
     // Debugging
@@ -160,7 +162,7 @@ public class PathOnMesh : MonoBehaviour
     // Debugging display of path
     private void OnDrawGizmos()
     {
-
+        /*
         // display points
         Gizmos.color = Color.red;
         foreach (Vector3 point in path)
@@ -186,6 +188,14 @@ public class PathOnMesh : MonoBehaviour
         {
             Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
         }
+
+        */
+        Gizmos.color = Color.red;
+        foreach (PathInfo point in pathInfo)
+        {
+            Gizmos.DrawSphere(point.point, 0.01f);
+        }
+
     }
 
     // calculate one path
@@ -195,6 +205,9 @@ public class PathOnMesh : MonoBehaviour
         // set up path array
         int numPoints = buffer.text.Length;
         path = new Vector3[numPoints];
+
+        // set up pathInfo array
+        pathInfo = new PathInfo[numPoints];
 
         // set up currentStepSize
         currentStepSize = originalStepSize;
@@ -222,6 +235,15 @@ public class PathOnMesh : MonoBehaviour
         // add startPoint to path
         path[0] = startPoint;
 
+        // add startPoint to pathInfo
+        PathInfo currentPathInfo = new PathInfo()
+        {
+            point = startPoint,
+            normal = normal,
+        };
+
+        pathInfo[0] = currentPathInfo;
+
         // set up edge for step calculation
         Vector3 edge = Vector3.zero;
 
@@ -247,7 +269,7 @@ public class PathOnMesh : MonoBehaviour
 
             if (j >= 5000)
             {
-                Debug.Log("ERROR more than " + j + " times in loop");
+                Debug.Log("ERROR more than " + j + " times in loop, this loop might not stop on its own");
                 return;
             }
 
@@ -256,20 +278,17 @@ public class PathOnMesh : MonoBehaviour
 
             if (info.hasIntersection)
             {
-                // debugging
-                Debug.Log("in if statement: has intersection");
-
                 // get corners of neighbouring triangle
                 corners = GetNeighbouringTriangle(info.edge, info.lastCorner);
 
                 // calculate normal of new triangle
                 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
 
+                // update normal in currentPathInfo
+                currentPathInfo.normal = normal;
+
                 // update stepSize
                 currentStepSize = info.newStepSize;
-
-                // Debugging
-                Debug.Log("remaining step in if statement: " + info.newStepSize);
 
                 // if a full step has been taken
                 if (Mathf.Abs(currentStepSize) < 1e-6)
@@ -294,6 +313,10 @@ public class PathOnMesh : MonoBehaviour
                 {
                     // add point to path
                     path[i] = startPoint;
+
+                    // add point to pathInfo
+                    currentPathInfo.point = startPoint;
+                    pathInfo[i] = currentPathInfo;
                 }
                 else
                 {
@@ -306,8 +329,6 @@ public class PathOnMesh : MonoBehaviour
             }
             else
             {
-                // debugging
-                Debug.Log("in if statement: has no intersection");
 
                 // update currentStepSize (always resets when we don't intersect cause then we do a full step or complete one)
                 currentStepSize = originalStepSize;
@@ -328,7 +349,11 @@ public class PathOnMesh : MonoBehaviour
                 nextTheoreticalPoint = startPoint + step;
 
                 // add new point to path
-                path[i] = info.nextPoint;
+                path[i] = startPoint;
+
+                // add point to pathInfo
+                currentPathInfo.point = startPoint;
+                pathInfo[i] = currentPathInfo;
 
             }
         }
@@ -372,21 +397,6 @@ public class PathOnMesh : MonoBehaviour
 
         Vector3 normal = Vector3.Cross(edge1, edge2).normalized;
 
-        /*
-        // Debugging
-        GameObject lineObject = new GameObject("LineRendererObject");
-        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-
-        lineRenderer.startWidth = 0.005f;
-        lineRenderer.endWidth = 0.005f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.positionCount = 2;
-
-        Vector3 centre = (a + b + c) / 3f;
-        lineRenderer.SetPosition(0, centre);
-        lineRenderer.SetPosition(1, centre + normal*0.06f);
-        */
-
         return normal;
     }
 
@@ -414,22 +424,6 @@ public class PathOnMesh : MonoBehaviour
         {
             // get inward pointing normal of edge
             Vector3 inwardNormal = math.cross(edge.Value, normal);
-
-            /*
-            // Debugging
-            GameObject lineObject = new GameObject("LineRendererObject");
-            LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-
-            lineRenderer.startWidth = 0.005f;
-            lineRenderer.endWidth = 0.005f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer.positionCount = 2;
-            lineRenderer.startColor = Color.blue;
-            lineRenderer.endColor = Color.yellow;
-
-            lineRenderer.SetPosition(0, startPoint);
-            lineRenderer.SetPosition(1, startPoint + inwardNormal.normalized * 0.06f);
-            */
 
             float dot = Vector3.Dot(step, inwardNormal);
 
@@ -466,12 +460,6 @@ public class PathOnMesh : MonoBehaviour
             (orderedCorners.Item2, orderedCorners.Item3),
             (orderedCorners.Item3, orderedCorners.Item1),
         };
-
-        // Debugging
-        Debug.Log("numberCornerCombinations: " + cornerCombinations.Count);
-        Debug.Log("corners: " + orderedCorners.Item1 + ", " + orderedCorners.Item2);
-        Debug.Log("corners: " + orderedCorners.Item2 + ", " + orderedCorners.Item3);
-        Debug.Log("corners: " + orderedCorners.Item3 + ", " + orderedCorners.Item1);
 
         // remove previousEdge if it exists
         if (previousEdge.HasValue)
@@ -577,9 +565,6 @@ public class PathOnMesh : MonoBehaviour
         // if intersection is within bounds of line segment
         if (s > 1e-6 && s <= 1 + 1e-6 && t > 1e-6 && t <= 1 + 1e-6)
         {
-            // Debugging
-            Debug.Log("s: " + s + ", t:" + t);
-
             // calcualte nextPoint
             Vector3 nextPoint = sv1 + s * sv;
 
@@ -591,9 +576,6 @@ public class PathOnMesh : MonoBehaviour
 
             // reduce the step size used for the next step
             float remainingStep = currentStepSize - newsvMAG;
-
-            // Debugging
-            Debug.Log("current Step size: " + currentStepSize + " minus newsvMAG: " + newsvMAG);
 
             // TODO THIS SHOULD NOT BE NECESSARY
             // get intersected edge in correct order
@@ -656,9 +638,6 @@ public class PathOnMesh : MonoBehaviour
     // returns order of edge based on triangle
     public (Vector3, Vector3) GetEdgeOrderOnTriangle(Vector3 edgeStart, Vector3 edgeEnd, Vector3 lastCorner)
     {
-        // Debugging
-        Debug.Log("in GetEdgeOrderOnTriangle with edge: " + edgeStart + ", " + edgeEnd);
-
         // get correct order of corners
         var cornerKey = meshManager.GetCornerOrder(edgeStart, edgeEnd, lastCorner);
         var orderedCorners = sortedTrianglesDict[cornerKey];
@@ -676,9 +655,6 @@ public class PathOnMesh : MonoBehaviour
             }
             
         }
-
-        // Debugging
-        Debug.Log("ERROR, COULDNT FIND THE CORRECT EDGE ORDER");
 
         return (edgeStart, edgeEnd);
     }
