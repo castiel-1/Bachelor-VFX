@@ -185,11 +185,15 @@ public class PathOnMesh : MonoBehaviour
         }
 
         */
-        Gizmos.color = Color.red;
-        foreach (PathInfo point in pathInfo)
+        if(pathInfo != null)
         {
-            Gizmos.DrawSphere(point.point, 0.01f);
+            Gizmos.color = Color.red;
+            foreach (PathInfo point in pathInfo)
+            {
+                Gizmos.DrawSphere(point.point, 0.01f);
+            }
         }
+      
 
     }
 
