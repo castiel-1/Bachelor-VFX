@@ -33,7 +33,7 @@ public class TextOnSpline : MonoBehaviour
             {
                 fIndex = graphicsBuffer.GetIndex(graphicsBuffer.text[i]),
                 position = splinePoints[j],
-                direction = Vector3.up,
+                normal = Vector3.up,
                 size = 0.5f,
             };
 

@@ -12,19 +12,6 @@ using static PathOnMesh;
 
 public class PathOnMesh : MonoBehaviour
 {
-    /* THE PLAN IS SIMPLE
-    
-      1) we pick a point on the mesh from the dictionary
-      2) calculate normal vector with triangle corners
-      3) calculate step vector
-      4) make step
-      5) if(intersection with next triangle)
-            find intersection, remember how much of step is done, get corners of new triangle and go to 2)
-         else 
-            place point according to step, go to 4)
-
-      */
-
     public Vector3 stepDirection;
     public float originalStepSize;
     public GraphicsInfoBuffer buffer;
@@ -54,7 +41,6 @@ public class PathOnMesh : MonoBehaviour
         public Vector3 startPoint;
         public Vector3 nextTheoreticalPoint;
 
-
         public Vector3 nextPoint;
         public (Vector3, Vector3) edge;
         public Vector3 lastCorner;
@@ -67,10 +53,8 @@ public class PathOnMesh : MonoBehaviour
     {
         public Vector3 point;
         public Vector3 normal;
+        public Vector3 lineDirection;
     }
-
-    // Debugging
-    private int count = 0;
 
     void Awake()
     {
@@ -161,20 +145,6 @@ public class PathOnMesh : MonoBehaviour
     private void OnDrawGizmos()
     {
         /*
-        // display points
-        Gizmos.color = Color.red;
-        foreach (Vector3 point in path)
-        {
-            Gizmos.DrawSphere(point, 0.008f);
-        }
-
-        Gizmos.color = Color.blue;
-        // display all points
-        foreach (Vector3 point in debugPath)
-        {
-            Gizmos.DrawSphere(point, 0.008f);
-        }
-
         // draw lines between points
         Gizmos.color = Color.green;
         for (int i = 0; i < path.Length - 1; i++)
@@ -242,6 +212,7 @@ public class PathOnMesh : MonoBehaviour
         {
             point = startPoint,
             normal = normal,
+            lineDirection = nextTheoreticalPoint - startPoint,
         };
 
         pathInfo[0] = currentPathInfo;
@@ -266,7 +237,6 @@ public class PathOnMesh : MonoBehaviour
             intersectionInfos.Add(info);
 
             // Debugging
-            count++;
             j++;
 
             if (j >= 5000)
@@ -285,6 +255,9 @@ public class PathOnMesh : MonoBehaviour
 
                 // calculate normal of new triangle
                 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
+
+                // update lineDirection in currentPathInfo
+                currentPathInfo.lineDirection = info.nextPoint - startPoint;
 
                 // update normal in currentPathInfo
                 currentPathInfo.normal = normal;

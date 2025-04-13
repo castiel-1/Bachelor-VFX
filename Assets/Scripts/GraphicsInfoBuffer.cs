@@ -23,7 +23,8 @@ public struct LetterStruct
 {
     public int fIndex;
     public Vector3 position;
-    public Vector3 direction;
+    public Vector3 lineDirection;
+    public Vector3 normal;
     public float size;
 }
 
@@ -52,23 +53,12 @@ public class GraphicsInfoBuffer : MonoBehaviour
             System.Runtime.InteropServices.Marshal.SizeOf(typeof(LetterStruct)));
 
         visualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
-
     }
 
 
     // updates buffer to display any changes made to letterStructs
     public void UpdateBuffer(LetterStruct[] letterStructs)
     {
-        //DEBUG
-        if (graphicsBuffer == null){
-            Debug.Log("Graphics buffer is null");
-        }
-        if(visualEffect == null)
-        {
-            Debug.Log("visual effect is null");
-        }
-        Debug.Log("update buffer called");
-
         graphicsBuffer.SetData(letterStructs);
 
         Debug.Log("reloading buffer");
@@ -78,7 +68,6 @@ public class GraphicsInfoBuffer : MonoBehaviour
     // get fIndex of letter for use with the flipbook
     public int GetIndex(char letter)
     {
-
         return charSet.IndexOf(letter);
     }
 
