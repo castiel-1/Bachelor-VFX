@@ -37,7 +37,8 @@ public class DisplayPath : MonoBehaviour
             {
                 fIndex = graphicsBuffer.GetIndex(graphicsBuffer.text[i]),
                 position = pathInfo[i].point,
-                direction = pathInfo[i].normal,
+                normal = pathInfo[i].normal,
+                lineDirection = pathInfo[i].lineDirection,
                 size = 0.3f,
             };
 

@@ -67,6 +67,7 @@ public class PathOnMesh : MonoBehaviour
     {
         public Vector3 point;
         public Vector3 normal;
+        public Vector3 lineDirection;
     }
 
     // Debugging
@@ -242,6 +243,7 @@ public class PathOnMesh : MonoBehaviour
         {
             point = startPoint,
             normal = normal,
+            lineDirection = nextTheoreticalPoint - startPoint,
         };
 
         pathInfo[0] = currentPathInfo;
@@ -285,6 +287,9 @@ public class PathOnMesh : MonoBehaviour
 
                 // calculate normal of new triangle
                 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
+
+                // update lineDirection in currentPathInfo
+                currentPathInfo.lineDirection = info.nextPoint - info.startPoint;
 
                 // update normal in currentPathInfo
                 currentPathInfo.normal = normal;

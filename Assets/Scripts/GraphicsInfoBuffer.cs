@@ -23,7 +23,8 @@ public struct LetterStruct
 {
     public int fIndex;
     public Vector3 position;
-    public Vector3 direction;
+    public Vector3 normal;
+    public Vector3 lineDirection;
     public float size;
 }
 

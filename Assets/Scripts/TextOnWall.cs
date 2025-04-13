@@ -17,7 +17,7 @@ public class TextOnWall : MonoBehaviour
             {
                 fIndex = buffer.GetIndex(buffer.text[i]),
                 position = Vector3.up,
-                direction = Vector3.up,
+                normal = Vector3.up,
                 size = 0.3f,
             };
 
