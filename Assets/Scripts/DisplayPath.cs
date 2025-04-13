@@ -36,7 +36,7 @@ public class DisplayPath : MonoBehaviour
             letterStructs[i] = new LetterStruct
             {
                 fIndex = graphicsBuffer.GetIndex(graphicsBuffer.text[i]),
-                position = pathInfo[i].point,
+                position = pathInfo[i].point + pathInfo[i].normal * 0.01f,
                 normal = pathInfo[i].normal,
                 lineDirection = pathInfo[i].lineDirection,
                 size = 0.3f,

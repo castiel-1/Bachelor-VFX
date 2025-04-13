@@ -370,8 +370,8 @@ public class PathOnMesh : MonoBehaviour
     public (Vector3, Vector3, Vector3) GetRandomTriangleOnMesh()
     {
         // Debugging
-        int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
-        //int rand = 50;
+        //int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
+        int rand = 300;
 
         var key = sortedTrianglesDict.Keys.ElementAt(rand);
         return (key.Item1, key.Item2, key.Item3);
