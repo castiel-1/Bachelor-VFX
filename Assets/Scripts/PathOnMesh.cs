@@ -76,6 +76,9 @@ public class PathOnMesh : MonoBehaviour
     {
         // create path
         CreatePath();
+
+        // Debugging
+        Debug.Log("path created");
     }
 
     // Debugging
@@ -658,4 +661,8 @@ public class PathOnMesh : MonoBehaviour
         return (edgeStart, edgeEnd);
     }
 
+    public PathInfo[] GetPathInfo()
+    {
+        return pathInfo;
+    }
 }

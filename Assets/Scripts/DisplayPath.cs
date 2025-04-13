@@ -10,12 +10,17 @@ public class DisplayPath : MonoBehaviour
 
     public void Start()
     {
+        // Debugging
+        Debug.Log("in Display path");
+
         // set up pathInfo
         letterCount = graphicsBuffer.text.Length;
-        pathInfo = new PathOnMesh.PathInfo[letterCount];
+        pathInfo = pathOnMesh.GetPathInfo();
+
+        // Debugging
+        Debug.Log("letterCount: " + letterCount);
 
         // display path
-        Debug.Log("displaying path now...");
         ShowPath();
     }
 
@@ -33,9 +38,12 @@ public class DisplayPath : MonoBehaviour
                 fIndex = graphicsBuffer.GetIndex(graphicsBuffer.text[i]),
                 position = pathInfo[i].point,
                 direction = pathInfo[i].normal,
-                size = 0.5f,
+                size = 0.3f,
             };
 
+            // Debugging
+            Debug.Log("position: " + pathInfo[i].point);
+            Debug.Log("normal: " + pathInfo[i].normal);
         }
 
         // update buffer
