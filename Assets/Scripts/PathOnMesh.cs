@@ -29,6 +29,7 @@ public class PathOnMesh : MonoBehaviour
     public float originalStepSize;
     public GraphicsInfoBuffer buffer;
     public MeshManager meshManager;
+    public string text;
 
     private Vector3[] path;
     private PathInfo[] pathInfo;
@@ -206,7 +207,7 @@ public class PathOnMesh : MonoBehaviour
     {
 
         // set up path array
-        int numPoints = buffer.text.Length;
+        int numPoints = text.Length;
         path = new Vector3[numPoints];
 
         // set up pathInfo array
@@ -669,5 +670,15 @@ public class PathOnMesh : MonoBehaviour
     public PathInfo[] GetPathInfo()
     {
         return pathInfo;
+    }
+
+    public int GetLetterCount()
+    {
+        return text.Length;
+    }
+
+    public string GetText()
+    {
+        return text;
     }
 }

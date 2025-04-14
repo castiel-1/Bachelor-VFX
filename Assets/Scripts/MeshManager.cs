@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -40,6 +41,27 @@ public class MeshManager : MonoBehaviour
         triangleDict = CreateNeighbouringTrianglesDict();
         sortedTrianglesDict = CreateSortedTrianglesDictionary();
 
+        // Debugging
+        Debug.Log("sortedTrianlgesDict count in meshManager: " + sortedTrianglesDict.Count);
+    }
+
+    // Debugging
+    
+    private void OnDrawGizmos()
+    {
+        if (sortedTrianglesDict != null)
+        {
+            for (int j = 0; j < sortedTrianglesDict.Keys.Count; j++)
+            {
+                var corners = sortedTrianglesDict.Keys.ElementAt(j);
+
+                Vector3 centroid = (corners.Item1 + corners.Item2 + corners.Item3) / 3f;
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(centroid, 0.01f);
+            }
+
+        }
     }
 
     public Dictionary<(Vector3, Vector3), List<Vector3>> CreateNeighbouringTrianglesDict()

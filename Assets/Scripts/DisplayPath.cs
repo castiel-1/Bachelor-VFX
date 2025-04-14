@@ -14,11 +14,17 @@ public class DisplayPath : MonoBehaviour
         Debug.Log("in Display path");
 
         // set up pathInfo
-        letterCount = graphicsBuffer.text.Length;
+        letterCount = pathOnMesh.GetLetterCount();
         pathInfo = pathOnMesh.GetPathInfo();
 
         // Debugging
         Debug.Log("letterCount: " + letterCount);
+
+        // give letterCount to buffer
+        graphicsBuffer.SetLetterCount(letterCount);
+
+        // set up buffer
+        graphicsBuffer.SetUpBuffer();
 
         // display path
         ShowPath();
@@ -35,7 +41,7 @@ public class DisplayPath : MonoBehaviour
 
             letterStructs[i] = new LetterStruct
             {
-                fIndex = graphicsBuffer.GetIndex(graphicsBuffer.text[i]),
+                fIndex = graphicsBuffer.GetIndex(pathOnMesh.GetText()[i]),
                 position = pathInfo[i].point + pathInfo[i].normal * 0.01f,
                 normal = pathInfo[i].normal,
                 lineDirection = pathInfo[i].lineDirection,
