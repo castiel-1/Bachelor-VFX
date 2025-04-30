@@ -189,7 +189,7 @@ public class PathOnMesh : MonoBehaviour
             Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
         }
 
-        */
+        
         if(pathInfo != null)
         {
             Gizmos.color = Color.red;
@@ -198,7 +198,7 @@ public class PathOnMesh : MonoBehaviour
                 Gizmos.DrawSphere(point.point, 0.01f);
             }
         }
-      
+      */
 
     }
 
@@ -372,7 +372,7 @@ public class PathOnMesh : MonoBehaviour
     {
         // Debugging
         //int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
-        int rand = 300;
+        int rand =300;
 
         var key = sortedTrianglesDict.Keys.ElementAt(rand);
         return (key.Item1, key.Item2, key.Item3);

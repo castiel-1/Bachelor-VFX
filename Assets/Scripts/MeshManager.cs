@@ -49,6 +49,7 @@ public class MeshManager : MonoBehaviour
     
     private void OnDrawGizmos()
     {
+        /*
         if (sortedTrianglesDict != null)
         {
             for (int j = 0; j < sortedTrianglesDict.Keys.Count; j++)
@@ -61,7 +62,7 @@ public class MeshManager : MonoBehaviour
                 Gizmos.DrawSphere(centroid, 0.01f);
             }
 
-        }
+        }*/
     }
 
     public Dictionary<(Vector3, Vector3), List<Vector3>> CreateNeighbouringTrianglesDict()
