@@ -372,7 +372,7 @@ public class PathOnMesh : MonoBehaviour
     {
         // Debugging
         //int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
-        int rand =300;
+        int rand =39;
 
         var key = sortedTrianglesDict.Keys.ElementAt(rand);
         return (key.Item1, key.Item2, key.Item3);

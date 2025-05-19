@@ -40,9 +40,6 @@ public class MeshManager : MonoBehaviour
         // create dictionaries
         triangleDict = CreateNeighbouringTrianglesDict();
         sortedTrianglesDict = CreateSortedTrianglesDictionary();
-
-        // Debugging
-        Debug.Log("sortedTrianlgesDict count in meshManager: " + sortedTrianglesDict.Count);
     }
 
     // Debugging
