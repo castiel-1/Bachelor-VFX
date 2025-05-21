@@ -37,6 +37,9 @@ public class MeshHandler : MonoBehaviour
         // create dictionaries
         triangleDict = CreateNeighbouringTrianglesDict();
         sortedTrianglesDict = CreateSortedTrianglesDictionary();
+
+        //debugging
+        Debug.Log("dictionaries created");
     }
 
     // Debugging

@@ -12,6 +12,7 @@ public class PathCalculator : MonoBehaviour
 
 
     private Vector3[] pathPoints;
+    private List<Vector3> allPoints = new List<Vector3>();
     private PathInfo[] pointInfos;
     private float currentStepSize;
 
@@ -39,18 +40,10 @@ public class PathCalculator : MonoBehaviour
     }
 
     // testing
-    public Node startNode;
-    public Node endNode;
-    public int numLetters;
-    public int startIndex; // the index of the triangle where we start until we figure out how to exactly  use the start point for that
+    public int startIndex; // the index of the triangle where we start until we figure out how to exactly use the start point for that
+    public int endIndex;
 
-    void Awake()
-    {
-        // create path
-        CalculateLetterPositions(startNode, endNode, numLetters);
-    }
-
-    Vector3[] CalculateLetterPositions(Node startNode, Node endNode, int numLetters)
+    public Vector3[] CalculateLetterPositions(int numLetters)
     {
         // set up path array
         pathPoints = new Vector3[numLetters];
@@ -68,15 +61,27 @@ public class PathCalculator : MonoBehaviour
         sortedTrianglesDict = meshHandler.GetSortedTrianglesDict();
 
         // get all the variables we need to make the initial step
+        //debugging
+        Debug.Log("startIndex: " + startIndex);
         var corners = sortedTrianglesDict.Keys.ElementAt(startIndex);
 
         Vector3 startPoint = GetStartPoint(corners.Item1, corners.Item2, corners.Item3); // TEMPORARY
         Vector3 normal = CalculateNormal(corners.Item1, corners.Item2, corners.Item3);
-        Vector3 stepDirection = startNode.Position - endNode.Position;
+
+        //TEMPORARY
+        var endCorners = sortedTrianglesDict.Keys.ElementAt(endIndex);
+        Vector3 endPoint = GetStartPoint(endCorners.Item1, endCorners.Item2, endCorners.Item3);
+
+        Vector3 stepDirection = endPoint - startPoint;
+
         if (AreOpposite(stepDirection, normal))
         {
-            stepDirection = Vector3.up;
+            Debug.Log("step Direction and normal are opposite!");
+            stepDirection = Vector3.down;
         }
+
+        // debugging
+        Debug.Log("stepDirection: " + stepDirection);
 
         Vector3 step = GetStepVector(stepDirection, normal, originalStepSize, startPoint);
         Vector3 nextTheoreticalPoint = startPoint + step;
@@ -86,6 +91,9 @@ public class PathCalculator : MonoBehaviour
 
         // add startPoint to path
         pathPoints[0] = startPoint;
+
+        // debugging
+        allPoints.Add(startPoint);
 
         // add startPoint to pathInfo
         PathInfo currentPathInfo = new PathInfo()
@@ -100,7 +108,7 @@ public class PathCalculator : MonoBehaviour
         // set up edge for step calculation
         Vector3 edge = Vector3.zero;
 
-        // for as many letters as we want to display (starting at 2 because of startPoint)
+        // for as many letters as we want to display (starting at 1 because of startPoint)
         for (int i = 1; i < numLetters; i++)
         {
 
@@ -111,7 +119,19 @@ public class PathCalculator : MonoBehaviour
             startPoint = info.nextPoint;
 
             // update stepDirection
-            stepDirection = info.nextPoint - info.startPoint;
+            stepDirection = endPoint - startPoint;
+
+            if (AreOpposite(stepDirection, normal))
+            {
+                // debugging
+                Debug.Log("step Direction and normal are opposite!");
+
+                stepDirection = Vector3.up;
+            }
+
+            // debugging
+            Debug.Log("stepDirection: " + stepDirection);
+
             if (AreOpposite(stepDirection, normal))
             {
                 stepDirection = Vector3.up;
@@ -158,12 +178,16 @@ public class PathCalculator : MonoBehaviour
                     // add point to path
                     pathPoints[i] = startPoint;
 
+                    // debugging
+                    allPoints[i] = startPoint;
+
                     // add point to pathInfo
                     currentPathInfo.point = startPoint;
                     pointInfos[i] = currentPathInfo;
                 }
                 else
                 {
+                    allPoints.Add(startPoint);
                     i--;
                 }
 
@@ -451,7 +475,15 @@ public class PathCalculator : MonoBehaviour
 
     }
 
+    public PathInfo[] GetPointInfos()
+    {
+        return pointInfos;
+    }
 
+    public List<Vector3> GetAllPoints()
+    {
+        return allPoints;
+    }
 }
 
 

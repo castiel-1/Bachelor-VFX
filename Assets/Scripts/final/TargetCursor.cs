@@ -1,0 +1,40 @@
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using UnityEngine;
+
+public class TargetCursor : MonoBehaviour
+{
+    public Transform cursorVisual;
+    public float maxDistance = 1000f;
+    public Vector3 ScreenTo3D()
+    {
+#if UNITY_EDITOR
+
+        Camera cam = SceneView.lastActiveSceneView.camera;
+
+        if(cam == null)
+        {
+            Debug.Log("you need to be in scene view, otherwise camera is null");
+        }
+
+        Vector3 direction = (cursorVisual.position - cam.transform.position).normalized;
+
+        Ray ray = new Ray(cam.transform.position, direction);
+
+        // debugging
+        Debug.DrawRay(ray.origin, ray.direction * maxDistance, Color.cyan, 2f);
+
+        if(Physics.Raycast(ray, out RaycastHit hit, maxDistance))
+        {
+            // debugging
+            Debug.Log("raycast hit in point: " + hit.point);
+
+            return hit.point;
+        }
+
+        Debug.Log("nothing hit with raycast, no meshes close enough");
+        return Vector3.zero;
+# endif
+    }
+}

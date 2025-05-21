@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 
-public class Node : MonoBehaviour
+public class Node
 {
     public int Index { get; }
     public Vector3 Position { get; }
