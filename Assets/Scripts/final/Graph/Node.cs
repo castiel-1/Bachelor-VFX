@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class Node
 {
-    public int Index { get; }
+    public int ID { get; }
     public Vector3 Position { get; }
-    public List<Node> Neighbours {  get; }
+    public List<int> Neighbours {  get; }
 
-    public Node(int index, Vector3 position)
+    public Node(int id, Vector3 position)
     {
-        Index = index;
+        ID = id;
         Position = position;
-        Neighbours = new List<Node>();
+        Neighbours = new List<int>();
     }
 }
