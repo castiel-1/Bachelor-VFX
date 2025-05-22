@@ -41,8 +41,8 @@ public class TestController : MonoBehaviour
         // debugging
         Debug.Log("test path displayer called");
 
-        pathDisplayer.DisplayPathPoints(letterPositions);
-        pathDisplayer.DisplayPathLines(letterPositions);
+        pathDisplayer.DisplayPoints(letterPositions);
+        pathDisplayer.DisplayLines(letterPositions);
     }
 
     public void TestNode()

@@ -7,15 +7,15 @@ public class PathDisplayer : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
-    public void DisplayPathPoints(Vector3[] pathPoints)
+    public void DisplayPoints(Vector3[] points)
     {
-        foreach (Vector3 point in pathPoints)
+        foreach (Vector3 point in points)
         {
             Instantiate(pointPrefab, point, Quaternion.identity);
         }
     }
 
-    public void DisplayPathLines(Vector3[] pathPoints)
+    public void DisplayLines(Vector3[] points)
     {
         if (lineRenderer == null)
         {
@@ -29,7 +29,7 @@ public class PathDisplayer : MonoBehaviour
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.useWorldSpace = true;
 
-        lineRenderer.positionCount = pathPoints.Length;
-        lineRenderer.SetPositions(pathPoints);
+        lineRenderer.positionCount = points.Length;
+        lineRenderer.SetPositions(points);
     }
 }

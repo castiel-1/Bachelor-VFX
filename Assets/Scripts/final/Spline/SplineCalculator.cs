@@ -1,0 +1,34 @@
+using UnityEngine;
+
+public static class SplineCalculator
+{
+    public static Vector3[] CalculateSplinePoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, int numSamplePoints)
+    {
+        Vector3[] splinePoints = new Vector3[numSamplePoints];
+
+        int index = 0;
+
+        for (int j = 0; j < numSamplePoints; j++)
+        {
+            float t = j / (float)numSamplePoints; // not numSamplePoints-1 because we exclude p2, so we can put the next sentence's first letter there
+            splinePoints[index] = GetCatmullRomPoint(p0, p1, p2, p3, t);
+            index++;
+        }
+
+        return splinePoints;
+    }
+
+    private static Vector3 GetCatmullRomPoint(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+
+        Vector3 calculatedPoint =
+        0.5f *
+        ((2 * p1) +
+        (-p0 + p2) * t +
+        (2 * p0 - 5 * p1 + 4 * p2 - p3) * (t * t) +
+        (-p0 + 3 * p1 - 3 * p2 + p3) * (t * t * t)
+        );
+
+        return calculatedPoint;
+    }
+}

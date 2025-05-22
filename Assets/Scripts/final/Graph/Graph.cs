@@ -21,7 +21,7 @@ public class NodeManager : MonoBehaviour
         Paths = new List<Path>();
     }
 
-    public Path CreatePath(Vector3 startPosition, Vector3 endPosition, int numPathPoints)
+    public void CreatePath(Vector3 startPosition, Vector3 endPosition, int numPathPoints)
     {
         Node startNode = CreateNode(startPosition);
         Node endNode = CreateNode(endPosition);
@@ -30,8 +30,6 @@ public class NodeManager : MonoBehaviour
         
         AddPathToPaths(nextPath);
         AddPathToNeighbours(nextPath.StartNode, nextPath.EndNode);
-
-        return nextPath;
     }
 
     private Node CreateNode(Vector3 position)
