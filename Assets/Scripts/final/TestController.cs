@@ -4,6 +4,7 @@ using static PathCalculator;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine.UIElements;
+using System.Collections;
 
 public class TestController : MonoBehaviour
 {
@@ -30,10 +31,12 @@ public class TestController : MonoBehaviour
     public TargetCursor cursor;
     public GameObject debugSphere;
 
+    public InfluenceManager influenceManager;
+
     
     void Start()
     {
-
+        TestInfluence();
     }
 
     public void TestPathDisplayer(Vector3[] letterPositions)
@@ -79,4 +82,11 @@ public class TestController : MonoBehaviour
 
         Instantiate(debugSphere, rayCastHit, Quaternion.identity);
     }
+
+    public void TestInfluence()
+    {
+        influenceManager.CreateInfluence(Vector3.zero, 1f, "test", debugSphere);
+    }
+
+
 }
