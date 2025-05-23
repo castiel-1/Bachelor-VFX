@@ -5,7 +5,7 @@ public class Path
 {
     public Node StartNode { get; }
     public Node EndNode { get; }
-    public Vector3[] pathPoints { get; }
+    public Vector3[] pathPoints { get; set; }
     public Sentence Sentence { get; set; }
     public Path(Node startNode, Node endNode, int numPathPoints)
     {

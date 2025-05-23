@@ -9,7 +9,7 @@ using System.Collections;
 public class TestController : MonoBehaviour
 {
 
-    public PathDisplayer pathDisplayer;
+    public GraphDisplayer pathDisplayer;
     private Vector3[] testPoints = new Vector3[]
     {
             new Vector3(0, 0, 0),
@@ -36,16 +36,6 @@ public class TestController : MonoBehaviour
     
     void Start()
     {
-        TestInfluence();
-    }
-
-    public void TestPathDisplayer(Vector3[] letterPositions)
-    {
-        // debugging
-        Debug.Log("test path displayer called");
-
-        pathDisplayer.DisplayPoints(letterPositions);
-        pathDisplayer.DisplayLines(letterPositions);
     }
 
     public void TestNode()
@@ -62,18 +52,6 @@ public class TestController : MonoBehaviour
         Debug.Log("test path calculator called");
 
         return pathCalculator.CalculateLetterPositions(numLetters);
-    }
-
-    public void TestPathCalculatorAndDisplayer()
-    {
-        TestPathCalculator();
-
-        allPoints = pathCalculator.GetAllPoints();
-
-        //debugging
-        Debug.Log("number of path points: " + allPoints.Count);
-
-        TestPathDisplayer(allPoints.ToArray());
     }
 
     public void TestCursor()

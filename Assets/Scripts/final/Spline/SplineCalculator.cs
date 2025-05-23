@@ -2,6 +2,7 @@ using UnityEngine;
 
 public static class SplineCalculator
 {
+    // 4 control points known
     public static Vector3[] CalculateSplinePoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, int numSamplePoints)
     {
         Vector3[] splinePoints = new Vector3[numSamplePoints];
@@ -16,6 +17,15 @@ public static class SplineCalculator
         }
 
         return splinePoints;
+    }
+
+    // 2 control points known
+    public static Vector3[] CalculateSplinePoints(Vector3 p1, Vector3 p2, int numSamplePoints)
+    {
+        Vector3 p0 = p1 + (p1 - p2);
+        Vector3 p3 = p2 + (p2 - p1);
+
+        return CalculateSplinePoints(p0, p1, p2, p3, numSamplePoints);
     }
 
     private static Vector3 GetCatmullRomPoint(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
