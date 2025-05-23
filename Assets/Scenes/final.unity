@@ -493,6 +493,52 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -5495902117074765545, guid: cd490be884a015549a918eb48085b734, type: 3}
+--- !u!1 &854135993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 854135996}
+  - component: {fileID: 854135994}
+  m_Layer: 0
+  m_Name: GraphDisplayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &854135994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854135993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fda61ca0f401e264597b98f884cab1b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pointPrefab: {fileID: 7232164320203899052, guid: 48b545218be0267458e154e287eb6825, type: 3}
+  nodePrefab: {fileID: 7232164320203899052, guid: 039edb25b5341c1459804e4ff19f6f23, type: 3}
+--- !u!4 &854135996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 854135993}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.155085, y: 1.2048572, z: 0.3907192}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &974916338
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1517,6 +1563,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pointPrefab: {fileID: 7232164320203899052, guid: 48b545218be0267458e154e287eb6825, type: 3}
+  nodePrefab: {fileID: 0}
 --- !u!4 &1923487586
 Transform:
   m_ObjectHideFlags: 0
@@ -1543,3 +1590,4 @@ SceneRoots:
   - {fileID: 1810912258}
   - {fileID: 289307501}
   - {fileID: 483343566}
+  - {fileID: 854135996}

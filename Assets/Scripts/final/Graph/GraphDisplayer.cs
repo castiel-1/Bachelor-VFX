@@ -14,17 +14,32 @@ public class GraphDisplayer : MonoBehaviour
     private void OnEnable()
     {
         Graph.OnNodeCreated += SpawnNode;
+        Graph.OnNodeDeleted += DespawnNode;
         Graph.OnPathCreated += SpawnPath;
-        Graph.OnPathDestroyed += DespawnPath;
+        Graph.OnPathDeleted += DespawnPath;
+    }
+    private void OnDisable()
+    {
+        Graph.OnNodeCreated -= SpawnNode;
+        Graph.OnNodeDeleted -= DespawnNode;
+        Graph.OnPathCreated -= SpawnPath;
+        Graph.OnPathDeleted -= SpawnPath;
     }
 
     public void SpawnPath(Path path)
     {
+        // debugging
+        Debug.Log("path spawned");
+
+        GameObject pathParent = new GameObject();
+        PathDestructionNotifier notifier = pathParent.AddComponent<PathDestructionNotifier>();
+        notifier.LinkedPath = path;
+
         List<GameObject> pointObjects = new();
 
         foreach (Vector3 point in path.pathPoints)
         {
-            GameObject nextPoint = Instantiate(pointPrefab, point, Quaternion.identity);
+            GameObject nextPoint = Instantiate(pointPrefab, point, Quaternion.identity, pathParent.transform);
             pointObjects.Add(nextPoint);
         }
 
@@ -33,18 +48,29 @@ public class GraphDisplayer : MonoBehaviour
 
     public void DespawnPath(Path path)
     {
-        foreach(GameObject point in paths[path])
-        {
-            Destroy(point);
-        }
+        // debugging
+        Debug.Log("path despawned");
 
         paths.Remove(path);
     }
 
     public void SpawnNode(Node node)
     {
+        // debugging
+        Debug.Log("node spawned");
+
         GameObject nextNode = Instantiate(nodePrefab, node.Position, Quaternion.identity);
         nodes.Add(node, nextNode);
+    }
+    
+    public void DespawnNode(Node node)
+    {
+        // debugging
+        Debug.Log("node despawned");
+
+        Destroy(nodes[node]);
+
+        nodes.Remove(node);
     }
 
     public void DisplayLines(Vector3[] points)

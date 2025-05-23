@@ -36,6 +36,19 @@ public class TestController : MonoBehaviour
     
     void Start()
     {
+        TestGraph();
+    }
+
+    public void TestGraph()
+    {
+        GameObject graphObject = new GameObject("Graph");
+        Graph graph = graphObject.AddComponent<Graph>();
+        graph.Initialize(0);
+
+        Node startNode = graph.CreateNode(Vector3.zero);
+        Node endNode = graph.CreateNode(new Vector3(2, 2, 2));
+        
+        graph.CreatePath(startNode, endNode, 10);
     }
 
     public void TestNode()

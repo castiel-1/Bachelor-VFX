@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class DestructionNotifier : MonoBehaviour
+public class InfluenceDestructionNotifier : MonoBehaviour
 {
     public Influence LinkedInfluence { get; set; }
 

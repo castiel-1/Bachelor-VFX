@@ -6,82 +6,114 @@ using System;
 
 public class Graph : MonoBehaviour
 {
-    public GameObject nodePrefab;
-    public List<Node> Nodes { get; }
-    public List<List<int>> IncomingAdjacency { get; }
-    public List<List<int>> OutgoingAdjacency { get; }
-    public List<Path> Paths { get; private set; }
-    public int ID { get; }
+    public List<Node> Nodes { get; private set; }
+    public List<List<int>> IncomingAdjacency { get; private set; }
+    public List<List<int>> OutgoingAdjacency { get; private set; }
+    public List<Path> Paths { get; private set;
+    }
+    public int ID { get; private set; }
 
     public static event Action<Node> OnNodeCreated;
+    public static event Action<Node> OnNodeDeleted;
 
     public static event Action<Path> OnPathCreated;
-    public static event Action<Path> OnPathDestroyed;
+    public static event Action<Path> OnPathDeleted;
 
     private int nodeID = 0;
 
-    public Graph(int id)
+    public void Initialize(int id)
     {
         ID = id;
+    }
+    private void Awake()
+    {
         Nodes = new List<Node>();
         IncomingAdjacency = new List<List<int>>();
         OutgoingAdjacency = new List<List<int>>();
         Paths = new List<Path>();
     }
 
+    private void OnEnable()
+    {
+        PathDestructionNotifier.OnPathDestroyed += DeletePath;
+    }
+
+    private void OnDisable()
+    {
+        PathDestructionNotifier.OnPathDestroyed -= DeletePath;
+    }
+
     public void CreatePath(Node startNode, Node endNode, int numPathPoints)
     {
+        // debugging
+        Debug.Log("path created");
+
         Path nextPath = new Path(startNode, endNode, numPathPoints);
         
         nextPath.pathPoints = SplineCalculator.CalculateSplinePoints(startNode.Position, endNode.Position, numPathPoints);
 
-        AddPathToPaths(nextPath);
+        Paths.Add(nextPath);
+
         AddPathToIncomingOutgoing(nextPath.StartNode, nextPath.EndNode);
 
-        OnPathCreated(nextPath);
+        OnPathCreated?.Invoke(nextPath);
     }
 
-    public void DestroyPath(Path path)
+    public void DeletePath(Path path)
     {
+        // debugging
+        Debug.Log("path deleted");
+
         Node startNode = path.StartNode;
         Node endNode = path.EndNode;
-
+        
+        if(Paths == null)
+        {
+            Debug.Log("Paths is null");
+        }
         Paths.Remove(path);
 
         RemovePathFromIncomingOutgoing(startNode, endNode);
 
         if (startNode.Outgoing.Count == 0 && startNode.Incoming.Count == 0)
         {
-            DestroyNode(startNode);
+            DeleteNode(startNode);
         }
 
         if (endNode.Outgoing.Count == 0 && endNode.Incoming.Count == 0)
         {
-            DestroyNode(endNode);
+            DeleteNode(endNode);
         }
  
-        OnPathDestroyed(path);
+        OnPathDeleted?.Invoke(path);
     }
 
-    public void CreateNode(Vector3 position)
+    public Node CreateNode(Vector3 position)
     {
+        // debugging
+        Debug.Log("node created");
+
         Node nextNode = new Node(nodeID, position);
         Nodes.Add(nextNode);
         IncomingAdjacency.Add(nextNode.Incoming);
         OutgoingAdjacency.Add(nextNode.Outgoing);
         nodeID++;
 
-        OnNodeCreated(nextNode);
+        OnNodeCreated?.Invoke(nextNode);
+
+        return nextNode;
     }
 
-    public void DestroyNode(Node node)
+    private void DeleteNode(Node node)
     {
+        // debugging
+        Debug.Log("node deleted");
 
-    }
+        Nodes.Remove(node);
+        IncomingAdjacency.Remove(node.Incoming);
+        OutgoingAdjacency.Remove(node.Outgoing);
 
-    private void AddPathToPaths(Path nextPath)
-    {
-        Paths.Add(nextPath);
+        OnNodeDeleted?.Invoke(node);
     }
 
     private void AddPathToIncomingOutgoing(Node startNode, Node endNode)

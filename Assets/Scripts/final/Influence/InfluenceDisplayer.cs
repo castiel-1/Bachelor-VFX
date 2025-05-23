@@ -24,7 +24,7 @@ public class InfluenceDisplayer : MonoBehaviour
         Debug.Log("influence spawned");
 
         GameObject instance = Instantiate(influence.Prefab, influence.Position, Quaternion.identity);
-        var notifier = instance.AddComponent<DestructionNotifier>();
+        var notifier = instance.AddComponent<InfluenceDestructionNotifier>();
         notifier.LinkedInfluence = influence;
 
         spawnedInfluences.Add(influence, instance);

@@ -12,11 +12,11 @@ public class InfluenceManager : MonoBehaviour
 
     private void OnEnable()
     {
-        DestructionNotifier.OnInfluenceDestroyed += DeleteInfluence;
+        InfluenceDestructionNotifier.OnInfluenceDestroyed += DeleteInfluence;
     }
     private void OnDisable()
     {
-        DestructionNotifier.OnInfluenceDestroyed -= DeleteInfluence;
+        InfluenceDestructionNotifier.OnInfluenceDestroyed -= DeleteInfluence;
     }
 
     public void CreateInfluence(Vector3 position, float radius, string promptModifier, GameObject prefab)

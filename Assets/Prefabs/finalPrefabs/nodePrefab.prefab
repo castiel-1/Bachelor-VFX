@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1574688639365971076}
   - component: {fileID: 7497106848326994720}
   m_Layer: 0
-  m_Name: pathPointP
+  m_Name: nodePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 47de4f6c99dd70940916b5b3ca02ceee, type: 2}
+  - {fileID: 2100000, guid: 30f37eaac2fc8934ca060a8d9788ca11, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
