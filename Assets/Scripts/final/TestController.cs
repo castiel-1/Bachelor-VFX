@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine.UIElements;
 using System.Collections;
+using System.Threading.Tasks;
 
 public class TestController : MonoBehaviour
 {
@@ -33,10 +34,21 @@ public class TestController : MonoBehaviour
 
     public InfluenceManager influenceManager;
 
+    public LLMManager llmManager;
     
     void Start()
     {
-        TestGraph();
+        TestLLMManger();
+    }
+
+    public async void TestLLMManger()
+    {
+        string prompt = "Write a sentence. Your answer should only be this sentence.";
+        string promptModifier = "The sentence is influenced to 50% by 'dragon' and 10% by 'sad'";
+
+        string answer = await llmManager.PromptLLM(prompt, promptModifier);
+
+        Debug.Log("llm reply: " + answer);
     }
 
     public void TestGraph()
