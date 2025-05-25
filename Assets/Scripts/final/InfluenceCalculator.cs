@@ -7,22 +7,26 @@ public static class InfluenceCalculator
     public static List<float> CalculateInfluenceStrength(Vector3[] letterPositions, List<Influence> influences)
     {
         List<float> influenceStrengths = new();
-        int numPointsInSphere = 0;
         int numPoints = letterPositions.Length;
 
         foreach(Influence influence in influences)
         {
-            foreach(Vector3 point in letterPositions)
+            int numPointsInSphere = 0;
+
+            foreach (Vector3 point in letterPositions)
             {
                 if(IsPointInSphere(point, influence.Position, influence.Radius))
                 {
                     numPointsInSphere++;
                 }
-
-                float influenceStrength = numPointsInSphere / numPoints;
-
-                influenceStrengths.Add(influenceStrength);
             }
+
+            float influenceStrength = (float)numPointsInSphere / numPoints;
+
+            // debugging
+            Debug.Log("calculated Strength = " + numPointsInSphere + " / " + numPoints + " = " + influenceStrength);
+
+            influenceStrengths.Add(influenceStrength);
         }
 
         return influenceStrengths;
@@ -37,11 +41,18 @@ public static class InfluenceCalculator
 
         string fullPrompt = "The sentence should be influenced ";
 
+        if(influences.Count == 1)
+        {
+            fullPrompt += "to " + Mathf.RoundToInt(InfluenceStrengths[0] * 100) + " percent by '" + influences[0].PromptModifier + "'. ";
+
+            return fullPrompt;
+        }
+
         for (int i = 0; i < influences.Count - 1; i++)
         {
-            fullPrompt += "to " + InfluenceStrengths[i]*100 + " percent by '" + influences[i].PromptModifier + "', ";
+            fullPrompt += "to " + Mathf.RoundToInt(InfluenceStrengths[i] * 100) + " percent by '" + influences[i].PromptModifier + "', ";
         }
-        fullPrompt += "and to " + InfluenceStrengths[influences.Count] * 100 + " percent by '" + influences[influences.Count].PromptModifier + "'.";
+        fullPrompt += "and to " + Mathf.RoundToInt(InfluenceStrengths[influences.Count - 1] * 100) + " percent by '" + influences[influences.Count - 1].PromptModifier + "'.";
 
         return fullPrompt;
     }

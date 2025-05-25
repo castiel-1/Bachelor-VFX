@@ -38,7 +38,30 @@ public class TestController : MonoBehaviour
     
     void Start()
     {
-        TestLLMManger();
+    }
+
+    public void TestInfluenceCalculator()
+    {
+        Influence influence = new Influence(Vector3.zero, 1f, "sad", debugSphere);
+        Influence influence1 = new Influence(Vector3.zero, 1f, "dragon", debugSphere);
+        List<Influence> influences = new List<Influence>() { influence, influence1 };
+
+        Vector3[] points = new Vector3[]
+        {
+            new Vector3(0.9f, 0, 0),
+            new Vector3(0, 0.5f, 0.5f),
+            new Vector3(3, 3, 3)
+        };
+
+        List<float> strengths = InfluenceCalculator.CalculateInfluenceStrength(points, influences);
+
+        Debug.Log("strength: " + strengths[0]);
+        Debug.Log("strength: " + strengths[1]);
+
+        string prompt = InfluenceCalculator.CalculateInfluencePrompt(strengths, influences);
+
+        Debug.Log("prompt: " + prompt);
+
     }
 
     public async void TestLLMManger()
