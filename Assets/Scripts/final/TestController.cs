@@ -1,4 +1,4 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using UnityEngine;
 using static PathCalculator;
 using System.Collections.Generic;
@@ -35,9 +35,78 @@ public class TestController : MonoBehaviour
     public InfluenceManager influenceManager;
 
     public LLMManager llmManager;
+
+    public CountBasedInfluenceCalculator countBasedInfluenceCalculator;
+    public CountBasedInfluencePromptGenerator countBasedInfluencePromptGenerator;
+
+    public Graph graph;
     
     void Start()
     {
+        TestHistoryPromptGenerator();
+    }
+
+    public void TestHistoryPromptGenerator()
+    {
+        // Create nodes
+        Node nodeA = new Node(0, Vector3.zero);
+        Node nodeB = new Node(1, Vector3.one);
+        Node nodeC = new Node(2, Vector3.up);
+        Node nodeD = new Node(3, Vector3.right);
+
+        // Create paths with sentences
+        Path pathAB = new Path(nodeA, nodeB, 0) { Sentence = new Sentence(0, 7, "There was a dragon.") };
+        Path pathBD = new Path(nodeB, nodeD, 0) { Sentence = new Sentence(7, 7, "I had green scales.") };
+        Path pathCD = new Path(nodeC, nodeD, 0) { Sentence = new Sentence(14, 7, "There was a mouse.") };
+
+        // Branch 1: A -> B -> D
+        var branchABD = new List<Path> { pathAB, pathBD };
+
+        // Branch 2: C -> D
+        var branchCD = new List<Path> { pathCD };
+
+        var allBranches = new List<List<Path>> { branchABD, branchCD };
+
+        // Generate prompt
+        string prompt = HistoryPromptGenerator.GenerateHistoryPrompt(allBranches);
+
+        // Print the generated prompt
+        Debug.Log("Generated Prompt:" + prompt);
+    }
+    public void TestBackwardsTraversal()
+    {
+        // Create some nodes
+        Node nodeA = graph.CreateNode(new Vector3(0, 0, 0)); // ID 0
+        Node nodeB = graph.CreateNode(new Vector3(1, 0, 0)); // ID 1
+        Node nodeC = graph.CreateNode(new Vector3(2, 0, 0)); // ID 2
+        Node nodeD = graph.CreateNode(new Vector3(3, 0, 0)); // ID 3
+        Node nodeE = graph.CreateNode(new Vector3(4, 0, 0)); // ID 4
+
+        // Create paths (A → B → D and A → C → D → E)
+        graph.CreatePath(nodeA, nodeB, 5); // A → B
+        graph.CreatePath(nodeB, nodeD, 5); // B → D
+        graph.CreatePath(nodeA, nodeC, 5); // A → C
+        graph.CreatePath(nodeC, nodeD, 5); // C → D
+        graph.CreatePath(nodeD, nodeE, 5); // D → E
+
+        // Pick a target node and depth
+        Node targetNode = nodeE;
+        int depth = 3;
+
+        // Perform the backwards traversal
+        List<List<Path>> branches = graph.GetAllPreviousPaths(targetNode, depth);
+
+        // Print out each branch
+        Debug.Log($"Found {branches.Count} branches leading to node {targetNode.ID}:");
+        for (int i = 0; i < branches.Count; i++)
+        {
+            string branchDesc = $"Branch {i + 1}: ";
+            foreach (Path path in branches[i])
+            {
+                branchDesc += $"{path.StartNode.ID} → {path.EndNode.ID}, ";
+            }
+            Debug.Log(branchDesc.TrimEnd(',', ' '));
+        }
     }
 
     public void TestInfluenceCalculator()
@@ -53,12 +122,12 @@ public class TestController : MonoBehaviour
             new Vector3(3, 3, 3)
         };
 
-        List<float> strengths = InfluenceCalculator.CalculateInfluenceStrength(points, influences);
+        List<float> strengths = countBasedInfluenceCalculator.CalculateInfluenceStrengths(points, influences);
 
         Debug.Log("strength: " + strengths[0]);
         Debug.Log("strength: " + strengths[1]);
 
-        string prompt = InfluenceCalculator.CalculateInfluencePrompt(strengths, influences);
+        string prompt = countBasedInfluencePromptGenerator.GenerateInfluencePrompt(influences, strengths);
 
         Debug.Log("prompt: " + prompt);
 

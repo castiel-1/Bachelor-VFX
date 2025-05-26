@@ -9,8 +9,7 @@ public class Graph : MonoBehaviour
     public List<Node> Nodes { get; private set; }
     public List<List<int>> IncomingAdjacency { get; private set; }
     public List<List<int>> OutgoingAdjacency { get; private set; }
-    public List<Path> Paths { get; private set;
-    }
+    public List<Path> Paths { get; private set; }
     public int ID { get; private set; }
 
     public static event Action<Node> OnNodeCreated;
@@ -102,6 +101,38 @@ public class Graph : MonoBehaviour
         OnNodeCreated?.Invoke(nextNode);
 
         return nextNode;
+    }
+
+    public List<List<Path>> GetAllPreviousPaths(Node currentNode, int depth)
+    {
+        List<List<Path>> allBranches = new();
+
+        TraverseBackwards(currentNode, 0, depth, new List<Path>(), allBranches);
+
+        return allBranches;
+    }
+
+    private void TraverseBackwards(Node currentNode, int depth, int maxDepth, List<Path> currentBranch, List<List<Path>> allBranches)
+    {
+        if(depth >= maxDepth || currentNode.Incoming.Count == 0)
+        {
+            List<Path> completeBranch = new List<Path>(currentBranch);
+            completeBranch.Reverse();
+            allBranches.Add(completeBranch);
+            return;
+        }
+
+        foreach (int incomingNodeID in currentNode.Incoming)
+        {
+            Node incomingNode = Nodes.First(n => n.ID ==  incomingNodeID);
+            Path incomingPath = Paths.First(p => p.StartNode == incomingNode && p.EndNode == currentNode);
+
+            currentBranch.Add(incomingPath);
+
+            TraverseBackwards(incomingNode, depth + 1, maxDepth, currentBranch, allBranches);
+
+            currentBranch.RemoveAt(currentBranch.Count - 1);
+        }
     }
 
     private void DeleteNode(Node node)

@@ -2,9 +2,10 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
-public static class InfluenceCalculator
+// calculates influence based on how many points are in influence sphere
+public class CountBasedInfluenceCalculator : IInfluenceCalculator
 {
-    public static List<float> CalculateInfluenceStrength(Vector3[] letterPositions, List<Influence> influences)
+    public List<float> CalculateInfluenceStrengths(Vector3[] letterPositions, List<Influence> influences)
     {
         List<float> influenceStrengths = new();
         int numPoints = letterPositions.Length;
@@ -30,31 +31,6 @@ public static class InfluenceCalculator
         }
 
         return influenceStrengths;
-    }
-
-    public static string CalculateInfluencePrompt(List<float> InfluenceStrengths, List<Influence> influences)
-    {
-        if(influences.Count == 0)
-        {
-            return "";
-        }
-
-        string fullPrompt = "The sentence should be influenced ";
-
-        if(influences.Count == 1)
-        {
-            fullPrompt += "to " + Mathf.RoundToInt(InfluenceStrengths[0] * 100) + " percent by '" + influences[0].PromptModifier + "'. ";
-
-            return fullPrompt;
-        }
-
-        for (int i = 0; i < influences.Count - 1; i++)
-        {
-            fullPrompt += "to " + Mathf.RoundToInt(InfluenceStrengths[i] * 100) + " percent by '" + influences[i].PromptModifier + "', ";
-        }
-        fullPrompt += "and to " + Mathf.RoundToInt(InfluenceStrengths[influences.Count - 1] * 100) + " percent by '" + influences[influences.Count - 1].PromptModifier + "'.";
-
-        return fullPrompt;
     }
 
     private static bool IsPointInSphere(Vector3 point, Vector3 center, float radius)
