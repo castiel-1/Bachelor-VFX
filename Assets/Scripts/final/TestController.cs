@@ -55,9 +55,9 @@ public class TestController : MonoBehaviour
         Node nodeD = new Node(3, Vector3.right);
 
         // Create paths with sentences
-        Path pathAB = new Path(nodeA, nodeB, 0) { Sentence = new Sentence(0, 7, "There was a dragon.") };
-        Path pathBD = new Path(nodeB, nodeD, 0) { Sentence = new Sentence(7, 7, "I had green scales.") };
-        Path pathCD = new Path(nodeC, nodeD, 0) { Sentence = new Sentence(14, 7, "There was a mouse.") };
+        Path pathAB = new Path(nodeA, nodeB, 0) { Sentence = new Sentence("There was a dragon.", 0) };
+        Path pathBD = new Path(nodeB, nodeD, 0) { Sentence = new Sentence("I had green scales.", 1) };
+        Path pathCD = new Path(nodeC, nodeD, 0) { Sentence = new Sentence("There was a mouse.", 2) };
 
         // Branch 1: A -> B -> D
         var branchABD = new List<Path> { pathAB, pathBD };

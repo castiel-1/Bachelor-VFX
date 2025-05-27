@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.VFX;
 
 
@@ -27,62 +27,48 @@ public struct LetterStruct
     public float size;
 }
 
-public class GraphicsInfoBuffer : MonoBehaviour
+public class Buffer : MonoBehaviour
 {
-    public VisualEffect visualEffect;
-    public GraphicsBuffer graphicsBuffer;
-    public string charSet;
+    VisualEffect VisualEffect { get; set; }
+    int NumLetters { get; set; }
 
-    private int letterCount;
+    private GraphicsBuffer graphicsBuffer;
 
     // create graphics buffer that can hold information for all letters
     public void SetUpBuffer()
     {
         //DEBUG
-        Debug.Log("buffer is set up with number of letterStructs: " + letterCount);
+        Debug.Log("buffer is set up with number of letterStructs: " + NumLetters);
 
-        graphicsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, letterCount,
+        graphicsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, NumLetters,
             System.Runtime.InteropServices.Marshal.SizeOf(typeof(LetterStruct)));
 
-        visualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
-
+        VisualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
     }
 
 
     // updates buffer to display any changes made to letterStructs
-    public void UpdateBuffer(LetterStruct[] letterStructs)
+    public void UpdateBuffer(LetterStruct[] letterStructsToUpdate, int startIndex, int length)
     {
         //DEBUG
-        if (graphicsBuffer == null){
+        if (graphicsBuffer == null)
+        {
             Debug.Log("Graphics buffer is null");
         }
-        if(visualEffect == null)
+        if (VisualEffect == null)
         {
             Debug.Log("visual effect is null");
         }
         Debug.Log("update buffer called");
 
-        graphicsBuffer.SetData(letterStructs);
+        graphicsBuffer.SetData(letterStructsToUpdate, 0, startIndex, length);
 
         Debug.Log("reloading buffer");
-        visualEffect.Reinit();
-    }
-
-    // get fIndex of letter for use with the flipbook
-    public int GetIndex(char letter)
-    {
-
-        return charSet.IndexOf(letter);
+        VisualEffect.Reinit();
     }
 
     private void OnDestroy()
     {
         graphicsBuffer.Release();
-    }
-
-    // set number of letters for display
-    public void SetLetterCount(int count)
-    {
-        letterCount = count;
     }
 }

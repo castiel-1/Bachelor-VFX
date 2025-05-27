@@ -34,12 +34,12 @@ public class DisplayPath : MonoBehaviour
     public void ShowPath()
     {
         // set up letterStructs
-        LetterStruct[] letterStructs = new LetterStruct[letterCount];
+        OldLetterStruct[] letterStructs = new OldLetterStruct[letterCount];
 
         for (int i = 0; i < letterCount; i++)
         {
 
-            letterStructs[i] = new LetterStruct
+            letterStructs[i] = new OldLetterStruct
             {
                 fIndex = graphicsBuffer.GetIndex(pathOnMesh.GetText()[i]),
                 position = pathInfo[i].point + pathInfo[i].normal * 0.01f,
