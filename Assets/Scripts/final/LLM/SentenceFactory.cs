@@ -3,19 +3,6 @@ using UnityEngine.UIElements;
 
 public static class SentenceFactory
 {
-    // with just one size
-    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, Vector3[] letterPositions, float size, Vector3[] normals = null, Vector3[] lineDirections = null)
-    {
-        float[] sizes = new float[text.Length];
-        for (int i = 0; i < text.Length; i++)
-        {
-            sizes[i] = size;
-        }
-
-        return CreateSentence(text, startIndex, letterPositions, sizes, normals, lineDirections);   
-    }
-
-    // with multiplpe sizes
     public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, Vector3[] letterPositions, float[] sizes, Vector3[] normals = null, Vector3[] lineDirections = null)
     {
         if(normals == null)

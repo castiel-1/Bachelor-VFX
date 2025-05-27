@@ -29,42 +29,37 @@ public struct LetterStruct
 
 public class Buffer : MonoBehaviour
 {
-    VisualEffect VisualEffect { get; set; }
-    int NumLetters { get; set; }
+    public VisualEffect visualEffect;
 
     private GraphicsBuffer graphicsBuffer;
 
-    // create graphics buffer that can hold information for all letters
-    public void SetUpBuffer()
+    // create graphics buffer
+    public void SetUpBuffer(int numLetters)
     {
         //DEBUG
-        Debug.Log("buffer is set up with number of letterStructs: " + NumLetters);
+        Debug.Log("buffer is set up with number of letterStructs: " + numLetters);
 
-        graphicsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, NumLetters,
+        graphicsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, numLetters,
             System.Runtime.InteropServices.Marshal.SizeOf(typeof(LetterStruct)));
 
-        VisualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
+        visualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
     }
 
-
-    // updates buffer to display any changes made to letterStructs
-    public void UpdateBuffer(LetterStruct[] letterStructsToUpdate, int startIndex, int length)
+    // adds a sentence to the buffer beginning at startIndex
+    public void AddSentenceToBuffer(LetterStruct[] letterStructs, Sentence sentence)
     {
-        //DEBUG
-        if (graphicsBuffer == null)
-        {
-            Debug.Log("Graphics buffer is null");
-        }
-        if (VisualEffect == null)
-        {
-            Debug.Log("visual effect is null");
-        }
+        // debugging
         Debug.Log("update buffer called");
 
-        graphicsBuffer.SetData(letterStructsToUpdate, 0, startIndex, length);
+        graphicsBuffer.SetData(letterStructs, 0, sentence.StartIndex, sentence.Text.Length);
+        visualEffect.Reinit();
+    }
 
-        Debug.Log("reloading buffer");
-        VisualEffect.Reinit();
+    // deletes sentence from buffer (this leaves a hole which is not being dealt with so far)
+    public void DeleteSentenceFromBuffer(Sentence sentence)
+    {
+        LetterStruct[] emptyLetters = new LetterStruct[sentence.Text.Length];
+        graphicsBuffer.SetData(emptyLetters, 0, sentence.StartIndex, sentence.Text.Length);
     }
 
     private void OnDestroy()
