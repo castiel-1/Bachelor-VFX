@@ -9,6 +9,7 @@ public class InfluenceManager : MonoBehaviour
     public static event Action<Influence> OnInfluenceDeleted;
 
     private List<Influence> influences = new List<Influence>();
+    public IReadOnlyList<Influence> Influences => influences;
 
     private void OnEnable()
     {
@@ -27,7 +28,6 @@ public class InfluenceManager : MonoBehaviour
         Influence nextInfluence = new Influence(position, radius, promptModifier, prefab);
         influences.Add(nextInfluence);
         OnInfluenceCreated?.Invoke(nextInfluence);
-
     }
 
     public void DeleteInfluence(Influence influence)
