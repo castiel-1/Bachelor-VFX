@@ -20,11 +20,23 @@ public class CountBasedInfluencePromptGenerator : IInfluencePromptGenerator
             return fullPrompt;
         }
 
-        for (int i = 0; i < influences.Count - 1; i++)
+        for (int i = 0; i < influences.Count; i++)
         {
-            fullPrompt += "to " + Mathf.RoundToInt(influenceStrengths[i] * 100) + " percent by '" + influences[i].PromptModifier + "', ";
+            string part = "to " + Mathf.RoundToInt(influenceStrengths[i] * 100) + " percent by '" + influences[i].PromptModifier;
+
+            if(i == influences.Count - 1)
+            {
+                fullPrompt += "and " + part + ".";
+            }
+            else if(i == influences.Count - 2)
+            {
+                fullPrompt += part + " ";
+            }
+            else
+            {
+                fullPrompt += part + ", ";
+            }
         }
-        fullPrompt += "and to " + Mathf.RoundToInt(influenceStrengths[influences.Count - 1] * 100) + " percent by '" + influences[influences.Count - 1].PromptModifier + "'.";
 
         return fullPrompt;
     }

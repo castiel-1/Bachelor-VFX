@@ -8,8 +8,9 @@ public class GraphDisplayer : MonoBehaviour
     public GameObject nodePrefab;
 
     private LineRenderer lineRenderer;
-    private Dictionary<Node, GameObject> nodes = new();
     private Dictionary<Path, List<GameObject>> paths = new();
+
+    public Dictionary<Node, GameObject> nodes { get; private set; } = new();
 
     private void OnEnable()
     {

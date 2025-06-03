@@ -42,7 +42,7 @@ public class Graph : MonoBehaviour
         PathDestructionNotifier.OnPathDestroyed -= DeletePath;
     }
 
-    public void CreatePath(Node startNode, Node endNode, int numPathPoints)
+    public Path CreatePath(Node startNode, Node endNode, int numPathPoints)
     {
         // debugging
         Debug.Log("path created");
@@ -56,6 +56,8 @@ public class Graph : MonoBehaviour
         AddPathToIncomingOutgoing(nextPath.StartNode, nextPath.EndNode);
 
         OnPathCreated?.Invoke(nextPath);
+
+        return nextPath;
     }
 
     public void DeletePath(Path path)

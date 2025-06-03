@@ -36,14 +36,65 @@ public class TestController : MonoBehaviour
 
     public LLMManager llmManager;
 
-    public CountBasedInfluenceCalculator countBasedInfluenceCalculator;
-    public CountBasedInfluencePromptGenerator countBasedInfluencePromptGenerator;
-
     public Graph graph;
+    public FullPromptBuilder fullPromptBuilder;
+
     
     void Start()
     {
-        TestHistoryPromptGenerator();
+        SimplePathSetup();
+    }
+    public void SimplePathSetup()
+    {
+        // Create some nodes
+        Node nodeA = graph.CreateNode(new Vector3(0, 0, 0)); // ID 0
+        Node nodeB = graph.CreateNode(new Vector3(1, 0, 0)); // ID 1
+        Node nodeC = graph.CreateNode(new Vector3(2, 0, 0)); // ID 2
+        Node nodeD = graph.CreateNode(new Vector3(3, 0, 0)); // ID 3
+        Node nodeE = graph.CreateNode(new Vector3(4, 0, 0)); // ID 4
+
+        // Create paths (A → B → D and A → C → D → E)
+        graph.CreatePath(nodeA, nodeB, 5); // A → B
+        graph.CreatePath(nodeB, nodeD, 5); // B → D
+        graph.CreatePath(nodeA, nodeC, 5); // A → C
+        graph.CreatePath(nodeC, nodeD, 5); // C → D
+        graph.CreatePath(nodeD, nodeE, 5); // D → E
+    }
+
+    public void TestFullPromptGenerator()
+    {
+        int numPoints = 10;
+
+
+        // Create some nodes
+        Node nodeA = graph.CreateNode(new Vector3(0, 0, 0)); // ID 0
+        Node nodeB = graph.CreateNode(new Vector3(1, 0, 0)); // ID 1
+        Node nodeC = graph.CreateNode(new Vector3(2, 0, 0)); // ID 2
+        Node nodeD = graph.CreateNode(new Vector3(3, 0, 0)); // ID 3
+        Node nodeE = graph.CreateNode(new Vector3(4, 0, 0)); // ID 4
+
+        // Create paths (A → B → D and A → C → D → E)
+        Path p1 = graph.CreatePath(nodeA, nodeB, 5); // A → B
+        p1.Sentence = new Sentence("test1", 1);
+        Path p2 = graph.CreatePath(nodeB, nodeD, 5); // B → D
+        p2.Sentence = new Sentence("test2", 1);
+        Path p3 = graph.CreatePath(nodeA, nodeC, 5); // A → C
+        p3.Sentence = new Sentence("test3", 1);
+        Path p4  = graph.CreatePath(nodeC, nodeD, 5); // C → D
+        p4.Sentence = new Sentence("test4", 1);
+        Path path = graph.CreatePath(nodeD, nodeE, 5); // D → E
+
+        int depth = 2;
+
+        influenceManager.CreateInfluence(new Vector3(3, 0, 0), 1f, "Influence1", debugSphere);
+        influenceManager.CreateInfluence(new Vector3(3, 0, 0), 2f, "Influence2", debugSphere);
+
+        IInfluenceCalculator calculator = new CountBasedInfluenceCalculator();
+        IInfluencePromptGenerator generator = new CountBasedInfluencePromptGenerator();
+
+        string fullPrompt = fullPromptBuilder.BuildPrompt(numPoints, graph, path, depth, influenceManager, calculator, generator);
+
+        Debug.Log("full prompt: " +  fullPrompt);   
     }
 
     public void TestHistoryPromptGenerator()
@@ -122,11 +173,13 @@ public class TestController : MonoBehaviour
             new Vector3(3, 3, 3)
         };
 
+        IInfluenceCalculator countBasedInfluenceCalculator = new CountBasedInfluenceCalculator();
         List<float> strengths = countBasedInfluenceCalculator.CalculateInfluenceStrengths(points, influences);
 
         Debug.Log("strength: " + strengths[0]);
         Debug.Log("strength: " + strengths[1]);
 
+        IInfluencePromptGenerator countBasedInfluencePromptGenerator = new CountBasedInfluencePromptGenerator();
         string prompt = countBasedInfluencePromptGenerator.GenerateInfluencePrompt(influences, strengths);
 
         Debug.Log("prompt: " + prompt);
