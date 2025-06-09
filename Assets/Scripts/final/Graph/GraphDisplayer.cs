@@ -61,6 +61,7 @@ public class GraphDisplayer : MonoBehaviour
         Debug.Log("node spawned");
 
         GameObject nextNode = Instantiate(nodePrefab, node.Position, Quaternion.identity);
+        nextNode.AddComponent<NodeComponent>().Initialize(node);
         nodes.Add(node, nextNode);
     }
     
