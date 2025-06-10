@@ -24,6 +24,8 @@ public class Settings : EditorWindow
     private float textSize = 0.2f;
     private float textSizeMin = 0.1f;
     private float textSizeMax = 0.5f;
+    private int numberOfLettersMin = 10;
+    private int numberOfLettersMax = 200;
 
     [MenuItem("Window/Prototype Settings")]
     public static void ShowWindow()
@@ -86,8 +88,10 @@ public class Settings : EditorWindow
         EditorGUI.indentLevel++;
 
         DrawTextSizeDropdown();
+        DrawMinMaxNumberOfLettersField();
 
         EditorGUI.indentLevel--;
+
     }
 
     private void DrawTextSizeDropdown()
@@ -106,7 +110,7 @@ public class Settings : EditorWindow
         {
             EditorGUI.indentLevel++;
 
-            DrawMixMaxSizeField();
+            DrawMinMaxSizeField();
             
             EditorGUI.indentLevel-- ;
         }
@@ -117,10 +121,21 @@ public class Settings : EditorWindow
         textSize = EditorGUILayout.FloatField("Text Size", textSize);
     }
 
-    private void DrawMixMaxSizeField()
+    private void DrawMinMaxSizeField()
     {
         textSizeMin = EditorGUILayout.FloatField("Text Size Minimum", textSizeMin);
         textSizeMax = EditorGUILayout.FloatField("Text Size Maximum", textSizeMax);
     }
 
+    private void DrawMinMaxNumberOfLettersField()
+    {
+        EditorGUILayout.LabelField("Number of Letters");
+
+        EditorGUI.indentLevel++;
+
+        numberOfLettersMin = EditorGUILayout.IntField("Minimun", numberOfLettersMin);
+        numberOfLettersMax = EditorGUILayout.IntField("Maximum", numberOfLettersMax);
+
+        EditorGUI.indentLevel--;
+    }
 }
