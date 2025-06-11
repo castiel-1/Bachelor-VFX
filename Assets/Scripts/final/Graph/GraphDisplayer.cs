@@ -7,24 +7,30 @@ public class GraphDisplayer : MonoBehaviour
     public GameObject pointPrefab;
     public GameObject nodePrefab;
 
-    private LineRenderer lineRenderer;
-    private Dictionary<Path, List<GameObject>> paths = new();
+    private GraphComponent graph;
 
-    public Dictionary<Node, GameObject> nodes { get; private set; } = new();
+    private LineRenderer lineRenderer;
+    private Dictionary<Path, List<GameObject>> pathObjects = new();
+    private Dictionary<Node, GameObject> nodeObjects = new();
+
+    private void Awake()
+    {
+        graph = GetComponent<GraphComponent>();
+    }
 
     private void OnEnable()
     {
-        Graph.OnNodeCreated += SpawnNode;
-        Graph.OnNodeDeleted += DespawnNode;
-        Graph.OnPathCreated += SpawnPath;
-        Graph.OnPathDeleted += DespawnPath;
+        graph.OnNodeCreated += SpawnNode;
+        graph.OnNodeDeleted += DespawnNode;
+        graph.OnPathCreated += SpawnPath;
+        graph.OnPathDeleted += DespawnPath;
     }
     private void OnDisable()
     {
-        Graph.OnNodeCreated -= SpawnNode;
-        Graph.OnNodeDeleted -= DespawnNode;
-        Graph.OnPathCreated -= SpawnPath;
-        Graph.OnPathDeleted -= SpawnPath;
+        graph.OnNodeCreated -= SpawnNode;
+        graph.OnNodeDeleted -= DespawnNode;
+        graph.OnPathCreated -= SpawnPath;
+        graph.OnPathDeleted -= DespawnPath;
     }
 
     public void SpawnPath(Path path)
@@ -32,7 +38,8 @@ public class GraphDisplayer : MonoBehaviour
         // debugging
         Debug.Log("path spawned");
 
-        GameObject pathParent = new GameObject();
+        GameObject pathParent = new GameObject("Path_" + path.StartNode.ID + "_" + path.EndNode.ID);
+        pathParent.transform.parent = transform;
         PathDestructionNotifier notifier = pathParent.AddComponent<PathDestructionNotifier>();
         notifier.LinkedPath = path;
 
@@ -44,7 +51,7 @@ public class GraphDisplayer : MonoBehaviour
             pointObjects.Add(nextPoint);
         }
 
-        paths.Add(path, pointObjects);
+        pathObjects.Add(path, pointObjects);
     }
 
     public void DespawnPath(Path path)
@@ -52,7 +59,12 @@ public class GraphDisplayer : MonoBehaviour
         // debugging
         Debug.Log("path despawned");
 
-        paths.Remove(path);
+        foreach (GameObject pointGO in pathObjects[path])
+        {
+            Destroy(pointGO);
+        }
+
+        pathObjects.Remove(path);
     }
 
     public void SpawnNode(Node node)
@@ -60,9 +72,10 @@ public class GraphDisplayer : MonoBehaviour
         // debugging
         Debug.Log("node spawned");
 
-        GameObject nextNode = Instantiate(nodePrefab, node.Position, Quaternion.identity);
-        nextNode.AddComponent<NodeComponent>().Initialize(node);
-        nodes.Add(node, nextNode);
+        GameObject nodeGO = Instantiate(nodePrefab, node.Position, Quaternion.identity, transform);
+        nodeGO.name = "Node_" + node.ID;
+        nodeGO.AddComponent<NodeComponent>().Initialize(node);
+        nodeObjects.Add(node, nodeGO);
     }
     
     public void DespawnNode(Node node)
@@ -70,9 +83,9 @@ public class GraphDisplayer : MonoBehaviour
         // debugging
         Debug.Log("node despawned");
 
-        Destroy(nodes[node]);
+        Destroy(nodeObjects[node]);
 
-        nodes.Remove(node);
+        nodeObjects.Remove(node);
     }
 
     public void DisplayLines(Vector3[] points)

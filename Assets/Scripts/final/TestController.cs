@@ -39,10 +39,21 @@ public class TestController : MonoBehaviour
     public Graph graph;
     public FullPromptBuilder fullPromptBuilder;
 
+    public GraphManager graphManager;
+
     
     void Start()
     {
-        SimplePathSetup();
+        TestGraphCreation();
+    }
+
+    public void TestGraphCreation()
+    {
+        GraphComponent graph = graphManager.CreateGraph();
+        Node startNode = GraphOperations.CreateNode(graph, Vector3.zero);
+        Node endNode = GraphOperations.CreateNode(graph, Vector3.one);
+
+        GraphOperations.CreatePath(graph, startNode, endNode, 20);
     }
     public void SimplePathSetup()
     {
