@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2711724898427501834}
-  - component: {fileID: 650672227436462616}
   - component: {fileID: 3404997658629267867}
+  - component: {fileID: 5320380706256420268}
   m_Layer: 0
   m_Name: GraphAndDisplayerPrefab
   m_TagString: Untagged
@@ -33,18 +33,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &650672227436462616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3870839535032866535}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35f6050f2859a024d909c607015ba9b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3404997658629267867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,3 +47,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointPrefab: {fileID: 7232164320203899052, guid: 48b545218be0267458e154e287eb6825, type: 3}
   nodePrefab: {fileID: 7232164320203899052, guid: 039edb25b5341c1459804e4ff19f6f23, type: 3}
+--- !u!114 &5320380706256420268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3870839535032866535}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7429c1e6f61fbd489bc0ea7a4f776a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -10,10 +10,6 @@ public static class PathCreationController
     private static IPathCreationStrategy selectedStrategy;
     private static GameObject hoveredObject;
 
-    // debugging, temporary
-    public static Graph graph;
-    public static int numPathPoints = 10;
-
     static PathCreationController()
     {
         SceneView.duringSceneGui += OnSceneGUI;
@@ -59,7 +55,8 @@ public static class PathCreationController
             // on left mouse click
             if (e.type == EventType.MouseDown && e.button == 0)
             {
-                selectedStrategy.HandleClick(hitInfo, graph, numPathPoints);
+                int numberOfPathPoints = RandomizeNumberOfPathPoints(RuntimeSettings.numberOfLettersMin, RuntimeSettings.numberOfLettersMax);
+                selectedStrategy.HandleClick(hitInfo, numberOfPathPoints);
                 e.Use();
             }
         }
@@ -76,5 +73,10 @@ public static class PathCreationController
         }
 
         sceneView.Repaint();
+    }
+
+    private static int RandomizeNumberOfPathPoints(int min, int max)
+    {
+        return UnityEngine.Random.Range(min, max + 1);
     }
 }

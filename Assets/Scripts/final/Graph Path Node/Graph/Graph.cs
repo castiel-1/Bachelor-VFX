@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class GraphComponent : MonoBehaviour
+public class Graph : MonoBehaviour
 {
     public int ID { get; private set; }
     public int NodeID { get; set; } = 0;
@@ -11,7 +11,7 @@ public class GraphComponent : MonoBehaviour
 
     
 
-    public event Action<Node> OnNodeCreated;
+    public event Action<Node, Graph> OnNodeCreated;
     public event Action<Node> OnNodeDeleted;
 
     public event Action<Path> OnPathCreated;
@@ -22,7 +22,7 @@ public class GraphComponent : MonoBehaviour
         ID = id;    
     }
 
-    public void RaiseNodeCreated(Node node) => OnNodeCreated?.Invoke(node);
+    public void RaiseNodeCreated(Node node, Graph graph) => OnNodeCreated?.Invoke(node, graph);
     public void RaiseNodeDeleted(Node node) => OnNodeDeleted?.Invoke(node);
     public void RaisePathCreated(Path path) => OnPathCreated?.Invoke(path);
     public void RaisePathDeleted(Path path) => OnPathDeleted?.Invoke(path);

@@ -6,7 +6,7 @@ using UnityEngine;
 
 public static class GraphOperations 
 {
-    public static Node CreateNode(GraphComponent graph, Vector3 position)
+    public static Node CreateNode(Graph graph, Vector3 position)
     {
         // debugging
         Debug.Log("node created");
@@ -15,12 +15,12 @@ public static class GraphOperations
         graph.NodeID++;
         graph.Nodes.Add(nextNode);
 
-        graph.RaiseNodeCreated(nextNode);
+        graph.RaiseNodeCreated(nextNode, graph);
 
         return nextNode;
     }
 
-    public static Path CreatePath(GraphComponent graph, Node startNode, Node endNode, int numPathPoints)
+    public static Path CreatePath(Graph graph, Node startNode, Node endNode, int numPathPoints)
     {
         // debugging
         Debug.Log("path created");
@@ -37,7 +37,7 @@ public static class GraphOperations
         return nextPath;
     }
 
-    public static void DeletePath(GraphComponent graph, Path path)
+    public static void DeletePath(Graph graph, Path path)
     {
         // debugging
         Debug.Log("path deleted");
@@ -62,7 +62,7 @@ public static class GraphOperations
         graph.RaisePathDeleted(path);
     }
 
-    private static void DeleteNode(GraphComponent graph, Node node)
+    private static void DeleteNode(Graph graph, Node node)
     {
         // debugging
         Debug.Log("node deleted");
@@ -72,7 +72,7 @@ public static class GraphOperations
         graph.RaiseNodeDeleted(node);
     }
 
-    public static void TraverseBackwards(GraphComponent graph, Node currentNode, int depth, int maxDepth, List<Path> currentBranch, List<List<Path>> allBranches)
+    public static void TraverseBackwards(Graph graph, Node currentNode, int depth, int maxDepth, List<Path> currentBranch, List<List<Path>> allBranches)
     {
         if (depth >= maxDepth || currentNode.Incoming.Count == 0)
         {
@@ -95,7 +95,7 @@ public static class GraphOperations
         }
     }
 
-    public static List<List<Path>> GetAllPreviousPaths(GraphComponent graph, Node currentNode, int depth)
+    public static List<List<Path>> GetAllPreviousPaths(Graph graph, Node currentNode, int depth)
     {
         List<List<Path>> allBranches = new();
 

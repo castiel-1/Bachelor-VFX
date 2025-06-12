@@ -49,12 +49,15 @@ public class TestController : MonoBehaviour
 
     public void TestGraphCreation()
     {
-        GraphComponent graph = graphManager.CreateGraph();
+        Graph graph = graphManager.CreateGraph();
         Node startNode = GraphOperations.CreateNode(graph, Vector3.zero);
         Node endNode = GraphOperations.CreateNode(graph, Vector3.one);
+        Node thirdNode = GraphOperations.CreateNode(graph, new Vector3(2, 1, 1));
 
         GraphOperations.CreatePath(graph, startNode, endNode, 20);
     }
+
+    /*
     public void SimplePathSetup()
     {
         // Create some nodes
@@ -107,7 +110,7 @@ public class TestController : MonoBehaviour
 
         Debug.Log("full prompt: " +  fullPrompt);   
     }
-
+    */
     public void TestHistoryPromptGenerator()
     {
         // Create nodes
@@ -135,6 +138,7 @@ public class TestController : MonoBehaviour
         // Print the generated prompt
         Debug.Log("Generated Prompt:" + prompt);
     }
+    /*
     public void TestBackwardsTraversal()
     {
         // Create some nodes
@@ -170,7 +174,7 @@ public class TestController : MonoBehaviour
             Debug.Log(branchDesc.TrimEnd(',', ' '));
         }
     }
-
+    */
     public void TestInfluenceCalculator()
     {
         Influence influence = new Influence(Vector3.zero, 1f, "sad", debugSphere);
@@ -207,7 +211,7 @@ public class TestController : MonoBehaviour
         Debug.Log("llm reply: " + answer);
     }
 
-    public void TestGraph()
+    /*public void TestGraph()
     {
         GameObject graphObject = new GameObject("Graph");
         Graph graph = graphObject.AddComponent<Graph>();
@@ -218,7 +222,7 @@ public class TestController : MonoBehaviour
         
         graph.CreatePath(startNode, endNode, 10);
     }
-
+    */
     public void TestNode()
     {
         startNode = new Node(0, new Vector3(2, 1, 0));
@@ -237,7 +241,7 @@ public class TestController : MonoBehaviour
 
     public void TestCursor()
     {
-        Vector3 rayCastHit = cursor.ScreenTo3D();
+        Vector3 rayCastHit = cursor.GetSurfacePoint();
 
         Instantiate(debugSphere, rayCastHit, Quaternion.identity);
     }

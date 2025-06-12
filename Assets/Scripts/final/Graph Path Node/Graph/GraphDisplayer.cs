@@ -7,7 +7,7 @@ public class GraphDisplayer : MonoBehaviour
     public GameObject pointPrefab;
     public GameObject nodePrefab;
 
-    private GraphComponent graph;
+    private Graph graph;
 
     private LineRenderer lineRenderer;
     private Dictionary<Path, List<GameObject>> pathObjects = new();
@@ -15,7 +15,7 @@ public class GraphDisplayer : MonoBehaviour
 
     private void Awake()
     {
-        graph = GetComponent<GraphComponent>();
+        graph = GetComponent<Graph>();
     }
 
     private void OnEnable()
@@ -67,14 +67,14 @@ public class GraphDisplayer : MonoBehaviour
         pathObjects.Remove(path);
     }
 
-    public void SpawnNode(Node node)
+    public void SpawnNode(Node node, Graph graph)
     {
         // debugging
         Debug.Log("node spawned");
 
         GameObject nodeGO = Instantiate(nodePrefab, node.Position, Quaternion.identity, transform);
         nodeGO.name = "Node_" + node.ID;
-        nodeGO.AddComponent<NodeComponent>().Initialize(node);
+        nodeGO.AddComponent<NodeComponent>().Initialize(node, graph);
         nodeObjects.Add(node, nodeGO);
     }
     

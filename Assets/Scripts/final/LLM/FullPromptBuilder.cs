@@ -12,7 +12,7 @@ public class FullPromptBuilder : MonoBehaviour
         string start = "Generate one sentence with " + numPoints + " words. Your output should only be that sentence.";
 
         // build history prompt
-        List<List<Path>> allBranches = graph.GetAllPreviousPaths(path.StartNode, depth);
+        List<List<Path>> allBranches = GraphOperations.GetAllPreviousPaths(graph, path.StartNode, depth);
         string historyPrompt = HistoryPromptGenerator.GenerateHistoryPrompt(allBranches);
 
         // build influence prompt

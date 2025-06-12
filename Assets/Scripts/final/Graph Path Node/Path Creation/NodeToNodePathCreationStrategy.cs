@@ -5,17 +5,19 @@ public class NodeToNodePathCreationStrategy : IPathCreationStrategy
     private Node startNode;
     private Node endNode;
 
-    public void HandleClick(RaycastHit hitInfo, Graph graph, int numPathPoints)
+    public void HandleClick(RaycastHit hitInfo, int numPathPoints)
     {
         GameObject hitObject = hitInfo.collider.gameObject;
+        NodeComponent nodeComponent = hitObject.GetComponent<NodeComponent>();
 
         // if we haven't clicked on a node we continue waiting
-        if (hitObject == null )
+        if (hitObject == null || nodeComponent == null)
         {
             return;
         }
 
-        Node currentNode = hitObject.GetComponent<NodeComponent>().Node;
+        Node currentNode = nodeComponent.Node;
+        Graph graph = nodeComponent.Graph;
 
         if (startNode == null)
         {
@@ -29,18 +31,16 @@ public class NodeToNodePathCreationStrategy : IPathCreationStrategy
             // debugging
             Debug.Log("end node has been selected: " + endNode);
 
-            // TODO 
-            // implement this so that we can uncomment the line below
-            // graph.CreatePath(startNode, endNode, numPathPoints);
+          
+            GraphOperations.CreatePath(graph, startNode, endNode, numPathPoints);
 
             // debugging
-            Debug.Log("path has been created");
+            Debug.Log("new path with " + numPathPoints + " points has been created");
 
             PathCreationController.EndPathCreation();
 
             startNode = null;
             endNode = null;
-
         }
 
 

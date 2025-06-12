@@ -8,24 +8,11 @@ public class Settings : EditorWindow
     private bool showTextSettings = false;
 
     // dropdowns
-    private int selectedPathTypeIndex = 0;
     private string[] pathTypeOptions = new string[] { "Bezier", "Path On Mesh" };
 
-    private int selectedCreationModeIndex = 0;
     private string[] pathCreationModeOptions = new string[] { "Manual", "Auto" };
 
-    private int selectedTextSizeIndex = 0;
     private string[] textSizeOptions = new string[] { "One Size", "Random", "Growing", "Shrinking", "Wave" };
-
-    // toggles
-    private bool gravity = true;
-
-    // input fields
-    private float textSize = 0.2f;
-    private float textSizeMin = 0.1f;
-    private float textSizeMax = 0.5f;
-    private int numberOfLettersMin = 10;
-    private int numberOfLettersMax = 200;
 
     [MenuItem("Window/Prototype Settings")]
     public static void ShowWindow()
@@ -61,19 +48,19 @@ public class Settings : EditorWindow
     // path type dropdown
     private void DrawPathTypeDropdown()
     {
-        selectedPathTypeIndex = EditorGUILayout.Popup("Path Type", selectedPathTypeIndex, pathTypeOptions);
+        RuntimeSettings.pathType = (RuntimeSettings.PathType) (EditorGUILayout.Popup("Path Type", (int) RuntimeSettings.pathType, pathTypeOptions));
     }
 
     // creation mode dropdown
     private void DrawCreationModeDropdown()
     {
-        selectedCreationModeIndex = EditorGUILayout.Popup("Creation Mode", selectedCreationModeIndex, pathCreationModeOptions);
+        RuntimeSettings.creationMode = (RuntimeSettings.CreationMode) EditorGUILayout.Popup("Creation Mode", (int) RuntimeSettings.creationMode, pathCreationModeOptions);
     }
 
     // gravity toggle
     private void DrawGravityToggle()
     {
-        gravity = EditorGUILayout.Toggle("Gravity", gravity);
+        RuntimeSettings.gravity = EditorGUILayout.Toggle("Gravity", RuntimeSettings.gravity);
     }
 
     private void DrawTextSettings()
@@ -96,9 +83,9 @@ public class Settings : EditorWindow
 
     private void DrawTextSizeDropdown()
     {
-        selectedTextSizeIndex = EditorGUILayout.Popup("Text Size Mode", selectedTextSizeIndex, textSizeOptions);
+        RuntimeSettings.textSizeMode = (RuntimeSettings.TextSizeMode) EditorGUILayout.Popup("Text Size Mode", (int) RuntimeSettings.textSizeMode, textSizeOptions);
 
-        if(selectedTextSizeIndex == 0)
+        if((int) RuntimeSettings.textSizeMode == 0)
         {
             EditorGUI.indentLevel++;
 
@@ -118,13 +105,13 @@ public class Settings : EditorWindow
 
     private void DrawOneSizeField()
     {
-        textSize = EditorGUILayout.FloatField("Text Size", textSize);
+        RuntimeSettings.textSize = EditorGUILayout.FloatField("Text Size", RuntimeSettings.textSize);
     }
 
     private void DrawMinMaxSizeField()
     {
-        textSizeMin = EditorGUILayout.FloatField("Text Size Minimum", textSizeMin);
-        textSizeMax = EditorGUILayout.FloatField("Text Size Maximum", textSizeMax);
+        RuntimeSettings.textSizeMin = EditorGUILayout.FloatField("Text Size Minimum", RuntimeSettings.textSizeMin);
+        RuntimeSettings.textSizeMax = EditorGUILayout.FloatField("Text Size Maximum", RuntimeSettings.textSizeMax);
     }
 
     private void DrawMinMaxNumberOfLettersField()
@@ -133,8 +120,8 @@ public class Settings : EditorWindow
 
         EditorGUI.indentLevel++;
 
-        numberOfLettersMin = EditorGUILayout.IntField("Minimun", numberOfLettersMin);
-        numberOfLettersMax = EditorGUILayout.IntField("Maximum", numberOfLettersMax);
+        RuntimeSettings.numberOfLettersMin = EditorGUILayout.IntField("Minimun", RuntimeSettings.numberOfLettersMin);
+        RuntimeSettings.numberOfLettersMax = EditorGUILayout.IntField("Maximum", RuntimeSettings.numberOfLettersMax);
 
         EditorGUI.indentLevel--;
     }

@@ -7,9 +7,9 @@ public class GraphManager : MonoBehaviour
     public static GraphManager Instance { get; private set; }
 
     private int graphID = 0;
-    private Dictionary<int, GraphComponent> graphs = new();
+    private Dictionary<int, Graph> graphs = new();
 
-    public GameObject graphPrefab;
+    public GameObject graphPrefab; // this holds a graph script and a graphDisplayer script
 
     private void Awake()
     {
@@ -23,7 +23,7 @@ public class GraphManager : MonoBehaviour
         }
     }
 
-    public GraphComponent CreateGraph()
+    public Graph CreateGraph()
     {
         // debugging
         Debug.Log("creating graph");
@@ -31,7 +31,7 @@ public class GraphManager : MonoBehaviour
         GameObject graphGO = Instantiate(graphPrefab);
         graphGO.name = "gaph_" + graphID;
 
-        GraphComponent graph = graphGO.GetComponent<GraphComponent>();
+        Graph graph = graphGO.GetComponent<Graph>();
 
         graph.Initialize(graphID);
 
@@ -42,17 +42,31 @@ public class GraphManager : MonoBehaviour
         return graph;
     }
 
-    public GraphComponent GetGraph(int graphID)
+    // debugging - this has been more or less replaced with reference based lookup but can still be useful for debugging so it stays here
+    public Graph GetGraph(int graphID)
     {
         return graphs[graphID];
     }
 
+    // debugging - this has been more or less replaced with reference based deletion but can still be useful for debugging so it stays here
     public void DeleteGraph(int graphID)
     {
-        GraphComponent graph = graphs[graphID];
+        Graph graph = graphs[graphID];
         graphs.Remove(graphID);
 
         Destroy(graph.gameObject);
     }
 
+    public void DeleteGraph(Graph graph)
+    {
+        foreach (var pair in graphs)
+        {
+            if (pair.Value == graph)
+            {
+                graphs.Remove(pair.Key);
+                Destroy(graph.gameObject);
+                return;
+            }
+        }
+    }
 }

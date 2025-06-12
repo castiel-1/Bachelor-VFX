@@ -5,9 +5,23 @@ using UnityEngine;
 
 public class TargetCursor : MonoBehaviour
 {
+    public static TargetCursor Instance { get; private set; }
+
     public Transform cursorVisual;
     public float maxDistance = 1000f;
-    public Vector3 ScreenTo3D()
+
+    private void Awake()
+    {
+        if(Instance != null || Instance != this)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    public Vector3 GetSurfacePoint()
     {
 #if UNITY_EDITOR
 
@@ -36,5 +50,10 @@ public class TargetCursor : MonoBehaviour
         Debug.Log("nothing hit with raycast, no meshes close enough");
         return Vector3.zero;
 # endif
+    }
+
+    public Vector3 GetCursorPosition()
+    {
+        return cursorVisual.position;
     }
 }
