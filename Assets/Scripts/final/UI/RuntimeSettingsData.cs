@@ -1,4 +1,4 @@
-public static class RuntimeSettings
+public static class RuntimeSettingsData
 {
     public enum PathType { Bezier, PathOnMesh }
     public enum CreationMode { Manual, Auto }
@@ -8,7 +8,7 @@ public static class RuntimeSettings
     public static CreationMode creationMode;
     public static TextSizeMode textSizeMode;
 
-    public static bool gravity;
+    public static bool onSurface;
 
     public static float textSize = 0.2f;
     public static float textSizeMin = 0.1f;

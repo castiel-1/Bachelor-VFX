@@ -9,6 +9,7 @@ public static class PathCreationController
     public static bool IsCreatingPath { get; private set; } = false;
     private static IPathCreationStrategy selectedStrategy;
     private static GameObject hoveredObject;
+    public static IPathCreationStrategy SelectedStrategy => selectedStrategy;
 
     static PathCreationController()
     {
@@ -55,7 +56,13 @@ public static class PathCreationController
             // on left mouse click
             if (e.type == EventType.MouseDown && e.button == 0)
             {
-                int numberOfPathPoints = RandomizeNumberOfPathPoints(RuntimeSettings.numberOfLettersMin, RuntimeSettings.numberOfLettersMax);
+                // if we are waiting for the cursor position confirmation we stop using left click
+                if (selectedStrategy is NodeToCursorPathCreationStrategy cursorStrategy && cursorStrategy.IsAwaitingCursorConfirmation)
+                {
+                    return;
+                }
+
+                int numberOfPathPoints = RandomizeNumberOfPathPoints(RuntimeSettingsData.numberOfLettersMin, RuntimeSettingsData.numberOfLettersMax);
                 selectedStrategy.HandleClick(hitInfo, numberOfPathPoints);
                 e.Use();
             }

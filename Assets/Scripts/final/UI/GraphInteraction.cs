@@ -4,8 +4,10 @@ using UnityEngine;
 public class GraphInteraction : EditorWindow
 {
     // dropdowns
-    private int selectedPathCreationIndex = 0;
-    private string[] pathCreationOptions = new string[] { "Node to Node", "Node to Cursor" };
+    private string[] pathCreationOptions = new string[] { "Node to Cursor", "Node to Node" };
+
+    // tools
+    private PathCreationTool pathCreationTool = new();
 
 
     [MenuItem("Window/Graph Interaction")]
@@ -18,41 +20,65 @@ public class GraphInteraction : EditorWindow
     {
         DrawPathCreationDropdown();
         DrawAddPathButton();
-        DrawCancelButton();
+
+        if (RuntimeInteractionData.AskForCursorPositionConfirmation)
+        {
+            DrawCursorPositionConfirmationButton();
+        }
+
+        if (RuntimeInteractionData.IsCreatingPath)
+        {
+            DrawCancelButton();
+        }
+
+        DrawDeletePathButton();
     }
 
     private void DrawPathCreationDropdown()
     {
-        selectedPathCreationIndex = EditorGUILayout.Popup("Path Creation Type", selectedPathCreationIndex, pathCreationOptions);
+        RuntimeInteractionData.pathCreationType = (RuntimeInteractionData.PathCreationType) EditorGUILayout.Popup("Path Creation Type", (int) RuntimeInteractionData.pathCreationType, pathCreationOptions);
     }
 
     private void DrawAddPathButton()
     {
         if(GUILayout.Button("Create New Path"))
         {
-            PathCreationController.StartPathCreation(GetSelectedPathCreationStrategy());
+            pathCreationTool.StartInteraction();
             Debug.Log("path creation started, button pressed");
         }
     }
-    private IPathCreationStrategy GetSelectedPathCreationStrategy()
+
+    private void DrawCursorPositionConfirmationButton()
     {
-        IPathCreationStrategy strategy = null;
-
-        switch(selectedPathCreationIndex)
+        if(GUILayout.Button("Confirm Cursor Position"))
         {
-            case 0: strategy = new NodeToNodePathCreationStrategy(); break;
-            case 1: strategy = new NodeToCursorPathCreationStrategy(); break;
-        }
+            
+            if(PathCreationTool.SelectedStrategy is NodeToCursorPathCreationStrategy nodeToCursorStrategy)
+            {
+                nodeToCursorStrategy.HandleCursorPositionConfirmation();
+            }
 
-        return strategy;
+        }
     }
 
     private void DrawCancelButton()
     {
         if (GUILayout.Button("Cancel"))
         {
-            PathCreationController.EndPathCreation();
+            pathCreationTool.StopInteraction();
+
+            // hide cursor position confirmation button again
+            RuntimeInteractionData.AskForCursorPositionConfirmation = false;
+
             Debug.Log("path creation cancelled, button pressed");
+        }
+    }
+
+    private void DrawDeletePathButton()
+    {
+        if(GUILayout.Button("Delete Path"))
+        {
+
         }
     }
 }

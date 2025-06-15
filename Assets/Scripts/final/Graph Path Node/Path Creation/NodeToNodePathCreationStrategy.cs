@@ -5,6 +5,13 @@ public class NodeToNodePathCreationStrategy : IPathCreationStrategy
     private Node startNode;
     private Node endNode;
 
+    private PathCreationTool pathCreationTool;
+
+    public NodeToNodePathCreationStrategy(PathCreationTool tool)
+    {
+        pathCreationTool = tool;
+    }
+
     public void HandleClick(RaycastHit hitInfo, int numPathPoints)
     {
         GameObject hitObject = hitInfo.collider.gameObject;
@@ -37,7 +44,7 @@ public class NodeToNodePathCreationStrategy : IPathCreationStrategy
             // debugging
             Debug.Log("new path with " + numPathPoints + " points has been created");
 
-            PathCreationController.EndPathCreation();
+            pathCreationTool.StopInteraction();
 
             startNode = null;
             endNode = null;
