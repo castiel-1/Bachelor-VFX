@@ -51,7 +51,16 @@ public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
     {
         TargetCursor cursor = TargetCursor.Instance;
 
-        Vector3 cursorPosition = cursor.GetCursorPosition();
+        Vector3 cursorPosition;
+
+        if (RuntimeSettingsData.onSurface)
+        {
+            cursorPosition = cursor.GetSurfacePoint();
+        }
+        else
+        {
+            cursorPosition = cursor.GetCursorPosition();
+        }
 
         Node endNode = GraphOperations.CreateNode(graph, cursorPosition);
 

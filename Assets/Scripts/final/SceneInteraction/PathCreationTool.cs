@@ -33,6 +33,13 @@ public class PathCreationTool : ISceneInteractionTool
 
     public void OnHover(RaycastHit hitInfo)
     {
+        // don't do hover effect when we are waiting for cursor confirmation
+        if (selectedStrategy is NodeToCursorPathCreationStrategy cursorStrategy && cursorStrategy.IsAwaitingCursorConfirmation)
+        {
+            hoveredObject = null;
+            return;
+        }
+
         hoveredObject = hitInfo.collider.gameObject;
 
         Handles.color = Color.red;

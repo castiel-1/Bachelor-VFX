@@ -10,4 +10,5 @@ public static class RuntimeInteractionData
 
     public static bool AskForCursorPositionConfirmation = false;
 
+    public static bool IsDeletingPath = false;
 }

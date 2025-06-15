@@ -23,8 +23,6 @@ public class TargetCursor : MonoBehaviour
     }
     public Vector3 GetSurfacePoint()
     {
-#if UNITY_EDITOR
-
         Camera cam = SceneView.lastActiveSceneView.camera;
 
         if(cam == null)
@@ -49,7 +47,6 @@ public class TargetCursor : MonoBehaviour
 
         Debug.Log("nothing hit with raycast, no meshes close enough");
         return Vector3.zero;
-# endif
     }
 
     public Vector3 GetCursorPosition()

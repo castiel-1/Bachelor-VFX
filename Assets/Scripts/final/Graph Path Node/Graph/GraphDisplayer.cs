@@ -10,7 +10,11 @@ public class GraphDisplayer : MonoBehaviour
     private Graph graph;
 
     private LineRenderer lineRenderer;
-    private Dictionary<Path, List<GameObject>> pathObjects = new();
+    private Dictionary<Path, List<GameObject>> pathPointObjects = new();
+
+    public Dictionary<Path, List<GameObject>> PathObjects => pathPointObjects; //  make it accessible but read only
+
+    private Dictionary<Path, GameObject> pathObjects = new();
     private Dictionary<Node, GameObject> nodeObjects = new();
 
     private void Awake()
@@ -40,18 +44,20 @@ public class GraphDisplayer : MonoBehaviour
 
         GameObject pathParent = new GameObject("Path_" + path.StartNode.ID + "_" + path.EndNode.ID);
         pathParent.transform.parent = transform;
-        PathDestructionNotifier notifier = pathParent.AddComponent<PathDestructionNotifier>();
-        notifier.LinkedPath = path;
+
+        pathObjects[path] = pathParent;
 
         List<GameObject> pointObjects = new();
 
         foreach (Vector3 point in path.pathPoints)
         {
             GameObject nextPoint = Instantiate(pointPrefab, point, Quaternion.identity, pathParent.transform);
+            nextPoint.AddComponent<PathPointComponent>().Initialize(path, graph);
+
             pointObjects.Add(nextPoint);
         }
 
-        pathObjects.Add(path, pointObjects);
+        pathPointObjects.Add(path, pointObjects);
     }
 
     public void DespawnPath(Path path)
@@ -59,12 +65,18 @@ public class GraphDisplayer : MonoBehaviour
         // debugging
         Debug.Log("path despawned");
 
-        foreach (GameObject pointGO in pathObjects[path])
+        // destroy path point gameobjects
+        foreach (GameObject pointGO in pathPointObjects[path])
         {
             Destroy(pointGO);
         }
 
+        // destroy path gameobject
+        Destroy(pathObjects[path]);
+
+        // remove from the dictionaries
         pathObjects.Remove(path);
+        pathPointObjects.Remove(path);
     }
 
     public void SpawnNode(Node node, Graph graph)

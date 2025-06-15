@@ -9,15 +9,31 @@ public static class SceneRaycastListener
     public static Func<RaycastHit, bool> OnLeftClick; // the bool is false when left click should not be used
     public static Action OnMiss;
 
-    public static bool isListening = false;
+    public static bool isListening = false; // expose to other scripts that the SceneRaycastListener is currently active
 
+    // to avoid errors when exiting play mode
     static SceneRaycastListener()
     {
-        SceneView.duringSceneGui += OnSceneGUI;
+        EditorApplication.playModeStateChanged += OnPlayModeChanged;
+    }
+
+    private static void OnPlayModeChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.ExitingPlayMode || state == PlayModeStateChange.EnteredEditMode)
+        {
+            StopRaycastListener(); // Cleanup safely when exiting Play Mode
+        }
     }
 
     public static void StartRaycastListener(Action<RaycastHit> onHover, Func<RaycastHit, bool> onLeftClick, Action onMiss)
     {
+        // protection from subscribing more than once if we ever forget to unsubscribe
+        if (!isListening)
+        {
+            SceneView.duringSceneGui += OnSceneGUI;
+
+        }
+
         OnHover = onHover;
         OnLeftClick = onLeftClick;
         OnMiss = onMiss;
@@ -26,6 +42,13 @@ public static class SceneRaycastListener
 
     public static void StopRaycastListener()
     {
+        // protection from unsubscribing more than once if we ever forget to subscribe
+        if (isListening)
+        {
+            SceneView.duringSceneGui -= OnSceneGUI;
+
+        }
+
         OnHover = null;
         OnLeftClick = null;
         OnMiss = null;

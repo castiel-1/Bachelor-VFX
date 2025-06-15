@@ -4,11 +4,12 @@ using UnityEngine;
 public class GraphInteraction : EditorWindow
 {
     // dropdowns
-    private string[] pathCreationOptions = new string[] { "Node to Cursor", "Node to Node" };
+    private string[] pathCreationOptionsNotOnSurface = new string[] { "Node to Cursor", "Node to Node"};
+    private string[] pathCreationOptionsOnSurface = new string[] { "Node to Surface Point", "Node to Node" };
 
     // tools
     private PathCreationTool pathCreationTool = new();
-
+    private PathDeletionTool pathDeletionTool = new();
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -18,6 +19,7 @@ public class GraphInteraction : EditorWindow
 
     private void OnGUI()
     {
+        // path creation section
         DrawPathCreationDropdown();
         DrawAddPathButton();
 
@@ -28,15 +30,31 @@ public class GraphInteraction : EditorWindow
 
         if (RuntimeInteractionData.IsCreatingPath)
         {
-            DrawCancelButton();
+            DrawCancelPathCreationButton();
         }
 
+        // path deletion section
         DrawDeletePathButton();
+
+        if (RuntimeInteractionData.IsDeletingPath)
+        {
+            DrawCancelPathDeletionButton();
+        }
     }
 
     private void DrawPathCreationDropdown()
     {
-        RuntimeInteractionData.pathCreationType = (RuntimeInteractionData.PathCreationType) EditorGUILayout.Popup("Path Creation Type", (int) RuntimeInteractionData.pathCreationType, pathCreationOptions);
+        if (RuntimeSettingsData.onSurface)
+        {
+            RuntimeInteractionData.pathCreationType = 
+                (RuntimeInteractionData.PathCreationType)EditorGUILayout.Popup("Path Creation Type", (int)RuntimeInteractionData.pathCreationType, pathCreationOptionsOnSurface);
+        }
+        else
+        {
+            RuntimeInteractionData.pathCreationType = 
+                (RuntimeInteractionData.PathCreationType)EditorGUILayout.Popup("Path Creation Type", (int)RuntimeInteractionData.pathCreationType, pathCreationOptionsNotOnSurface);
+
+        }
     }
 
     private void DrawAddPathButton()
@@ -61,7 +79,7 @@ public class GraphInteraction : EditorWindow
         }
     }
 
-    private void DrawCancelButton()
+    private void DrawCancelPathCreationButton()
     {
         if (GUILayout.Button("Cancel"))
         {
@@ -78,7 +96,21 @@ public class GraphInteraction : EditorWindow
     {
         if(GUILayout.Button("Delete Path"))
         {
+            // debugging
+            Debug.Log("path deletion started");
 
+            pathDeletionTool.StartInteraction();
+        }
+    }
+
+    private void DrawCancelPathDeletionButton()
+    {
+        if (GUILayout.Button("Cancel"))
+        {
+            // debugging
+            Debug.Log("path deletion ended");
+
+            pathDeletionTool.StopInteraction();
         }
     }
 }
