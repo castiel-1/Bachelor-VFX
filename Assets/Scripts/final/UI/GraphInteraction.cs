@@ -10,6 +10,7 @@ public class GraphInteraction : EditorWindow
     // tools
     private PathCreationTool pathCreationTool = new();
     private PathDeletionTool pathDeletionTool = new();
+    private PathEditingTool pathEditingTool = new();
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -39,6 +40,15 @@ public class GraphInteraction : EditorWindow
         if (RuntimeInteractionData.IsDeletingPath)
         {
             DrawCancelPathDeletionButton();
+        }
+
+        // path editing
+        DrawPathEditingButton();
+
+        if (RuntimeInteractionData.IsEditingPath)
+        {
+            DrawAddControlPointButton();
+            DrawCancelPathEditingButton();
         }
     }
 
@@ -111,6 +121,39 @@ public class GraphInteraction : EditorWindow
             Debug.Log("path deletion ended");
 
             pathDeletionTool.StopInteraction();
+        }
+    }
+
+    private void DrawPathEditingButton()
+    {
+        if(GUILayout.Button("Edit Path"))
+        {
+            // debugging
+            Debug.Log("path editing started");
+
+            pathEditingTool.StartInteraction();
+        }
+    }
+
+    private void DrawAddControlPointButton()
+    {
+        if(GUILayout.Button("Add Control Point"))
+        {
+            // debugging
+            Debug.Log("control point button pressed");
+
+
+        }
+    }
+
+    private void DrawCancelPathEditingButton()
+    {
+        if (GUILayout.Button("Cancel"))
+        {
+            // debugging
+            Debug.Log("cancel edit path button pressed");
+
+            pathEditingTool.StopInteraction();
         }
     }
 }
