@@ -1,26 +1,24 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class SplineCalculator
 {
     // 4 control points known
-    public static Vector3[] CalculateSplinePoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, int numSamplePoints)
+    public static List<Vector3> CalculateSplinePoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, int numSamplePoints)
     {
-        Vector3[] splinePoints = new Vector3[numSamplePoints];
+        List<Vector3> splinePoints = new ();
 
-        int index = 0;
-
-        for (int j = 0; j < numSamplePoints; j++)
+        for (int i = 0; i < numSamplePoints; i++)
         {
-            float t = j / (float)numSamplePoints; // not numSamplePoints-1 because we exclude p2, so we can put the next sentence's first letter there
-            splinePoints[index] = GetCatmullRomPoint(p0, p1, p2, p3, t);
-            index++;
+            float t = i / (float)numSamplePoints; // not numSamplePoints-1 because we exclude p2, so we can put the next sentence's first letter there
+            splinePoints.Add(GetCatmullRomPoint(p0, p1, p2, p3, t));
         }
 
         return splinePoints;
     }
 
     // 2 control points known
-    public static Vector3[] CalculateSplinePoints(Vector3 p1, Vector3 p2, int numSamplePoints)
+    public static List<Vector3> CalculateSplinePoints(Vector3 p1, Vector3 p2, int numSamplePoints)
     {
         Vector3 p0 = p1 + (p1 - p2);
         Vector3 p3 = p2 + (p2 - p1);

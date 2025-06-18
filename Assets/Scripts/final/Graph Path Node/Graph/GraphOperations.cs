@@ -26,7 +26,7 @@ public static class GraphOperations
         Debug.Log("path created");
 
         Path nextPath = new Path(startNode, endNode, numPathPoints);
-        nextPath.pathPoints = SplineCalculator.CalculateSplinePoints(startNode.Position, endNode.Position, numPathPoints);
+        nextPath.pathPoints = SplineCalculator.CalculateSplinePoints(startNode.Position, endNode.Position, numPathPoints).ToArray();
         graph.Paths.Add(nextPath);
 
         startNode.Outgoing.Add(endNode.ID);
