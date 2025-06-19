@@ -15,5 +15,6 @@ public class Path
         StartNode = startNode;
         EndNode = endNode;
         pathPoints = new Vector3[numPathPoints];
+        Handles = new List<Handle>();
     }
 }

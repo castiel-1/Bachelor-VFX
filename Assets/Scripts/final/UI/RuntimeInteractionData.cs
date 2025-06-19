@@ -13,4 +13,6 @@ public static class RuntimeInteractionData
     public static bool IsDeletingPath = false;
 
     public static bool IsEditingPath = false;
+
+    public static bool IsCreatingHandle = false;
 }

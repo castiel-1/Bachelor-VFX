@@ -1,3 +1,4 @@
+using Obi;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ public class GraphInteraction : EditorWindow
     // tools
     private PathCreationTool pathCreationTool = new();
     private PathDeletionTool pathDeletionTool = new();
-    private PathEditingTool pathEditingTool = new();
+    private HandleCreationTool handleCreationTool = new();
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -20,36 +21,68 @@ public class GraphInteraction : EditorWindow
 
     private void OnGUI()
     {
-        // path creation section
-        DrawPathCreationDropdown();
-        DrawAddPathButton();
+        // path creation
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Path Creation", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical("box");
 
-        if (RuntimeInteractionData.AskForCursorPositionConfirmation)
         {
-            DrawCursorPositionConfirmationButton();
-        }
+            DrawPathCreationDropdown();
+            DrawAddPathButton();
 
-        if (RuntimeInteractionData.IsCreatingPath)
+            if (RuntimeInteractionData.AskForCursorPositionConfirmation)
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(40);
+                    DrawCursorPositionConfirmationButton();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
+            if (RuntimeInteractionData.IsCreatingPath)
+            {
+                DrawCancelPathCreationButton();
+            }
+        }
+        EditorGUILayout.EndVertical();
+
+        // path deletion
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Path Deletion", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical("box");
+
         {
-            DrawCancelPathCreationButton();
-        }
+            DrawDeletePathButton();
 
-        // path deletion section
-        DrawDeletePathButton();
-
-        if (RuntimeInteractionData.IsDeletingPath)
-        {
-            DrawCancelPathDeletionButton();
+            if (RuntimeInteractionData.IsDeletingPath)
+            {
+                DrawCancelPathDeletionButton();
+            }
         }
+        EditorGUILayout.EndVertical();
 
         // path editing
-        DrawPathEditingButton();
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Path Editing", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical("box");
 
-        if (RuntimeInteractionData.IsEditingPath)
         {
-            DrawAddControlPointButton();
-            DrawCancelPathEditingButton();
+            DrawPathEditingButton();
+
+            if (RuntimeInteractionData.IsEditingPath)
+            {
+                EditorGUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(40);
+                    DrawAddHandleButton();
+                }
+                EditorGUILayout.EndHorizontal();
+
+                DrawCancelPathEditingButton();
+            }
         }
+        EditorGUILayout.EndVertical();
     }
 
     private void DrawPathCreationDropdown()
@@ -131,18 +164,18 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("path editing started");
 
-            pathEditingTool.StartInteraction();
+            RuntimeInteractionData.IsEditingPath = true;
         }
     }
 
-    private void DrawAddControlPointButton()
+    private void DrawAddHandleButton()
     {
-        if(GUILayout.Button("Add Control Point"))
+        if (GUILayout.Button("Add Handle"))
         {
             // debugging
-            Debug.Log("control point button pressed");
+            Debug.Log("add handle button pressed");
 
-
+            handleCreationTool.StartInteraction();
         }
     }
 
@@ -153,7 +186,9 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("cancel edit path button pressed");
 
-            pathEditingTool.StopInteraction();
+            RuntimeInteractionData.IsEditingPath = false;
         }
     }
+
+  
 }

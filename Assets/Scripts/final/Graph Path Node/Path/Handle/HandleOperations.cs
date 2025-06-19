@@ -9,6 +9,9 @@ public static class HandleOperations
 
     public static Handle CreateHandle(Vector3 position, Path path)
     {
+        // debugging
+        Debug.Log("create handle called");
+
         Handle nextHandle = new Handle(position);
 
         path.Handles.Add(nextHandle);
