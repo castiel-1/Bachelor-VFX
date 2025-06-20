@@ -12,6 +12,15 @@ public class GraphInteraction : EditorWindow
     private PathCreationTool pathCreationTool = new();
     private PathDeletionTool pathDeletionTool = new();
     private HandleCreationTool handleCreationTool = new();
+    private HandleDeletionTool handleDeletionTool = new();
+
+    // handle displayer
+    private HandleDisplayer handleDisplayer;
+
+    private void OnEnable()
+    {
+        handleDisplayer = Object.FindFirstObjectByType<HandleDisplayer>();
+    }
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -28,7 +37,9 @@ public class GraphInteraction : EditorWindow
 
         {
             DrawPathCreationDropdown();
-            DrawAddPathButton();
+
+            // add path button
+            DrawCreatePathButton();
 
             if (RuntimeInteractionData.AskForCursorPositionConfirmation)
             {
@@ -42,6 +53,7 @@ public class GraphInteraction : EditorWindow
 
             if (RuntimeInteractionData.IsCreatingPath)
             {
+                // cancel path creation button
                 DrawCancelPathCreationButton();
             }
         }
@@ -53,11 +65,13 @@ public class GraphInteraction : EditorWindow
         EditorGUILayout.BeginVertical("box");
 
         {
+            // path deletion button
             DrawDeletePathButton();
 
             if (RuntimeInteractionData.IsDeletingPath)
             {
-                DrawCancelPathDeletionButton();
+                // cancel path deletion button
+                DrawCancelToolUseButton();
             }
         }
         EditorGUILayout.EndVertical();
@@ -68,6 +82,7 @@ public class GraphInteraction : EditorWindow
         EditorGUILayout.BeginVertical("box");
 
         {
+            // path editing button
             DrawPathEditingButton();
 
             if (RuntimeInteractionData.IsEditingPath)
@@ -75,10 +90,46 @@ public class GraphInteraction : EditorWindow
                 EditorGUILayout.BeginHorizontal();
                 {
                     GUILayout.Space(40);
+
+                    // add handle button
                     DrawAddHandleButton();
                 }
                 EditorGUILayout.EndHorizontal();
 
+                if (RuntimeInteractionData.IsCreatingHandle)
+                {
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Space(40);
+
+                        // cancel handle creation button
+                        DrawCancelToolUseButton();
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+
+                EditorGUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(40);
+
+                    // handle deletion button
+                    DrawDeleteHandleButton();
+                }
+                EditorGUILayout.EndHorizontal();
+
+                if (RuntimeInteractionData.IsDeletingHandle)
+                {
+                    GUILayout.BeginHorizontal();
+                    {
+                        GUILayout.Space(40);
+
+                        // cancel handle deletion button
+                        DrawCancelToolUseButton();
+                    }
+                    GUILayout.EndHorizontal();
+                }
+
+                // cancel path editing button
                 DrawCancelPathEditingButton();
             }
         }
@@ -100,11 +151,11 @@ public class GraphInteraction : EditorWindow
         }
     }
 
-    private void DrawAddPathButton()
+    private void DrawCreatePathButton()
     {
         if(GUILayout.Button("Create New Path"))
         {
-            pathCreationTool.StartInteraction();
+            ToolManager.ActivateTool(pathCreationTool);
             Debug.Log("path creation started, button pressed");
         }
     }
@@ -126,7 +177,7 @@ public class GraphInteraction : EditorWindow
     {
         if (GUILayout.Button("Cancel"))
         {
-            pathCreationTool.StopInteraction();
+            ToolManager.DeactivateTool();
 
             // hide cursor position confirmation button again
             RuntimeInteractionData.AskForCursorPositionConfirmation = false;
@@ -142,18 +193,7 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("path deletion started");
 
-            pathDeletionTool.StartInteraction();
-        }
-    }
-
-    private void DrawCancelPathDeletionButton()
-    {
-        if (GUILayout.Button("Cancel"))
-        {
-            // debugging
-            Debug.Log("path deletion ended");
-
-            pathDeletionTool.StopInteraction();
+            ToolManager.ActivateTool(pathDeletionTool);
         }
     }
 
@@ -165,6 +205,7 @@ public class GraphInteraction : EditorWindow
             Debug.Log("path editing started");
 
             RuntimeInteractionData.IsEditingPath = true;
+            handleDisplayer.ActivateAllHandles();
         }
     }
 
@@ -175,7 +216,7 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("add handle button pressed");
 
-            handleCreationTool.StartInteraction();
+            ToolManager.ActivateTool(handleCreationTool);
         }
     }
 
@@ -187,8 +228,29 @@ public class GraphInteraction : EditorWindow
             Debug.Log("cancel edit path button pressed");
 
             RuntimeInteractionData.IsEditingPath = false;
+            handleDisplayer.DeactivateAllHandles();
         }
     }
 
-  
+    private void DrawDeleteHandleButton()
+    {
+        if (GUILayout.Button("Delete Handle"))
+        {
+            // debugging
+            Debug.Log("delete handle button pressed");
+
+            ToolManager.ActivateTool(handleDeletionTool);
+        }
+    }
+
+    private void DrawCancelToolUseButton()
+    {
+        if (GUILayout.Button("Cancel"))
+        {
+            // debugging
+            Debug.Log("cancel tool use button pressed");
+
+            ToolManager.DeactivateTool();
+        }
+    }
 }

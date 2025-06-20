@@ -40,12 +40,6 @@ public class PathDeletionTool : ISceneInteractionTool
                 Handles.DrawWireCube(bounds.center, bounds.size);
             }
         }
-        else
-        {
-            Handles.color = UnityEngine.Color.red;
-            Bounds bounds = hoveredObject.GetComponent<Collider>().bounds;
-            Handles.DrawWireCube(bounds.center, bounds.size);
-        }
 
     }
 

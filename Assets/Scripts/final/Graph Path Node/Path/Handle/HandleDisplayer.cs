@@ -26,7 +26,7 @@ public class HandleDisplayer : MonoBehaviour
         Debug.Log("Spawn Handle called");
 
         GameObject handleGO = Instantiate(handlePrefab, handle.Position, Quaternion.identity);
-        handleGO.AddComponent<HandleComponent>().Initialize(path);
+        handleGO.AddComponent<HandleComponent>().Initialize(path, handle);
 
         handleObjects[handle] = handleGO;
     }
@@ -41,4 +41,27 @@ public class HandleDisplayer : MonoBehaviour
 
         handleObjects.Remove(handle);
     }
+
+    public void DeactivateAllHandles()
+    {
+        // debugging
+        Debug.Log("disabling all handles");
+
+        foreach(GameObject handleObject in handleObjects.Values)
+        {
+            handleObject.SetActive(false);
+        }
+    }
+
+    public void ActivateAllHandles()
+    {
+        // debugging
+        Debug.Log("enabling all handles");
+
+        foreach (GameObject handleObject in handleObjects.Values)
+        {
+            handleObject.SetActive(true);
+        }
+    }
+
 }

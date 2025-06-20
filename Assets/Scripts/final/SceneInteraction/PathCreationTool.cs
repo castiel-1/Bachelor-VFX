@@ -42,9 +42,12 @@ public class PathCreationTool : ISceneInteractionTool
 
         hoveredObject = hitInfo.collider.gameObject;
 
-        Handles.color = Color.red;
-        Bounds bounds = hoveredObject.GetComponent<Collider>().bounds;
-        Handles.DrawWireCube(bounds.center, bounds.size);
+        if (hoveredObject.GetComponent<NodeComponent>())
+        {
+            Handles.color = Color.red;
+            Bounds bounds = hoveredObject.GetComponent<Collider>().bounds;
+            Handles.DrawWireCube(bounds.center, bounds.size);
+        }
     }
 
     // returns true if left click should be used (e.use), false if not
@@ -56,10 +59,23 @@ public class PathCreationTool : ISceneInteractionTool
             return false;
         }
 
-        int numberOfPathPoints = RandomizeNumberOfPathPoints(RuntimeSettingsData.numberOfLettersMin, RuntimeSettingsData.numberOfLettersMax);
-        selectedStrategy.HandleClick(hitInfo, numberOfPathPoints);
+        bool useLeftClick = false;
 
-        return true;
+        GameObject hitObject = hitInfo.collider.gameObject;
+        NodeComponent nodeComponent = hitObject.GetComponent<NodeComponent>();
+
+        if (nodeComponent)
+        {
+            useLeftClick = true;
+            int numberOfPathPoints = RandomizeNumberOfPathPoints(RuntimeSettingsData.numberOfLettersMin, RuntimeSettingsData.numberOfLettersMax);
+            selectedStrategy.HandleClick(hitInfo, numberOfPathPoints);
+        }
+        else
+        {
+            useLeftClick = false;
+        }
+
+        return useLeftClick;
     }
     public void OnMiss()
     {

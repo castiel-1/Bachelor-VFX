@@ -25,6 +25,9 @@ public static class HandleOperations
 
     public static void DeleteHandle(Handle handle, Path path)
     {
+        // debugging
+        Debug.Log("delete handle called");
+
         path.Handles.Remove(handle);
 
         UpdateSpline(path);
