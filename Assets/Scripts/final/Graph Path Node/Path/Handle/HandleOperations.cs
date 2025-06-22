@@ -1,22 +1,72 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
 
 public static class HandleOperations
 {
     public static event Action<Handle, Path> onHandleCreated;
     public static event Action<Handle> onHandleDestroyed;
+    public static event Action<Path> onSplineUpdated;
 
-    public static Handle CreateHandle(Vector3 position, Path path)
+    public static Handle CreateHandle(Vector3 position, Path path, int pathPointIndex, bool updateSpline = true)
     {
         // debugging
         Debug.Log("create handle called");
 
         Handle nextHandle = new Handle(position);
 
-        path.Handles.Add(nextHandle);
+        // when we have no handles or one we are adding the start and end point handle which can be simplified
+        if(path.Handles.Count < 2)
+        {
+            path.Handles.Add(nextHandle);
+        }
+        else
+        {
+            // find where to insert the handle
+            int numSegments = path.Handles.Count - 1;
+            int numPathPoints = path.pathPoints.Length;
+            int numPointsPerSegment = numPathPoints / numSegments;
+            int leftOverPoints = numPathPoints % numSegments;
+            int runningIndex = 0;
 
-        UpdateSpline(path);
+            // for each segment
+            for (int i = 0; i < numSegments; i++)
+            {
+                // figure out how many points we have in this segment
+                int currentSegmentPoints = numPointsPerSegment;
+
+                if(leftOverPoints > 0)
+                {
+                    numPointsPerSegment++;
+                    leftOverPoints--;
+                }
+
+                // add the numberOfPoitns in this segment to the beginning of this segment (e.g. if we are in segment 2 and we've already had 5 points, it's 5 + ...)
+                int currentStartIndex = runningIndex;
+                int currentEndIndex = runningIndex + currentSegmentPoints;
+
+                // if the index of the handle we are inserting is between the start and end of this segment...
+                if(pathPointIndex >= currentStartIndex && pathPointIndex < currentEndIndex)
+                {
+                    path.Handles.Insert(i + 1, nextHandle);
+                    goto Finish;
+                }
+
+                runningIndex = currentEndIndex;
+            }
+
+        }
+   
+        
+        Finish:
+
+        if (updateSpline) // we don't want to update when adding the start and end node
+        {
+            UpdateSpline(path);
+        }
+
+        path.Handles.Add(nextHandle);
 
         onHandleCreated?.Invoke(nextHandle, path);
 
@@ -37,7 +87,6 @@ public static class HandleOperations
 
     public static void UpdateSpline(Path path)
     {
-        // get the path handle belongs to, get all handles, recalculate
         List<Handle> handles = path.Handles;
         int numHandles = handles.Count;
         int numPathPoints = path.pathPoints.Length;
@@ -98,5 +147,7 @@ public static class HandleOperations
 
         // update path points
         path.pathPoints = updatedPathPoints.ToArray();
+
+        onSplineUpdated?.Invoke(path);
     }
 }

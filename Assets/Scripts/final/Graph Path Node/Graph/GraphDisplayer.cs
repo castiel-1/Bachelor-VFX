@@ -28,6 +28,8 @@ public class GraphDisplayer : MonoBehaviour
         graph.OnNodeDeleted += DespawnNode;
         graph.OnPathCreated += SpawnPath;
         graph.OnPathDeleted += DespawnPath;
+
+        HandleOperations.onSplineUpdated += UpdatePathPoints;
     }
     private void OnDisable()
     {
@@ -35,6 +37,8 @@ public class GraphDisplayer : MonoBehaviour
         graph.OnNodeDeleted -= DespawnNode;
         graph.OnPathCreated -= SpawnPath;
         graph.OnPathDeleted -= DespawnPath;
+
+        HandleOperations.onSplineUpdated -= UpdatePathPoints;
     }
 
     public void SpawnPath(Path path)
@@ -49,10 +53,10 @@ public class GraphDisplayer : MonoBehaviour
 
         List<GameObject> pointObjects = new();
 
-        foreach (Vector3 point in path.pathPoints)
+        for(int i = 0; i < path.pathPoints.Length; i++)
         {
-            GameObject nextPoint = Instantiate(pointPrefab, point, Quaternion.identity, pathParent.transform);
-            nextPoint.AddComponent<PathPointComponent>().Initialize(path, graph);
+            GameObject nextPoint = Instantiate(pointPrefab, path.pathPoints[i], Quaternion.identity, pathParent.transform);
+            nextPoint.AddComponent<PathPointComponent>().Initialize(path, graph, i);
 
             pointObjects.Add(nextPoint);
         }
@@ -100,6 +104,16 @@ public class GraphDisplayer : MonoBehaviour
         nodeObjects.Remove(node);
     }
 
+    public void UpdatePathPoints(Path path)
+    {
+        List<GameObject> pathPoints = pathPointObjects[path];
+
+        for(int i = 0;  i < pathPoints.Count; i++)
+        {
+            pathPoints[i].transform.position = path.pathPoints[i];
+        }
+    }
+
     public void DisplayLines(Vector3[] points)
     {
         if (lineRenderer == null)
@@ -117,6 +131,4 @@ public class GraphDisplayer : MonoBehaviour
         lineRenderer.positionCount = points.Length;
         lineRenderer.SetPositions(points);
     }
-
-
 }

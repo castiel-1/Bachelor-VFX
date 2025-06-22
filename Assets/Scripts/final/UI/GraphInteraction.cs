@@ -17,10 +17,7 @@ public class GraphInteraction : EditorWindow
     // handle displayer
     private HandleDisplayer handleDisplayer;
 
-    private void OnEnable()
-    {
-        handleDisplayer = Object.FindFirstObjectByType<HandleDisplayer>();
-    }
+ 
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -227,9 +224,21 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("cancel edit path button pressed");
 
+            handleDisplayer = GetHandleDisplayer();
+
             RuntimeInteractionData.IsEditingPath = false;
             handleDisplayer.DeactivateAllHandles();
         }
+    }
+
+    private HandleDisplayer GetHandleDisplayer()
+    {
+        if (handleDisplayer == null)
+        {
+            handleDisplayer = Object.FindFirstObjectByType<HandleDisplayer>();
+        }
+
+        return handleDisplayer;
     }
 
     private void DrawDeleteHandleButton()
@@ -251,6 +260,15 @@ public class GraphInteraction : EditorWindow
             Debug.Log("cancel tool use button pressed");
 
             ToolManager.DeactivateTool();
+        }
+    }
+
+    private void DrawMoveHandleButton()
+    {
+        if(GUILayout.Button("Move Handle"))
+        {
+            // debugging
+            Debug.Log("move handle button pressed");
         }
     }
 }

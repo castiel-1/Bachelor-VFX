@@ -35,11 +35,12 @@ public class HandleCreationTool : ISceneInteractionTool
         GameObject hitObject = hitInfo.collider.gameObject;
         Vector3 position = hitObject.transform.position;
         PathPointComponent pathPointComp = hitObject.GetComponent<PathPointComponent>();
-        Path path = pathPointComp.Path;
 
         if (pathPointComp)
         {
-            HandleOperations.CreateHandle(position, path);
+            Path path = pathPointComp.Path;
+            int pathPointIndex = pathPointComp.PointIndex;
+            HandleOperations.CreateHandle(position, path, pathPointIndex);
 
             useLeftClick = true;
         }

@@ -33,11 +33,11 @@ public class HandleDeletionTool : ISceneInteractionTool
         bool useLeftClick = false;
         GameObject hitObject = hitInfo.collider.gameObject;
         HandleComponent handleComponent = hitObject.GetComponent<HandleComponent>();
-        Handle handle = handleComponent.Handle;
-        Path path = handleComponent.Path;
 
         if (handleComponent)
-        {
+    {
+            Handle handle = handleComponent.Handle;
+            Path path = handleComponent.Path;
             useLeftClick = true;
             HandleOperations.DeleteHandle(handle, path);
         }

@@ -32,6 +32,10 @@ public static class GraphOperations
         startNode.Outgoing.Add(endNode.ID);
         endNode.Incoming.Add(startNode.ID);
 
+        // add start and end as handles
+        Handle startHandle = HandleOperations.CreateHandle(startNode.Position, nextPath, 0, false);
+        Handle endHandle = HandleOperations.CreateHandle(endNode.Position, nextPath, 1, false);
+
         graph.RaisePathCreated(nextPath);
 
         return nextPath;
