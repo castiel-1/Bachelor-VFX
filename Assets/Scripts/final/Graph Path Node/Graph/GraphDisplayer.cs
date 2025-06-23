@@ -6,6 +6,7 @@ public class GraphDisplayer : MonoBehaviour
 {
     public GameObject pointPrefab;
     public GameObject nodePrefab;
+    public GameObject handlePrefab;
 
     private Graph graph;
 
@@ -16,6 +17,7 @@ public class GraphDisplayer : MonoBehaviour
 
     private Dictionary<Path, GameObject> pathObjects = new();
     private Dictionary<Node, GameObject> nodeObjects = new();
+    private Dictionary<Handle, GameObject> handleOnNodeObjects = new();
 
     private void Awake()
     {
@@ -29,7 +31,10 @@ public class GraphDisplayer : MonoBehaviour
         graph.OnPathCreated += SpawnPath;
         graph.OnPathDeleted += DespawnPath;
 
-        HandleOperations.onSplineUpdated += UpdatePathPoints;
+        HandleOperations.OnHandleOnNodeCreated += SpawnHandleOnNode;
+        HandleOperations.OnHandleOnNodeDestroyed += DespawnHandleOnNode;
+        HandleOperations.OnSplineUpdated += UpdatePathPoints;
+        HandleOperations.OnToggleAllHandles += ToggleHandles;
     }
     private void OnDisable()
     {
@@ -38,7 +43,10 @@ public class GraphDisplayer : MonoBehaviour
         graph.OnPathCreated -= SpawnPath;
         graph.OnPathDeleted -= DespawnPath;
 
-        HandleOperations.onSplineUpdated -= UpdatePathPoints;
+        HandleOperations.OnHandleOnNodeDestroyed -= DespawnHandleOnNode;
+        HandleOperations.OnHandleOnNodeCreated -= SpawnHandleOnNode;
+        HandleOperations.OnSplineUpdated -= UpdatePathPoints;
+        HandleOperations.OnToggleAllHandles -= ToggleHandles;
     }
 
     public void SpawnPath(Path path)
@@ -93,8 +101,23 @@ public class GraphDisplayer : MonoBehaviour
         nodeGO.AddComponent<NodeComponent>().Initialize(node, graph);
         nodeObjects.Add(node, nodeGO);
     }
-    
-    public void DespawnNode(Node node)
+
+    public void SpawnHandleOnNode(Handle handle, Node node)
+    {
+        // debugging
+        Debug.Log("spawn handle on node called");
+
+        GameObject nodeGO = nodeObjects[node];
+
+        GameObject handleGO = Instantiate(handlePrefab, handle.Position, Quaternion.identity, nodeGO.transform);
+        handleGO.AddComponent<HandleOnNodeComponent>().Initialize(node);
+
+        handleGO.SetActive(false);
+
+        handleOnNodeObjects[handle] = handleGO;
+    }
+
+    public void DespawnNode(Node node, Path path)
     {
         // debugging
         Debug.Log("node despawned");
@@ -102,6 +125,13 @@ public class GraphDisplayer : MonoBehaviour
         Destroy(nodeObjects[node]);
 
         nodeObjects.Remove(node);
+
+        HandleOperations.DeleteHandleOnNode(node, path);
+    }
+
+    public void DespawnHandleOnNode(Handle handle)
+    {
+        handleOnNodeObjects.Remove(handle);
     }
 
     public void UpdatePathPoints(Path path)
@@ -130,5 +160,23 @@ public class GraphDisplayer : MonoBehaviour
 
         lineRenderer.positionCount = points.Length;
         lineRenderer.SetPositions(points);
+    }
+
+    public void ToggleHandles(bool active)
+    {
+        if (active)
+        {
+            foreach (GameObject handle in handleOnNodeObjects.Values)
+            {
+                handle.SetActive(true);
+            }
+        }
+        else
+        {
+            foreach (GameObject handle in handleOnNodeObjects.Values)
+            {
+                handle.SetActive(false);
+            }
+        }
     }
 }

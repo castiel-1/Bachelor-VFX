@@ -15,7 +15,7 @@ public class GraphInteraction : EditorWindow
     private HandleDeletionTool handleDeletionTool = new();
 
     // handle displayer
-    private HandleDisplayer handleDisplayer;
+    private PathHandleDisplayer handleDisplayer;
 
  
 
@@ -202,7 +202,20 @@ public class GraphInteraction : EditorWindow
             Debug.Log("path editing started");
 
             RuntimeInteractionData.IsEditingPath = true;
-            handleDisplayer.ActivateAllHandles();
+
+            HandleOperations.ToggleAllHandles(true);
+        }
+    }
+    private void DrawCancelPathEditingButton()
+    {
+        if (GUILayout.Button("Cancel"))
+        {
+            // debugging
+            Debug.Log("cancel edit path button pressed");
+
+            RuntimeInteractionData.IsEditingPath = false;
+
+            HandleOperations.ToggleAllHandles(false);
         }
     }
 
@@ -215,30 +228,6 @@ public class GraphInteraction : EditorWindow
 
             ToolManager.ActivateTool(handleCreationTool);
         }
-    }
-
-    private void DrawCancelPathEditingButton()
-    {
-        if (GUILayout.Button("Cancel"))
-        {
-            // debugging
-            Debug.Log("cancel edit path button pressed");
-
-            handleDisplayer = GetHandleDisplayer();
-
-            RuntimeInteractionData.IsEditingPath = false;
-            handleDisplayer.DeactivateAllHandles();
-        }
-    }
-
-    private HandleDisplayer GetHandleDisplayer()
-    {
-        if (handleDisplayer == null)
-        {
-            handleDisplayer = Object.FindFirstObjectByType<HandleDisplayer>();
-        }
-
-        return handleDisplayer;
     }
 
     private void DrawDeleteHandleButton()

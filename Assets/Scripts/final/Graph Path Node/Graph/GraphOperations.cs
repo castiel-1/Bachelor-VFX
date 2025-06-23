@@ -29,12 +29,12 @@ public static class GraphOperations
         nextPath.pathPoints = SplineCalculator.CalculateSplinePoints(startNode.Position, endNode.Position, numPathPoints).ToArray();
         graph.Paths.Add(nextPath);
 
-        startNode.Outgoing.Add(endNode.ID);
-        endNode.Incoming.Add(startNode.ID);
+        startNode.Outgoing.Add(nextPath);
+        endNode.Incoming.Add(nextPath);
 
         // add start and end as handles
-        Handle startHandle = HandleOperations.CreateHandle(startNode.Position, nextPath, 0, false);
-        Handle endHandle = HandleOperations.CreateHandle(endNode.Position, nextPath, 1, false);
+        Handle startHandle = HandleOperations.CreateHandleOnNode(startNode, nextPath, true);
+        Handle endHandle = HandleOperations.CreateHandleOnNode(endNode, nextPath, false);
 
         graph.RaisePathCreated(nextPath);
 
@@ -50,30 +50,31 @@ public static class GraphOperations
         Node endNode = path.EndNode;
 
         graph.Paths.Remove(path);
-        startNode.Outgoing.Remove(endNode.ID);
-        endNode.Incoming.Remove(startNode.ID);
+        startNode.Outgoing.Remove(path);
+        endNode.Incoming.Remove(path);
 
         if (startNode.Outgoing.Count == 0 && startNode.Incoming.Count == 0)
         {
-            DeleteNode(graph, startNode);
+            DeleteNode(graph, startNode, path);
         }
 
         if (endNode.Outgoing.Count == 0 && endNode.Incoming.Count == 0)
         {
-            DeleteNode(graph,endNode);
+            DeleteNode(graph,endNode, path);
         }
 
         graph.RaisePathDeleted(path);
     }
 
-    private static void DeleteNode(Graph graph, Node node)
+    // only gets called when the node is owned by one path which is getting deleted
+    private static void DeleteNode(Graph graph, Node node, Path path)
     {
         // debugging
         Debug.Log("node deleted");
 
         graph.Nodes.Remove(node);
 
-        graph.RaiseNodeDeleted(node);
+        graph.RaiseNodeDeleted(node, path);
     }
 
     public static void TraverseBackwards(Graph graph, Node currentNode, int depth, int maxDepth, List<Path> currentBranch, List<List<Path>> allBranches)
@@ -86,10 +87,9 @@ public static class GraphOperations
             return;
         }
 
-        foreach (int incomingNodeID in currentNode.Incoming)
+        foreach (Path incomingPath in currentNode.Incoming)
         {
-            Node incomingNode = graph.Nodes.First(n => n.ID == incomingNodeID);
-            Path incomingPath = graph.Paths.First(p => p.StartNode == incomingNode && p.EndNode == currentNode);
+            Node incomingNode = incomingPath.StartNode;
 
             currentBranch.Add(incomingPath);
 

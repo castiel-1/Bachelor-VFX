@@ -1562,7 +1562,7 @@ GameObject:
   - component: {fileID: 1796805693}
   - component: {fileID: 1796805694}
   m_Layer: 0
-  m_Name: HandleDisplayerScript
+  m_Name: PathHandleDisplayerScript
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1938,6 +1938,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointPrefab: {fileID: 7232164320203899052, guid: 48b545218be0267458e154e287eb6825, type: 3}
   nodePrefab: {fileID: 0}
+  handlePrefab: {fileID: 0}
 --- !u!4 &1923487586
 Transform:
   m_ObjectHideFlags: 0

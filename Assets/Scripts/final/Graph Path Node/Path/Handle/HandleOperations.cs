@@ -5,75 +5,100 @@ using UnityEditor;
 
 public static class HandleOperations
 {
-    public static event Action<Handle, Path> onHandleCreated;
-    public static event Action<Handle> onHandleDestroyed;
-    public static event Action<Path> onSplineUpdated;
+    public static event Action<Handle, Path> OnHandleOnPathCreated;
+    public static event Action<Handle, Node> OnHandleOnNodeCreated;
+    public static event Action<Handle> OnHandleOnNodeDestroyed;
+    public static event Action<Handle> OnHandleOnPathDestroyed;
+    public static event Action<bool> OnToggleAllHandles;
+    public static event Action<Path> OnSplineUpdated;
 
-    public static Handle CreateHandle(Vector3 position, Path path, int pathPointIndex, bool updateSpline = true)
+    private static Dictionary<Node, Handle> nodeHandleDict = new();
+
+    public static Handle CreateHandleOnPath(Vector3 position, Path path, int pathPointIndex)
     {
         // debugging
-        Debug.Log("create handle called");
+        Debug.Log("create handle on path called");
 
         Handle nextHandle = new Handle(position);
 
-        // when we have no handles or one we are adding the start and end point handle which can be simplified
-        if(path.Handles.Count < 2)
-        {
-            path.Handles.Add(nextHandle);
-        }
-        else
-        {
-            // find where to insert the handle
-            int numSegments = path.Handles.Count - 1;
-            int numPathPoints = path.pathPoints.Length;
-            int numPointsPerSegment = numPathPoints / numSegments;
-            int leftOverPoints = numPathPoints % numSegments;
-            int runningIndex = 0;
+        // find where to insert the handle
+        int numSegments = path.Handles.Count - 1;
+        int numPathPoints = path.pathPoints.Length;
+        int numPointsPerSegment = numPathPoints / numSegments;
+        int leftOverPoints = numPathPoints % numSegments;
+        int runningIndex = 0;
 
-            // for each segment
-            for (int i = 0; i < numSegments; i++)
+        // for each segment
+        for (int i = 0; i < numSegments; i++)
+        {
+            // figure out how many points we have in this segment
+            int currentSegmentPoints = numPointsPerSegment;
+
+            if(leftOverPoints > 0)
             {
-                // figure out how many points we have in this segment
-                int currentSegmentPoints = numPointsPerSegment;
-
-                if(leftOverPoints > 0)
-                {
-                    numPointsPerSegment++;
-                    leftOverPoints--;
-                }
-
-                // add the numberOfPoitns in this segment to the beginning of this segment (e.g. if we are in segment 2 and we've already had 5 points, it's 5 + ...)
-                int currentStartIndex = runningIndex;
-                int currentEndIndex = runningIndex + currentSegmentPoints;
-
-                // if the index of the handle we are inserting is between the start and end of this segment...
-                if(pathPointIndex >= currentStartIndex && pathPointIndex < currentEndIndex)
-                {
-                    path.Handles.Insert(i + 1, nextHandle);
-                    goto Finish;
-                }
-
-                runningIndex = currentEndIndex;
+                numPointsPerSegment++;
+                leftOverPoints--;
             }
 
+            // add the numberOfPoitns in this segment to the beginning of this segment (e.g. if we are in segment 2 and we've already had 5 points, it's 5 + ...)
+            int currentStartIndex = runningIndex;
+            int currentEndIndex = runningIndex + currentSegmentPoints;
+
+            // if the index of the handle we are inserting is between the start and end of this segment...
+            if(pathPointIndex >= currentStartIndex && pathPointIndex < currentEndIndex)
+            {
+                path.Handles.Insert(i + 1, nextHandle);
+                goto Finish;
+            }
+
+            runningIndex = currentEndIndex;
         }
    
         
         Finish:
 
-        if (updateSpline) // we don't want to update when adding the start and end node
-        {
-            UpdateSpline(path);
-        }
+        UpdateSpline(path);
 
-        path.Handles.Add(nextHandle);
-
-        onHandleCreated?.Invoke(nextHandle, path);
+        OnHandleOnPathCreated?.Invoke(nextHandle, path);
 
         return nextHandle;
     }
 
-    public static void DeleteHandle(Handle handle, Path path)
+    public static Handle CreateHandleOnNode(Node node, Path path, bool isStartNode)
+    {
+        // debugging
+        Debug.Log("create handle on node called");
+
+        if(nodeHandleDict.TryGetValue(node, out Handle handleAtNode))
+        {
+            if (isStartNode)
+            {
+                path.Handles.Insert(0, handleAtNode);
+            }
+            else
+            {
+                path.Handles.Add(handleAtNode);
+            }
+
+            return handleAtNode;
+        }
+
+        Handle nextHandle = new Handle(node.Position);
+        nodeHandleDict[node] = nextHandle;
+        if (isStartNode)
+        {
+            path.Handles.Insert(0, nextHandle);
+        }
+        else
+        {
+            path.Handles.Add(nextHandle);
+        }
+
+        OnHandleOnNodeCreated?.Invoke(nextHandle, node);
+        return nextHandle;
+    }
+
+    public static void DeleteHandleOnPath(Handle handle, Path path)
     {
         // debugging
         Debug.Log("delete handle called");
@@ -82,7 +107,15 @@ public static class HandleOperations
 
         UpdateSpline(path);
 
-        onHandleDestroyed?.Invoke(handle);
+        OnHandleOnPathDestroyed?.Invoke(handle);
+    }
+
+    public static void DeleteHandleOnNode(Node node, Path path)
+    {
+        Handle handle = nodeHandleDict[node];
+        path.Handles.Remove(handle);
+
+        OnHandleOnNodeDestroyed?.Invoke(handle);
     }
 
     public static void UpdateSpline(Path path)
@@ -132,7 +165,7 @@ public static class HandleOperations
             }
 
             // distribute leftover points
-            if(leftOverPoints != 0)
+            if(leftOverPoints > 0)
             {
                 currentPointsInSegment += 1;
                 leftOverPoints -= 1;
@@ -148,6 +181,11 @@ public static class HandleOperations
         // update path points
         path.pathPoints = updatedPathPoints.ToArray();
 
-        onSplineUpdated?.Invoke(path);
+        OnSplineUpdated?.Invoke(path);
+    }
+
+    public static void ToggleAllHandles(bool active)
+    {
+        OnToggleAllHandles?.Invoke(active);
     }
 }

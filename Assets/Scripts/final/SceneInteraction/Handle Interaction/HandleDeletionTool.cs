@@ -21,7 +21,7 @@ public class HandleDeletionTool : ISceneInteractionTool
     {
         hoveredObject = hitInfo.collider.gameObject;
 
-        if (hoveredObject.GetComponent<HandleComponent>())
+        if (hoveredObject.GetComponent<HandleOnPathComponent>())
         {
             Bounds bounds = hoveredObject.GetComponent<Collider>().bounds;
             Handles.DrawWireCube(bounds.center, bounds.size);
@@ -32,14 +32,14 @@ public class HandleDeletionTool : ISceneInteractionTool
     {
         bool useLeftClick = false;
         GameObject hitObject = hitInfo.collider.gameObject;
-        HandleComponent handleComponent = hitObject.GetComponent<HandleComponent>();
+        HandleOnPathComponent handleComponent = hitObject.GetComponent<HandleOnPathComponent>();
 
         if (handleComponent)
     {
             Handle handle = handleComponent.Handle;
             Path path = handleComponent.Path;
             useLeftClick = true;
-            HandleOperations.DeleteHandle(handle, path);
+            HandleOperations.DeleteHandleOnPath(handle, path);
         }
         else
         {

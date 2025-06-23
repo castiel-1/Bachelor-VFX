@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HandleComponent : MonoBehaviour
+public class HandleOnPathComponent : MonoBehaviour
 {
     public Path Path { get; private set; }
     public Handle Handle { get; private set; }

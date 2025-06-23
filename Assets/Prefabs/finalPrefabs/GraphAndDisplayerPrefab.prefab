@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointPrefab: {fileID: 7232164320203899052, guid: 48b545218be0267458e154e287eb6825, type: 3}
   nodePrefab: {fileID: 7232164320203899052, guid: 039edb25b5341c1459804e4ff19f6f23, type: 3}
+  handlePrefab: {fileID: 7126500822128847633, guid: fcba9890638603a4098b241453f95792, type: 3}
 --- !u!114 &5320380706256420268
 MonoBehaviour:
   m_ObjectHideFlags: 0
