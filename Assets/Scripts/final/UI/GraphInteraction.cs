@@ -203,6 +203,9 @@ public class GraphInteraction : EditorWindow
 
             RuntimeInteractionData.IsEditingPath = true;
 
+            // deactivate any active tool since we want to start editing the path so we don't want to have other tools active
+            ToolManager.DeactivateTool();
+
             HandleOperations.ToggleAllHandles(true);
         }
     }
@@ -214,6 +217,8 @@ public class GraphInteraction : EditorWindow
             Debug.Log("cancel edit path button pressed");
 
             RuntimeInteractionData.IsEditingPath = false;
+
+            ToolManager.DeactivateTool();
 
             HandleOperations.ToggleAllHandles(false);
         }

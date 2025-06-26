@@ -101,9 +101,20 @@ public class GraphDisplayer : MonoBehaviour
         var handleComponent = handleGO.AddComponent<HandleOnNodeComponent>();
         handleComponent.Initialize(node, handle);
 
+        handleComponent.OnHandleMoved += UpdateNode;
+
         handleGO.SetActive(false);
 
         handleOnNodeObjects[handle] = handleGO;
+    }
+    public void DespawnHandleOnNode(Handle handle)
+    {
+        GameObject handleGO = handleOnNodeObjects[handle];
+        HandleOnNodeComponent handleComponent = handleGO.GetComponent<HandleOnNodeComponent>();
+        handleComponent.OnHandleMoved -= UpdateNode;
+
+        Destroy(handleGO);
+        handleOnNodeObjects.Remove(handle);
     }
 
     public void SpawnNode(Node node, Graph graph)
@@ -130,14 +141,6 @@ public class GraphDisplayer : MonoBehaviour
         HandleOperations.DeleteHandleOnNode(node, path);
     }
 
-    public void DespawnHandleOnNode(Handle handle)
-    {
-        GameObject handleGO = handleOnNodeObjects[handle];
-
-        Destroy(handleGO);
-        handleOnNodeObjects.Remove(handle);
-    }
-
     public void UpdatePathPoints(Path path)
     {
         // debugging
@@ -150,6 +153,12 @@ public class GraphDisplayer : MonoBehaviour
         {
             pathPoints[i].transform.position = path.pathPoints[i];
         }
+    }
+
+    public void UpdateNode(Node node)
+    {
+        GameObject nodeGO = nodeObjects[node];
+        nodeGO.transform.position = node.Position;
     }
 
     public void DisplayLines(Vector3[] points)

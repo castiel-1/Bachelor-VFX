@@ -9,6 +9,8 @@ public class HandleOnNodeComponent : MonoBehaviour
     public Handle Handle { get; private set; }
     public Vector3 lastPosition;
 
+    public event Action<Node> OnHandleMoved;
+
     public void Initialize(Node node, Handle handle)
     {
         Node = node;
@@ -35,6 +37,8 @@ public class HandleOnNodeComponent : MonoBehaviour
             {
                 HandleOperations.UpdateSpline(path);
             }
+
+            OnHandleMoved?.Invoke(Node);
         }
     }
 }

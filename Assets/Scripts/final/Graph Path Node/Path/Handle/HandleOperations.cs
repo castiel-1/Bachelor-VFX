@@ -19,7 +19,7 @@ public static class HandleOperations
         // debugging
         Debug.Log("create handle on path called");
 
-        Handle nextHandle = new Handle(position);
+        Handle nextHandle = new Handle(position, pathPointIndex);
 
         // find where to insert the handle
         int numSegments = path.Handles.Count - 1;
@@ -83,16 +83,19 @@ public static class HandleOperations
             return handleAtNode;
         }
 
-        Handle nextHandle = new Handle(node.Position);
-        nodeHandleDict[node] = nextHandle;
+        Handle nextHandle;
         if (isStartNode)
         {
+            nextHandle = new Handle(node.Position, 0);
             path.Handles.Insert(0, nextHandle);
         }
         else
         {
+            nextHandle = new Handle(node.Position, path.pathPoints.Length); // numpathpoint.length because that is after the last pathPoint which is where the end Node is (doesnt have a pathPoint)
             path.Handles.Add(nextHandle);
         }
+
+        nodeHandleDict[node] = nextHandle;
 
         OnHandleOnNodeCreated?.Invoke(nextHandle, node);
         return nextHandle;
@@ -123,25 +126,19 @@ public static class HandleOperations
         List<Handle> handles = path.Handles;
         int numHandles = handles.Count;
 
-        // debugging
-        Debug.Log("num handles: " + numHandles);
-
-        int numPathPoints = path.pathPoints.Length;
-
         if (numHandles < 2)
         {
             return;
         }
 
         int numSegments = handles.Count - 1;
-        int pointsPerSegment = numPathPoints / numSegments;
-        int leftOverPoints = numPathPoints % numSegments;
+
 
         List<Vector3> updatedPathPoints = new ();
 
         for (int i = 0; i < numSegments; i++)
         {
-            int currentPointsInSegment = pointsPerSegment;
+            int pointsInSegment = handles[i+1].Index - handles[i].Index;
 
             Vector3 p0;
             Vector3 p1 = handles[i].Position;
@@ -168,15 +165,8 @@ public static class HandleOperations
                 p3 = handles[i + 2].Position;
             }
 
-            // distribute leftover points
-            if(leftOverPoints > 0)
-            {
-                currentPointsInSegment += 1;
-                leftOverPoints -= 1;
-            }
-
             // calculate segment points
-            List<Vector3> segmentPoints = SplineCalculator.CalculateSplinePoints(p0, p1, p2, p3, currentPointsInSegment);
+            List<Vector3> segmentPoints = SplineCalculator.CalculateSplinePoints(p0, p1, p2, p3, pointsInSegment);
 
             updatedPathPoints.AddRange(segmentPoints);
 
