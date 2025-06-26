@@ -5,7 +5,7 @@ public class SentenceBufferManager : MonoBehaviour
 {
     public Buffer buffer;
 
-    private Dictionary<Sentence, LetterStruct[]> sentenceStructDict;
+    private Dictionary<Sentence, LetterStruct[]> sentenceStructDict = new();
     private int currentBufferIndex = 0;
 
     // same size every letter

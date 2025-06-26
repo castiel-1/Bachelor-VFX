@@ -34,12 +34,12 @@ public class Buffer : MonoBehaviour
     private GraphicsBuffer graphicsBuffer;
 
     // create graphics buffer
-    public void SetUpBuffer(int numLetters)
+    public void SetUpBuffer(int numLetterStructs)
     {
         //DEBUG
-        Debug.Log("buffer is set up with number of letterStructs: " + numLetters);
+        Debug.Log("buffer is set up with number of letterStructs: " + numLetterStructs);
 
-        graphicsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, numLetters,
+        graphicsBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, numLetterStructs,
             System.Runtime.InteropServices.Marshal.SizeOf(typeof(LetterStruct)));
 
         visualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
@@ -55,7 +55,7 @@ public class Buffer : MonoBehaviour
         visualEffect.Reinit();
     }
 
-    // deletes sentence from buffer (this leaves a hole which is not being dealt with so far)
+    // deletes sentence from buffer (this leaves a hole in the memory which is not being dealt with so far)
     public void DeleteSentenceFromBuffer(Sentence sentence)
     {
         LetterStruct[] emptyLetters = new LetterStruct[sentence.Text.Length];

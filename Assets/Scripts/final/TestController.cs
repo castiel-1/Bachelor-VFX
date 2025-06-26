@@ -36,25 +36,40 @@ public class TestController : MonoBehaviour
 
     public LLMManager llmManager;
 
-    public Graph graph;
     public FullPromptBuilder fullPromptBuilder;
 
     public GraphManager graphManager;
 
+    public Buffer buffer;
+
+    public SentenceBufferManager sentenceBufferManager;
+
     
     void Start()
     {
-        TestGraphCreation();
+        SetUpBuffer();
+        TestGraphAndSentenceCreation();
     }
 
-    public void TestGraphCreation()
+    public void SetUpBuffer()
     {
+        buffer.SetUpBuffer(1000); // sets up buffer with space for 1000 letters
+    }
+
+    public void TestGraphAndSentenceCreation()
+    {
+        string text = "Hello World!";
+        int numLetters = text.Length;
+
         Graph graph = graphManager.CreateGraph();
         Node startNode = GraphOperations.CreateNode(graph, Vector3.zero);
         Node endNode = GraphOperations.CreateNode(graph, Vector3.one);
         Node thirdNode = GraphOperations.CreateNode(graph, new Vector3(2, 1, 1));
 
-        GraphOperations.CreatePath(graph, startNode, endNode, 20);
+        Path path = GraphOperations.CreatePath(graph, startNode, endNode, numLetters);
+
+        sentenceBufferManager.AddSentence(text, path.pathPoints, 0.2f);
+
     }
 
     /*

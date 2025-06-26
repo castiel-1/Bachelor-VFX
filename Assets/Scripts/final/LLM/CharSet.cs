@@ -3,7 +3,7 @@ using UnityEngine;
 public class CharSet : MonoBehaviour
 {
     public static CharSet Instance { get; private set; }
-    string Chars { get; }
+    public string chars;
 
     private void Awake()
     {
@@ -16,13 +16,8 @@ public class CharSet : MonoBehaviour
         Instance = this;
     }
 
-    public CharSet(string chars)
-    {
-        Chars = chars;
-    }
-
     public int GetCharIndexInSet(char c)
     {
-        return Chars.IndexOf(c);
+        return chars.IndexOf(c);
     }
 }
