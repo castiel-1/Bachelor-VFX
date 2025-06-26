@@ -91,6 +91,21 @@ public class GraphDisplayer : MonoBehaviour
         pathPointObjects.Remove(path);
     }
 
+    public void SpawnHandleOnNode(Handle handle, Node node)
+    {
+        // debugging
+        Debug.Log("spawn handle on node called");
+
+        GameObject handleGO = Instantiate(handlePrefab, handle.Position, Quaternion.identity, transform);
+        handleGO.name = "nodeHandle_" + node.ID;
+        var handleComponent = handleGO.AddComponent<HandleOnNodeComponent>();
+        handleComponent.Initialize(node, handle);
+
+        handleGO.SetActive(false);
+
+        handleOnNodeObjects[handle] = handleGO;
+    }
+
     public void SpawnNode(Node node, Graph graph)
     {
         // debugging
@@ -99,22 +114,8 @@ public class GraphDisplayer : MonoBehaviour
         GameObject nodeGO = Instantiate(nodePrefab, node.Position, Quaternion.identity, transform);
         nodeGO.name = "Node_" + node.ID;
         nodeGO.AddComponent<NodeComponent>().Initialize(node, graph);
+
         nodeObjects.Add(node, nodeGO);
-    }
-
-    public void SpawnHandleOnNode(Handle handle, Node node)
-    {
-        // debugging
-        Debug.Log("spawn handle on node called");
-
-        GameObject nodeGO = nodeObjects[node];
-
-        GameObject handleGO = Instantiate(handlePrefab, handle.Position, Quaternion.identity, nodeGO.transform);
-        handleGO.AddComponent<HandleOnNodeComponent>().Initialize(node);
-
-        handleGO.SetActive(false);
-
-        handleOnNodeObjects[handle] = handleGO;
     }
 
     public void DespawnNode(Node node, Path path)
@@ -131,11 +132,18 @@ public class GraphDisplayer : MonoBehaviour
 
     public void DespawnHandleOnNode(Handle handle)
     {
+        GameObject handleGO = handleOnNodeObjects[handle];
+
+        Destroy(handleGO);
         handleOnNodeObjects.Remove(handle);
     }
 
     public void UpdatePathPoints(Path path)
     {
+        // debugging
+        Debug.Log("updating path Points");
+        Debug.Log($"Before OnSplineUpdated: path.pathPoints first = {path.pathPoints[0]}, last = {path.pathPoints[^1]}");
+
         List<GameObject> pathPoints = pathPointObjects[path];
 
         for(int i = 0;  i < pathPoints.Count; i++)

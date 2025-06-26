@@ -1,15 +1,18 @@
 using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class HandleOnNodeComponent : MonoBehaviour
 {
     public Node Node { get; private set; }
+    public Handle Handle { get; private set; }
     public Vector3 lastPosition;
 
-    public void Initialize(Node node)
+    public void Initialize(Node node, Handle handle)
     {
         Node = node;
+        Handle = handle;
         lastPosition = transform.position;
     }
 
@@ -19,10 +22,14 @@ public class HandleOnNodeComponent : MonoBehaviour
         {
             lastPosition = transform.position;
             Node.Position = transform.position;
+            Handle.Position = transform.position;
 
             List<Path> connectedPaths = new();
             connectedPaths.AddRange(Node.Incoming);
             connectedPaths.AddRange(Node.Outgoing);
+
+            // debugging
+            Debug.Log("connected paths: " + connectedPaths.Count);  
 
             foreach(Path path in connectedPaths)
             {

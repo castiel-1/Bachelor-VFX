@@ -122,6 +122,10 @@ public static class HandleOperations
     {
         List<Handle> handles = path.Handles;
         int numHandles = handles.Count;
+
+        // debugging
+        Debug.Log("num handles: " + numHandles);
+
         int numPathPoints = path.pathPoints.Length;
 
         if (numHandles < 2)
