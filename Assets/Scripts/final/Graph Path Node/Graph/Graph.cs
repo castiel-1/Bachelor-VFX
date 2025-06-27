@@ -14,8 +14,11 @@ public class Graph : MonoBehaviour
     public event Action<Node, Graph> OnNodeCreated;
     public event Action<Node, Path> OnNodeDeleted;
 
-    public event Action<Path> OnPathCreated;
+    public event Action<Path, Graph> OnPathPointsAdded;
+
+    public event Action<Path, Graph> OnPathCreated;
     public event Action<Path> OnPathDeleted;
+
 
     public void Initialize(int id)
     {
@@ -24,7 +27,9 @@ public class Graph : MonoBehaviour
 
     public void RaiseNodeCreated(Node node, Graph graph) => OnNodeCreated?.Invoke(node, graph);
     public void RaiseNodeDeleted(Node node, Path path) => OnNodeDeleted?.Invoke(node, path);
-    public void RaisePathCreated(Path path) => OnPathCreated?.Invoke(path);
+    public void RaisePathPointsAdded(Path path, Graph graph) => OnPathPointsAdded?.Invoke(path, graph);
+
+    public void RaisePathCreated(Path path, Graph graph) => OnPathCreated?.Invoke(path, graph);
     public void RaisePathDeleted(Path path) => OnPathDeleted?.Invoke(path);
 
 }

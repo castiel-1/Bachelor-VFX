@@ -2,14 +2,14 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class FullPromptBuilder : MonoBehaviour
+public static class FullPromptBuilder
 {
-    public string BuildPrompt(
+    public static string BuildPrompt(
         int numPoints, 
-        Graph graph, Path path, int depth,
+        Graph graph, Path path, int depth, // how far back we are considering for our history
         InfluenceManager influenceManager, IInfluenceCalculator influenceCalculator, IInfluencePromptGenerator influencePromptGenerator)
     {
-        string start = "Generate one sentence with " + numPoints + " words. Your output should only be that sentence.";
+        string start = "Generate one sentence with exactly " + numPoints + " characters counting letters, spaces and punctuation marks. Your output should only be that sentence.";
 
         // build history prompt
         List<List<Path>> allBranches = GraphOperations.GetAllPreviousPaths(graph, path.StartNode, depth);
@@ -20,6 +20,11 @@ public class FullPromptBuilder : MonoBehaviour
         List<float> influenceStrengths = influenceCalculator.CalculateInfluenceStrengths(path.pathPoints, influences);
         string influencePrompt = influencePromptGenerator.GenerateInfluencePrompt(influences, influenceStrengths);
 
-        return start + " " + historyPrompt + " " + influencePrompt;
+        string fullPrompt = start + " " + historyPrompt + " " + influencePrompt;
+
+        // debugging
+        Debug.Log("full prompt: " + fullPrompt);
+
+        return fullPrompt;
     }
 }

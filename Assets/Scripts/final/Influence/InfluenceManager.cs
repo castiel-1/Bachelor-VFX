@@ -5,21 +5,25 @@ using System;
 
 public class InfluenceManager : MonoBehaviour
 {
+    public static InfluenceManager Instance { get; private set; }
+
     public static event Action<Influence> OnInfluenceCreated;
     public static event Action<Influence> OnInfluenceDeleted;
 
     private List<Influence> influences = new List<Influence>();
     public IReadOnlyList<Influence> Influences => influences;
 
-    private void OnEnable()
+    private void Awake()
     {
-        InfluenceDestructionNotifier.OnInfluenceDestroyed += DeleteInfluence;
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
     }
-    private void OnDisable()
-    {
-        InfluenceDestructionNotifier.OnInfluenceDestroyed -= DeleteInfluence;
-    }
-
     public void CreateInfluence(Vector3 position, float radius, string promptModifier, GameObject prefab)
     {
         // debugging

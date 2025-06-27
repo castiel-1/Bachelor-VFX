@@ -24,7 +24,6 @@ public class TestController : MonoBehaviour
     private Node endNode;
 
     public PathCalculator pathCalculator;
-    public int numLetters = 5;
     private Vector3[] letterPositions;
     private PathInfo[] pointInfos;
     private List<Vector3> allPoints = new List<Vector3>();
@@ -35,8 +34,6 @@ public class TestController : MonoBehaviour
     public InfluenceManager influenceManager;
 
     public LLMManager llmManager;
-
-    public FullPromptBuilder fullPromptBuilder;
 
     public GraphManager graphManager;
 
@@ -58,18 +55,14 @@ public class TestController : MonoBehaviour
 
     public void TestGraphAndSentenceCreation()
     {
-        string text = "Hello World!";
-        int numLetters = text.Length;
-
         Graph graph = graphManager.CreateGraph();
         Node startNode = GraphOperations.CreateNode(graph, Vector3.zero);
         Node endNode = GraphOperations.CreateNode(graph, Vector3.one);
         Node thirdNode = GraphOperations.CreateNode(graph, new Vector3(2, 1, 1));
 
-        Path path = GraphOperations.CreatePath(graph, startNode, endNode, numLetters);
+        Path path = GraphOperations.CreatePath(graph, startNode, endNode, 30);
 
-        sentenceBufferManager.AddSentence(text, path.pathPoints, 0.2f);
-
+        Debug.Log("num path poitns:" + path.pathPoints.Length);
     }
 
     /*
@@ -219,9 +212,8 @@ public class TestController : MonoBehaviour
     public async void TestLLMManger()
     {
         string prompt = "Write a sentence. Your answer should only be this sentence.";
-        string promptModifier = "The sentence is influenced to 50% by 'dragon' and 10% by 'sad'";
 
-        string answer = await llmManager.PromptLLM(prompt, promptModifier);
+        string answer = await llmManager.PromptLLM(prompt);
 
         Debug.Log("llm reply: " + answer);
     }
@@ -251,7 +243,7 @@ public class TestController : MonoBehaviour
     {
         Debug.Log("test path calculator called");
 
-        return pathCalculator.CalculateLetterPositions(numLetters);
+        return pathCalculator.CalculateLetterPositions(10);
     }
 
     public void TestCursor()

@@ -4,5 +4,5 @@ using System.Collections.Generic;
 
 public interface IInfluenceCalculator
 {
-    public List<float> CalculateInfluenceStrengths(Vector3[] letterPositions, List<Influence> influence);
+    public List<float> CalculateInfluenceStrengths(Path path, List<Influence> influences);
 }

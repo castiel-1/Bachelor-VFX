@@ -148,7 +148,7 @@ public static class HandleOperations
             // on the first segment we need to interpolate p0
             if (i == 0)
             {
-                p0 = p1 + (p2 - p1);
+                p0 = p1 + (p1 - p2);
             }
             else
             {

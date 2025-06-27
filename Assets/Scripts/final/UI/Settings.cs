@@ -6,6 +6,7 @@ public class Settings : EditorWindow
     // foldouts
     private bool showPathSettings = false;
     private bool showTextSettings = false;
+    private bool showLLMSettings = false;
 
     // dropdowns
     private string[] pathTypeOptions = new string[] { "Bezier", "Path On Mesh" };
@@ -24,6 +25,7 @@ public class Settings : EditorWindow
     {
         DrawPathSettings();
         DrawTextSettings();
+        DrawLLMSettings(); 
     }
 
     private void DrawPathSettings()
@@ -125,4 +127,27 @@ public class Settings : EditorWindow
 
         EditorGUI.indentLevel--;
     }
+
+    private void DrawLLMSettings()
+    {
+        // foldout
+        showLLMSettings = EditorGUILayout.Foldout(showLLMSettings, "LLM Settings", true);
+
+        if (!showLLMSettings)
+        {
+            return;
+        }
+
+        EditorGUI.indentLevel++;
+
+        DrawHistoryDepthField();
+
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawHistoryDepthField()
+    {
+        RuntimeSettingsData.historyDepth = EditorGUILayout.IntField("History Prompt Depth", RuntimeSettingsData.historyDepth);
+    }
 }
+

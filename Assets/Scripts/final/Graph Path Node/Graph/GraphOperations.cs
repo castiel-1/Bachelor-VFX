@@ -20,13 +20,12 @@ public static class GraphOperations
         return nextNode;
     }
 
-    public static Path CreatePath(Graph graph, Node startNode, Node endNode, int numPathPoints)
+    public static Path CreatePath(Graph graph, Node startNode, Node endNode)
     {
         // debugging
         Debug.Log("path created");
 
-        Path nextPath = new Path(startNode, endNode, numPathPoints);
-        nextPath.pathPoints = SplineCalculator.CalculateSplinePoints(startNode.Position, endNode.Position, numPathPoints).ToArray();
+        Path nextPath = new Path(startNode, endNode);
         graph.Paths.Add(nextPath);
 
         startNode.Outgoing.Add(nextPath);
@@ -36,10 +35,18 @@ public static class GraphOperations
         Handle startHandle = HandleOperations.CreateHandleOnNode(startNode, nextPath, true);
         Handle endHandle = HandleOperations.CreateHandleOnNode(endNode, nextPath, false);
 
-        graph.RaisePathCreated(nextPath);
+        graph.RaisePathCreated(nextPath, graph);
 
         return nextPath;
     }
+
+    public static void AddPathPoints(Graph graph, Path path, List<Vector3> pathPointPositions)
+    {
+        path.pathPoints.AddRange(pathPointPositions);
+
+        graph.RaisePathPointsAdded(path, graph);
+    }
+
 
     public static void DeletePath(Graph graph, Path path)
     {
@@ -81,9 +88,12 @@ public static class GraphOperations
     {
         if (depth >= maxDepth || currentNode.Incoming.Count == 0)
         {
-            List<Path> completeBranch = new List<Path>(currentBranch);
-            completeBranch.Reverse();
-            allBranches.Add(completeBranch);
+            if(currentBranch.Count > 0)
+            {
+                List<Path> completeBranch = new List<Path>(currentBranch);
+                completeBranch.Reverse();
+                allBranches.Add(completeBranch);
+            }
             return;
         }
 

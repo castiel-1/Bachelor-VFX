@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine;
 public class GraphManager : MonoBehaviour
 {
     public static GraphManager Instance { get; private set; }
+    public event Action<Graph> OnGraphCreated;
+    public event Action<Graph> OnGraphDeleted;
 
     private int graphID = 0;
     private Dictionary<int, Graph> graphs = new();
@@ -39,6 +42,8 @@ public class GraphManager : MonoBehaviour
 
         graphID++;
 
+        OnGraphCreated?.Invoke(graph);
+
         return graph;
     }
 
@@ -64,9 +69,11 @@ public class GraphManager : MonoBehaviour
             if (pair.Value == graph)
             {
                 graphs.Remove(pair.Key);
+                OnGraphDeleted?.Invoke(graph);
                 Destroy(graph.gameObject);
                 return;
             }
         }
+
     }
 }

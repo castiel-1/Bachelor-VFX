@@ -16,4 +16,6 @@ public static class RuntimeSettingsData
 
     public static int numberOfLettersMin = 10;
     public static int numberOfLettersMax = 200;
+
+    public static int historyDepth = 3;
 }

@@ -10,9 +10,9 @@ public class LLMManager : MonoBehaviour
 {
     public LLMCharacter llm;
 
-    public async Task<string> PromptLLM(string prompt, string promptModifier)
+    public async Task<string> PromptLLM(string prompt)
     {
-        string reply = await llm.Chat(prompt + promptModifier, null, null, false);
+        string reply = await llm.Chat(prompt, null, null, false);
         return reply;
     }
 }
