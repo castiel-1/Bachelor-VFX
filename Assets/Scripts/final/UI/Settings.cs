@@ -77,7 +77,7 @@ public class Settings : EditorWindow
         EditorGUI.indentLevel++;
 
         DrawTextSizeDropdown();
-        DrawMinMaxNumberOfLettersField();
+        DrawMinMaxNumberOfWordsField();
 
         EditorGUI.indentLevel--;
 
@@ -116,14 +116,14 @@ public class Settings : EditorWindow
         RuntimeSettingsData.textSizeMax = EditorGUILayout.FloatField("Text Size Maximum", RuntimeSettingsData.textSizeMax);
     }
 
-    private void DrawMinMaxNumberOfLettersField()
+    private void DrawMinMaxNumberOfWordsField()
     {
-        EditorGUILayout.LabelField("Number of Letters");
+        EditorGUILayout.LabelField("Number of Words");
 
         EditorGUI.indentLevel++;
 
-        RuntimeSettingsData.numberOfLettersMin = EditorGUILayout.IntField("Minimun", RuntimeSettingsData.numberOfLettersMin);
-        RuntimeSettingsData.numberOfLettersMax = EditorGUILayout.IntField("Maximum", RuntimeSettingsData.numberOfLettersMax);
+        RuntimeSettingsData.numberOfWordsMin = EditorGUILayout.IntField("Minimun", RuntimeSettingsData.numberOfWordsMin);
+        RuntimeSettingsData.numberOfWordsMax = EditorGUILayout.IntField("Maximum", RuntimeSettingsData.numberOfWordsMax);
 
         EditorGUI.indentLevel--;
     }

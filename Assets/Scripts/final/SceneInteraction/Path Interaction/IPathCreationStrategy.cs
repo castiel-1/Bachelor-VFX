@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IPathCreationStrategy 
 {
-    public void HandleClick(RaycastHit hitInfo, int numPathPoints);
+    public void HandleClick(RaycastHit hitInfo);
 }

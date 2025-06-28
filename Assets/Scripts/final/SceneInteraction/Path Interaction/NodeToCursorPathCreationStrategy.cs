@@ -5,7 +5,6 @@ public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
 {
     private Node startNode;
     private Graph graph;
-    private int numberOfPathPoints;
     private bool waitingForCursorConfirmation = false;
     private PathCreationTool pathCreationTool;
     public bool IsAwaitingCursorConfirmation => waitingForCursorConfirmation;
@@ -15,9 +14,8 @@ public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
         pathCreationTool = tool;
     }
 
-    public void HandleClick(RaycastHit hitInfo, int numPathPoints)
+    public void HandleClick(RaycastHit hitInfo)
     {
-        numberOfPathPoints = numPathPoints;
 
         TargetCursor cursor = TargetCursor.Instance;
 
@@ -65,10 +63,10 @@ public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
         Node endNode = GraphOperations.CreateNode(graph, cursorPosition);
 
         // create a path
-        GraphOperations.CreatePath(graph, startNode, endNode, numberOfPathPoints);
+        GraphOperations.CreatePath(graph, startNode, endNode);
 
         // debugging
-        Debug.Log("new path with " + numberOfPathPoints + " points has been created");
+        Debug.Log("new path has been created");
 
         pathCreationTool.StopInteraction();
 

@@ -12,7 +12,7 @@ public class NodeToNodePathCreationStrategy : IPathCreationStrategy
         pathCreationTool = tool;
     }
 
-    public void HandleClick(RaycastHit hitInfo, int numPathPoints)
+    public void HandleClick(RaycastHit hitInfo)
     {
         GameObject hitObject = hitInfo.collider.gameObject;
         NodeComponent nodeComponent = hitObject.GetComponent<NodeComponent>();
@@ -39,10 +39,10 @@ public class NodeToNodePathCreationStrategy : IPathCreationStrategy
             Debug.Log("end node has been selected: " + endNode);
 
           
-            GraphOperations.CreatePath(graph, startNode, endNode, numPathPoints);
+            GraphOperations.CreatePath(graph, startNode, endNode);
 
             // debugging
-            Debug.Log("new path with " + numPathPoints + " points has been created");
+            Debug.Log("new path has been created");
 
             pathCreationTool.StopInteraction();
 

@@ -67,8 +67,7 @@ public class PathCreationTool : ISceneInteractionTool
         if (nodeComponent)
         {
             useLeftClick = true;
-            int numberOfPathPoints = RandomizeNumberOfPathPoints(RuntimeSettingsData.numberOfLettersMin, RuntimeSettingsData.numberOfLettersMax);
-            selectedStrategy.HandleClick(hitInfo, numberOfPathPoints);
+            selectedStrategy.HandleClick(hitInfo);
         }
         else
         {

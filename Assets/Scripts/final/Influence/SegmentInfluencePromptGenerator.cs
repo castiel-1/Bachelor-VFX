@@ -10,14 +10,44 @@ public static class SegmentInfluencePromptGenerator
 
         foreach(string segment in influencesPerSegment.Keys)
         {
-            string segmentPrompt = "The " + segment + " of the sentence should be influenced by ";
 
-            foreach(Influence influence in  influencesPerSegment[segment])
-            {
-                segmentPrompt += influence.PromptModifier;
+            int numInfluencesPerSegment = influencesPerSegment[segment].Count;
+
+            if (numInfluencesPerSegment == 0) 
+            { 
+                continue;
             }
 
-            prompt += segmentPrompt;
+            string segmentPrompt = "The " + segment + " of the sentence should be influenced by";
+
+            if (numInfluencesPerSegment == 1)
+            {
+                segmentPrompt += " " + influencesPerSegment[segment][0].PromptModifier + ". ";
+            }
+            else
+            {
+                for (int i = 0; i < numInfluencesPerSegment; i++)
+                {
+                    string part = influencesPerSegment[segment][i].PromptModifier;
+
+                    // if it is the last influence in the list
+                    if (i == numInfluencesPerSegment - 1)
+                    {
+                        segmentPrompt += " and " + part + ". ";
+                    }
+                    // if it is the first influence in the list
+                    else if (i == 0)
+                    {
+                        segmentPrompt += " " + part + ". ";
+                    }
+                    else
+                    {
+                        segmentPrompt += ", " + part;
+                    }
+                }
+            }
+
+            prompt += segmentPrompt.Trim();
         }
 
         return prompt;

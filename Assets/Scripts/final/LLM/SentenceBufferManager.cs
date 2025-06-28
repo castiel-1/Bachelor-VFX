@@ -32,7 +32,7 @@ public class SentenceBufferManager : MonoBehaviour
     }
 
     // same size every letter
-    public Sentence AddSentence(string text, Vector3[] letterPositions, float size, Vector3[] normals = null, Vector3[] lineDirections = null)
+    public Sentence AddSentence(string text, List<Vector3> letterPositions, float size, Vector3[] normals, Vector3[] lineDirections)
     {
         float[] sizes = new float[text.Length];
         for (int i = 0; i < text.Length; i++)
@@ -46,7 +46,7 @@ public class SentenceBufferManager : MonoBehaviour
     }
 
     // different sizes per letter
-    public Sentence AddSentence(string text, Vector3[] letterPositions, float[] sizes, Vector3[] normals = null, Vector3[] lineDirections = null)
+    public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections)
     {
         var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normals, lineDirections);
         sentenceStructDict.Add(sentence, letters);
@@ -66,11 +66,10 @@ public class SentenceBufferManager : MonoBehaviour
 
     public void UpdateSentence(Path path)
     {
-        // debugging
-        Debug.Log("update sentence called");
-
         Sentence sentence = path.Sentence;
         var letterStructs = sentenceStructDict[sentence];
+
+        Debug.Log("num letterstructs: " + letterStructs.Length + ", num pathPoints: " + path.pathPoints.Count);
 
         for(int i = 0; i < letterStructs.Length; i++)
         {

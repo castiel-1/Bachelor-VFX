@@ -4,12 +4,10 @@ using System.Collections.Generic;
 
 public static class FullPromptBuilder
 {
-    public static string BuildPrompt(
-        int numPoints, 
-        Graph graph, Path path, int depth, // how far back we are considering for our history
-        InfluenceManager influenceManager, IInfluenceCalculator influenceCalculator, IInfluencePromptGenerator influencePromptGenerator)
+    // depth = how far back we are considering for our history 
+    public static string BuildPrompt(Graph graph, Path path, int numWords, int depth, InfluenceManager influenceManager)
     {
-        string start = "Generate one sentence with exactly " + numPoints + " characters counting letters, spaces and punctuation marks. Your output should only be that sentence.";
+        string start = "Generate one sentence that is " + numWords + " words long. Your output should only be that sentence.";
 
         // build history prompt
         List<List<Path>> allBranches = GraphOperations.GetAllPreviousPaths(graph, path.StartNode, depth);
@@ -17,8 +15,8 @@ public static class FullPromptBuilder
 
         // build influence prompt
         List<Influence> influences = (List<Influence>)influenceManager.Influences;
-        List<float> influenceStrengths = influenceCalculator.CalculateInfluenceStrengths(path.pathPoints, influences);
-        string influencePrompt = influencePromptGenerator.GenerateInfluencePrompt(influences, influenceStrengths);
+        Dictionary<string, List<Influence>> influenceStrengths = SegmentInfluenceCalculator.CalculateInfluenceStrengths(path, influences);
+        string influencePrompt = SegmentInfluencePromptGenerator.CalculateInfluencePrompt(influenceStrengths);
 
         string fullPrompt = start + " " + historyPrompt + " " + influencePrompt;
 

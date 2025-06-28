@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public static class SentenceFactory
 {
-    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, Vector3[] letterPositions, float[] sizes, Vector3[] normals = null, Vector3[] lineDirections = null)
+    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections)
     {
         if(normals == null)
         {

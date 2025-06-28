@@ -52,7 +52,7 @@ public class GraphDisplayer : MonoBehaviour
     public void SpawnPathPoints(Path path, Graph graph)
     {
         // debugging
-        Debug.Log("path spawned");
+        Debug.Log("spawning " + path.pathPoints.Count + " path points");
 
         GameObject pathParent = new GameObject("Path_" + path.StartNode.ID + "_" + path.EndNode.ID);
         pathParent.transform.parent = transform;
@@ -74,9 +74,6 @@ public class GraphDisplayer : MonoBehaviour
 
     public void DespawnPathPoints(Path path)
     {
-        // debugging
-        Debug.Log("path despawned");
-
         // destroy path point gameobjects
         foreach (GameObject pointGO in pathPointObjects[path])
         {
@@ -93,9 +90,6 @@ public class GraphDisplayer : MonoBehaviour
 
     public void SpawnHandleOnNode(Handle handle, Node node)
     {
-        // debugging
-        Debug.Log("spawn handle on node called");
-
         GameObject handleGO = Instantiate(handlePrefab, handle.Position, Quaternion.identity, transform);
         handleGO.name = "nodeHandle_" + node.ID;
         var handleComponent = handleGO.AddComponent<HandleOnNodeComponent>();
@@ -119,9 +113,6 @@ public class GraphDisplayer : MonoBehaviour
 
     public void SpawnNode(Node node, Graph graph)
     {
-        // debugging
-        Debug.Log("node spawned");
-
         GameObject nodeGO = Instantiate(nodePrefab, node.Position, Quaternion.identity, transform);
         nodeGO.name = "Node_" + node.ID;
         nodeGO.AddComponent<NodeComponent>().Initialize(node, graph);
@@ -131,9 +122,6 @@ public class GraphDisplayer : MonoBehaviour
 
     public void DespawnNode(Node node, Path path)
     {
-        // debugging
-        Debug.Log("node despawned");
-
         Destroy(nodeObjects[node]);
 
         nodeObjects.Remove(node);
@@ -143,10 +131,6 @@ public class GraphDisplayer : MonoBehaviour
 
     public void UpdatePathPoints(Path path)
     {
-        // debugging
-        Debug.Log("updating path Points");
-        Debug.Log($"Before OnSplineUpdated: path.pathPoints first = {path.pathPoints[0]}, last = {path.pathPoints[^1]}");
-
         List<GameObject> pathPoints = pathPointObjects[path];
 
         for(int i = 0;  i < pathPoints.Count; i++)

@@ -60,9 +60,7 @@ public class TestController : MonoBehaviour
         Node endNode = GraphOperations.CreateNode(graph, Vector3.one);
         Node thirdNode = GraphOperations.CreateNode(graph, new Vector3(2, 1, 1));
 
-        Path path = GraphOperations.CreatePath(graph, startNode, endNode, 30);
-
-        Debug.Log("num path poitns:" + path.pathPoints.Length);
+        Path path = GraphOperations.CreatePath(graph, startNode, endNode);
     }
 
     /*
@@ -119,6 +117,8 @@ public class TestController : MonoBehaviour
         Debug.Log("full prompt: " +  fullPrompt);   
     }
     */
+
+    /*
     public void TestHistoryPromptGenerator()
     {
         // Create nodes
@@ -146,7 +146,7 @@ public class TestController : MonoBehaviour
         // Print the generated prompt
         Debug.Log("Generated Prompt:" + prompt);
     }
-    /*
+    
     public void TestBackwardsTraversal()
     {
         // Create some nodes
@@ -182,7 +182,7 @@ public class TestController : MonoBehaviour
             Debug.Log(branchDesc.TrimEnd(',', ' '));
         }
     }
-    */
+    
     public void TestInfluenceCalculator()
     {
         Influence influence = new Influence(Vector3.zero, 1f, "sad", debugSphere);
@@ -207,7 +207,7 @@ public class TestController : MonoBehaviour
 
         Debug.Log("prompt: " + prompt);
 
-    }
+    }*/
 
     public async void TestLLMManger()
     {

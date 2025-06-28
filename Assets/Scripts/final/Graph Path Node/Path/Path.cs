@@ -8,13 +8,13 @@ public class Path
     public Node EndNode { get; }
     public List<Vector3> pathPoints { get; set; }
     public Sentence Sentence { get; set; }
-    public List<Handle> Handles { get; set; }
+    public Dictionary<Handle, int> HandlesWithIndeces { get; set; }
 
     public Path(Node startNode, Node endNode)
     {
         StartNode = startNode;
         EndNode = endNode;
         pathPoints = new();
-        Handles = new();
+        HandlesWithIndeces = new();
     }
 }

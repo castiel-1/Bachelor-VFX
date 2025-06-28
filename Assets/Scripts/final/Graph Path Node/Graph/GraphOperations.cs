@@ -8,9 +8,6 @@ public static class GraphOperations
 {
     public static Node CreateNode(Graph graph, Vector3 position)
     {
-        // debugging
-        Debug.Log("node created");
-
         Node nextNode = new Node(graph.NodeID, position);
         graph.NodeID++;
         graph.Nodes.Add(nextNode);
@@ -22,18 +19,11 @@ public static class GraphOperations
 
     public static Path CreatePath(Graph graph, Node startNode, Node endNode)
     {
-        // debugging
-        Debug.Log("path created");
-
         Path nextPath = new Path(startNode, endNode);
         graph.Paths.Add(nextPath);
 
         startNode.Outgoing.Add(nextPath);
         endNode.Incoming.Add(nextPath);
-
-        // add start and end as handles
-        Handle startHandle = HandleOperations.CreateHandleOnNode(startNode, nextPath, true);
-        Handle endHandle = HandleOperations.CreateHandleOnNode(endNode, nextPath, false);
 
         graph.RaisePathCreated(nextPath, graph);
 
@@ -42,7 +32,10 @@ public static class GraphOperations
 
     public static void AddPathPoints(Graph graph, Path path, List<Vector3> pathPointPositions)
     {
-        path.pathPoints.AddRange(pathPointPositions);
+        // debugging
+        Debug.Log("added " + pathPointPositions.Count + " path points");
+
+        path.pathPoints = pathPointPositions;
 
         graph.RaisePathPointsAdded(path, graph);
     }
@@ -50,9 +43,6 @@ public static class GraphOperations
 
     public static void DeletePath(Graph graph, Path path)
     {
-        // debugging
-        Debug.Log("path deleted");
-
         Node startNode = path.StartNode;
         Node endNode = path.EndNode;
 
@@ -76,9 +66,6 @@ public static class GraphOperations
     // only gets called when the node is owned by one path which is getting deleted
     private static void DeleteNode(Graph graph, Node node, Path path)
     {
-        // debugging
-        Debug.Log("node deleted");
-
         graph.Nodes.Remove(node);
 
         graph.RaiseNodeDeleted(node, path);

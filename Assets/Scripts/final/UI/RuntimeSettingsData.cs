@@ -14,8 +14,8 @@ public static class RuntimeSettingsData
     public static float textSizeMin = 0.1f;
     public static float textSizeMax = 0.5f;
 
-    public static int numberOfLettersMin = 10;
-    public static int numberOfLettersMax = 200;
+    public static int numberOfWordsMin = 3;
+    public static int numberOfWordsMax = 4;
 
     public static int historyDepth = 3;
 }

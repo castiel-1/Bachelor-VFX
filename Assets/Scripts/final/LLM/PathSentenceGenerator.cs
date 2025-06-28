@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
+using UnityEditor.Experimental.GraphView;
 
 public class PathSentenceGenerator : MonoBehaviour
 {
@@ -34,14 +36,13 @@ public class PathSentenceGenerator : MonoBehaviour
         // debugging
         Debug.Log("Handle path created called");
 
-        // call llm, then count, then add that much to buffer and calculatePathPoints
+        // get full prompt
+        int numWords = RandomizeNumberOfWords(RuntimeSettingsData.numberOfWordsMin, RuntimeSettingsData.numberOfWordsMax);
+        string prompt = FullPromptBuilder.BuildPrompt(graph, path, numWords, RuntimeSettingsData.historyDepth, InfluenceManager.Instance);
 
-
-        string prompt = FullPromptBuilder.BuildPrompt(
-            path.pathPoints.Length, graph, path, RuntimeSettingsData.historyDepth, 
-            InfluenceManager.Instance, new CountBasedInfluenceCalculator(), new CountBasedInfluencePromptGenerator());
-
+        // call llm
         string llmOutput = await llmManager.PromptLLM(prompt);
+        int outputLength = llmOutput.Length;
 
         // debugging
         Debug.Log("llm output received in handle path created");
@@ -49,12 +50,33 @@ public class PathSentenceGenerator : MonoBehaviour
 
         // TODO deal with size and the dynamic size settings
 
-        if(llmOutput.Length > path.pathPoints.Length)
-        {
-            Debug.LogError("too many letters from llm");
-        }
+        // caluclate pathPoints
+        List<Vector3> pathPointPositions = SplineCalculator.CalculateSplinePoints(path.StartNode.Position, path.EndNode.Position, outputLength);
 
-        SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, 0.3f);
+        // debugging
+        Debug.Log("number of pathPoints at calculation: " + pathPointPositions.Count);
+
+        // add path points (which raises event to spawn them as well)
+        GraphOperations.AddPathPoints(graph, path, pathPointPositions);
+
+        // spawn handles on start and end node
+
+        // debugging
+        Debug.Log("creating handle on start node...");
+        Handle startHandle = HandleOperations.CreateHandleOnNode(path.StartNode, path, true);
+
+        // debugging
+        Debug.Log("creating handle on end node...");
+        Handle endHandle = HandleOperations.CreateHandleOnNode(path.EndNode, path, false);
+
+        // create buffer
+        Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, 0.1f, null, null);
+        path.Sentence = sentence;
+
     }
 
+    private int RandomizeNumberOfWords(int min, int max)
+    {
+        return UnityEngine.Random.Range(min, max + 1);
+    }
 }

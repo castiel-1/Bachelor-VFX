@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SegmentInfluenceCalculator
+public static class SegmentInfluenceCalculator
 {
-    public Dictionary<string, List<Influence>> CalculateInfluenceStrengths(Path path, List<Influence> influences)
+    public static Dictionary<string, List<Influence>> CalculateInfluenceStrengths(Path path, List<Influence> influences)
     {
         Vector3 p0 = path.StartNode.Position;
         Vector3 p3 = path.EndNode.Position;
@@ -51,7 +51,7 @@ public class SegmentInfluenceCalculator
         
     }
 
-    private Vector3 CalculateClosestPointToLineSegment(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
+    private static Vector3 CalculateClosestPointToLineSegment(Vector3 lineStart, Vector3 lineEnd, Vector3 point)
     {
         Vector3 lineDir = lineEnd - lineStart;
         Vector3 startToPoint = point - lineStart;
