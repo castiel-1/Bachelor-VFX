@@ -25,6 +25,7 @@ public class SentenceBufferManager : MonoBehaviour
     private void OnEnable()
     {
         HandleOperations.OnSplineUpdated += UpdateSentence;
+        GraphOperations.OnPathDeleted += DeleteSentence;
     }
     private void OnDisable()
     {

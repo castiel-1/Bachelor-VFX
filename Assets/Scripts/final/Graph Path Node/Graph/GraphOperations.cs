@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -6,6 +7,11 @@ using UnityEngine;
 
 public static class GraphOperations 
 {
+    public static event Action<bool> OnToggleNodes;
+    public static event Action<bool> OnTogglePathPoints;
+    public static event Action<Path, Graph> OnPathCreated;
+    public static event Action<Sentence> OnPathDeleted; // used to delete sentence
+
     public static Node CreateNode(Graph graph, Vector3 position)
     {
         Node nextNode = new Node(graph.NodeID, position);
@@ -26,6 +32,7 @@ public static class GraphOperations
         endNode.Incoming.Add(nextPath);
 
         graph.RaisePathCreated(nextPath, graph);
+        OnPathCreated?.Invoke(nextPath, graph);
 
         return nextPath;
     }
@@ -61,6 +68,7 @@ public static class GraphOperations
         }
 
         graph.RaisePathDeleted(path);
+        OnPathDeleted?.Invoke(path.Sentence);
     }
 
     // only gets called when the node is owned by one path which is getting deleted
@@ -103,6 +111,16 @@ public static class GraphOperations
         TraverseBackwards(graph, currentNode, 0, depth, new List<Path>(), allBranches);
 
         return allBranches;
+    }
+
+    public static void ToggleNodes(bool active)
+    {
+        OnToggleNodes?.Invoke(active);
+    }
+
+    public static void TogglePathPoints(bool active)
+    {
+        OnTogglePathPoints?.Invoke(active);
     }
 }
 

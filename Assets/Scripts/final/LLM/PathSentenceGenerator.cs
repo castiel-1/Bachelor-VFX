@@ -11,24 +11,12 @@ public class PathSentenceGenerator : MonoBehaviour
 
     private void OnEnable()
     {
-        graphManager.OnGraphCreated += HandleGraphCreated;
-        graphManager.OnGraphDeleted += HandleGraphDeleted;
+        GraphOperations.OnPathCreated += HandlePathCreated;
     }
 
     private void OnDisable()
     {
-        graphManager.OnGraphCreated -= HandleGraphCreated;
-        graphManager.OnGraphDeleted -= HandleGraphDeleted;
-    }
-
-    public void HandleGraphCreated(Graph graph)
-    {
-        graph.OnPathCreated += HandlePathCreated;
-    }
-
-    public void HandleGraphDeleted(Graph graph)
-    {
-        graph.OnPathCreated -= HandlePathCreated;
+        GraphOperations.OnPathCreated -= HandlePathCreated;
     }
 
     public async void HandlePathCreated(Path path, Graph graph)

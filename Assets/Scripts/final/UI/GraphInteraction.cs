@@ -14,11 +14,6 @@ public class GraphInteraction : EditorWindow
     private HandleCreationTool handleCreationTool = new();
     private HandleDeletionTool handleDeletionTool = new();
 
-    // handle displayer
-    private PathHandleDisplayer handleDisplayer;
-
- 
-
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
     {
@@ -190,6 +185,7 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("path deletion started");
 
+
             ToolManager.ActivateTool(pathDeletionTool);
         }
     }
@@ -207,6 +203,7 @@ public class GraphInteraction : EditorWindow
             ToolManager.DeactivateTool();
 
             HandleOperations.ToggleAllHandles(true);
+            GraphOperations.TogglePathPoints(true);
         }
     }
     private void DrawCancelPathEditingButton()
@@ -221,6 +218,7 @@ public class GraphInteraction : EditorWindow
             ToolManager.DeactivateTool();
 
             HandleOperations.ToggleAllHandles(false);
+            GraphOperations.TogglePathPoints(false);
         }
     }
 
@@ -257,12 +255,4 @@ public class GraphInteraction : EditorWindow
         }
     }
 
-    private void DrawMoveHandleButton()
-    {
-        if(GUILayout.Button("Move Handle"))
-        {
-            // debugging
-            Debug.Log("move handle button pressed");
-        }
-    }
 }

@@ -35,6 +35,9 @@ public class GraphDisplayer : MonoBehaviour
         HandleOperations.OnHandleOnNodeDestroyed += DespawnHandleOnNode;
         HandleOperations.OnSplineUpdated += UpdatePathPoints;
         HandleOperations.OnToggleAllHandles += ToggleHandles;
+
+        GraphOperations.OnToggleNodes += ToggleNodes;
+        GraphOperations.OnTogglePathPoints += TogglePathPoints;
     }
     private void OnDisable()
     {
@@ -47,6 +50,9 @@ public class GraphDisplayer : MonoBehaviour
         HandleOperations.OnHandleOnNodeCreated -= SpawnHandleOnNode;
         HandleOperations.OnSplineUpdated -= UpdatePathPoints;
         HandleOperations.OnToggleAllHandles -= ToggleHandles;
+
+        GraphOperations.OnToggleNodes -= ToggleNodes;
+        GraphOperations.OnTogglePathPoints -= TogglePathPoints;
     }
 
     public void SpawnPathPoints(Path path, Graph graph)
@@ -56,6 +62,7 @@ public class GraphDisplayer : MonoBehaviour
 
         GameObject pathParent = new GameObject("Path_" + path.StartNode.ID + "_" + path.EndNode.ID);
         pathParent.transform.parent = transform;
+        pathParent.SetActive(false);
 
         pathObjects[path] = pathParent;
 
@@ -116,6 +123,7 @@ public class GraphDisplayer : MonoBehaviour
         GameObject nodeGO = Instantiate(nodePrefab, node.Position, Quaternion.identity, transform);
         nodeGO.name = "Node_" + node.ID;
         nodeGO.AddComponent<NodeComponent>().Initialize(node, graph);
+        nodeGO.SetActive(false);
 
         nodeObjects.Add(node, nodeGO);
     }
@@ -145,39 +153,27 @@ public class GraphDisplayer : MonoBehaviour
         nodeGO.transform.position = node.Position;
     }
 
-    public void DisplayLines(Vector3[] points)
-    {
-        if (lineRenderer == null)
-        {
-            lineRenderer = gameObject.AddComponent<LineRenderer>();
-        }
-
-        lineRenderer = GetComponent<LineRenderer>();
-
-        lineRenderer.startWidth = 0.005f;
-        lineRenderer.endWidth = 0.005f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.useWorldSpace = true;
-
-        lineRenderer.positionCount = points.Length;
-        lineRenderer.SetPositions(points);
-    }
-
     public void ToggleHandles(bool active)
     {
-        if (active)
+        foreach(GameObject handle in handleOnNodeObjects.Values)
         {
-            foreach (GameObject handle in handleOnNodeObjects.Values)
-            {
-                handle.SetActive(true);
-            }
+            handle.SetActive(active);
         }
-        else
+    }
+
+    public void ToggleNodes(bool active)
+    {
+        foreach(GameObject nodeGO in nodeObjects.Values)
         {
-            foreach (GameObject handle in handleOnNodeObjects.Values)
-            {
-                handle.SetActive(false);
-            }
+            nodeGO.SetActive(active);
+        }
+    }
+
+    public void TogglePathPoints(bool active)
+    {
+        foreach(Path path in pathPointObjects.Keys)
+        {
+            pathObjects[path].SetActive(active);
         }
     }
 }

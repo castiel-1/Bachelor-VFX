@@ -14,6 +14,8 @@ public class PathCreationTool : ISceneInteractionTool
         RuntimeInteractionData.AskForCursorPositionConfirmation = false;
         RuntimeInteractionData.IsCreatingPath = true;
 
+        GraphOperations.ToggleNodes(true);
+
         switch (RuntimeInteractionData.pathCreationType)
         {
             case RuntimeInteractionData.PathCreationType.NodeToNode: selectedStrategy = new NodeToNodePathCreationStrategy(this); break;
@@ -25,6 +27,7 @@ public class PathCreationTool : ISceneInteractionTool
 
     public void StopInteraction()
     {
+        GraphOperations.ToggleNodes(false);
         RuntimeInteractionData.IsCreatingPath = false;
         SceneRaycastListener.StopRaycastListener();
         selectedStrategy = null;

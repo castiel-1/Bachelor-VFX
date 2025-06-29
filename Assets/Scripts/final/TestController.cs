@@ -56,7 +56,7 @@ public class TestController : MonoBehaviour
     public void TestGraphAndSentenceCreation()
     {
         Graph graph = graphManager.CreateGraph();
-        Node startNode = GraphOperations.CreateNode(graph, Vector3.zero);
+        Node startNode = GraphOperations.CreateNode(graph, new Vector3(0, 1, 1));
         Node endNode = GraphOperations.CreateNode(graph, Vector3.one);
         Node thirdNode = GraphOperations.CreateNode(graph, new Vector3(2, 1, 1));
 
