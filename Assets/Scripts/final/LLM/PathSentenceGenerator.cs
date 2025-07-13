@@ -35,9 +35,7 @@ public class PathSentenceGenerator : MonoBehaviour
         // debugging
         Debug.Log("llm output received in handle path created");
         Debug.Log(llmOutput);
-
-        // TODO deal with size and the dynamic size settings
-
+       
         // caluclate pathPoints
         List<Vector3> pathPointPositions = SplineCalculator.CalculateSplinePoints(path.StartNode.Position, path.EndNode.Position, outputLength);
 
@@ -47,8 +45,6 @@ public class PathSentenceGenerator : MonoBehaviour
         // add path points (which raises event to spawn them as well)
         GraphOperations.AddPathPoints(graph, path, pathPointPositions);
 
-        // spawn handles on start and end node
-
         // debugging
         Debug.Log("creating handle on start node...");
         Handle startHandle = HandleOperations.CreateHandleOnNode(path.StartNode, path, true);
@@ -57,8 +53,12 @@ public class PathSentenceGenerator : MonoBehaviour
         Debug.Log("creating handle on end node...");
         Handle endHandle = HandleOperations.CreateHandleOnNode(path.EndNode, path, false);
 
+        // calculate sizes
+        ITextSizeStrategy textSizeStrategy = TextSizeStrategyFactory.CreateTextSizeStrategy();
+        float[] sizes = textSizeStrategy.GetTextSizes(outputLength);
+
         // create buffer
-        Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, 0.1f, null, null);
+        Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null);
         path.Sentence = sentence;
 
     }

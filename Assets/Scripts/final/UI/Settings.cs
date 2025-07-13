@@ -107,7 +107,7 @@ public class Settings : EditorWindow
 
     private void DrawOneSizeField()
     {
-        RuntimeSettingsData.textSize = EditorGUILayout.FloatField("Text Size", RuntimeSettingsData.textSize);
+        RuntimeSettingsData.textSizeMin = EditorGUILayout.FloatField("Text Size", RuntimeSettingsData.textSizeMin);
     }
 
     private void DrawMinMaxSizeField()

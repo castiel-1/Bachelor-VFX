@@ -10,7 +10,7 @@ public static class RuntimeSettingsData
 
     public static bool onSurface;
 
-    public static float textSize = 0.2f;
+    // one size text will set the min value to the desired size
     public static float textSizeMin = 0.1f;
     public static float textSizeMax = 0.5f;
 

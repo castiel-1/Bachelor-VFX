@@ -32,21 +32,6 @@ public class SentenceBufferManager : MonoBehaviour
         HandleOperations.OnSplineUpdated -= UpdateSentence;
     }
 
-    // same size every letter
-    public Sentence AddSentence(string text, List<Vector3> letterPositions, float size, Vector3[] normals, Vector3[] lineDirections)
-    {
-        float[] sizes = new float[text.Length];
-        for (int i = 0; i < text.Length; i++)
-        {
-            sizes[i] = size;
-        }
-
-        Sentence sentence = AddSentence(text, letterPositions, sizes, normals = null, lineDirections = null);
-
-        return sentence;
-    }
-
-    // different sizes per letter
     public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections)
     {
         var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normals, lineDirections);
