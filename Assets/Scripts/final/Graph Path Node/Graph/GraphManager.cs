@@ -24,7 +24,7 @@ public class GraphManager : MonoBehaviour
         }
     }
 
-    public Graph CreateGraph()
+    public Graph CreateGraph(Vector3 startPosition, Vector3 endPosition) // the position of the first node of the graph
     {
         // debugging
         Debug.Log("creating graph");
@@ -39,6 +39,10 @@ public class GraphManager : MonoBehaviour
         graphs.Add(graphID, graph);
 
         graphID++;
+
+        Node startNode = GraphOperations.CreateNode(graph, startPosition);
+        Node endNode = GraphOperations.CreateNode(graph, endPosition);
+        GraphOperations.CreatePath(graph, startNode, endNode);
 
         return graph;
     }

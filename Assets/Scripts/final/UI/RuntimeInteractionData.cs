@@ -6,9 +6,13 @@ public static class RuntimeInteractionData
 
     public static PathCreationType pathCreationType;
 
+    public static bool isCreatingGraph = false;
+
     public static bool IsCreatingPath = false;
 
-    public static bool AskForCursorPositionConfirmation = false;
+    public static bool AskForPathCreationCursorPositionConfirmation = false;
+
+    public static bool AskForGraphCreationCursorPositionConfirmation = false;
 
     public static bool IsDeletingPath = false;
 

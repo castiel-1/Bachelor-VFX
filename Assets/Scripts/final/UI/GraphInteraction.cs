@@ -9,6 +9,7 @@ public class GraphInteraction : EditorWindow
     private string[] pathCreationOptionsOnSurface = new string[] { "Node to Surface Point", "Node to Node" };
 
     // tools
+    private GraphCreationTool graphCreationTool = new();
     private PathCreationTool pathCreationTool = new();
     private PathDeletionTool pathDeletionTool = new();
     private HandleCreationTool handleCreationTool = new();
@@ -22,6 +23,41 @@ public class GraphInteraction : EditorWindow
 
     private void OnGUI()
     {
+        DrawGraphCreationUI();
+
+        DrawPathCreationUI();
+        DrawPathDeletionUI();
+        DrawPathEditingUI();
+    }
+    private void DrawGraphCreationUI()
+    {
+        EditorGUILayout.LabelField("Graph Creation", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical();
+
+        {
+            DrawGraphCreationButton();
+
+            if (RuntimeInteractionData.AskForGraphCreationCursorPositionConfirmation)
+            {
+                EditorGUILayout.BeginHorizontal("box");
+                {
+                    GUILayout.Space(40);
+                    DrawGraphCreationCursorPositionConfirmationButton();
+                }
+                EditorGUILayout.EndHorizontal();
+            }
+
+            if (RuntimeInteractionData.isCreatingGraph)
+            {
+                DrawCancelGraphCreationButton();
+            }
+        }
+
+        EditorGUILayout.EndVertical();
+    }
+
+    private void DrawPathCreationUI()
+    {
         // path creation
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Path Creation", EditorStyles.boldLabel);
@@ -33,12 +69,12 @@ public class GraphInteraction : EditorWindow
             // add path button
             DrawCreatePathButton();
 
-            if (RuntimeInteractionData.AskForCursorPositionConfirmation)
+            if (RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation)
             {
                 EditorGUILayout.BeginHorizontal();
                 {
                     GUILayout.Space(40);
-                    DrawCursorPositionConfirmationButton();
+                    DrawPathCreationCursorPositionConfirmationButton();
                 }
                 EditorGUILayout.EndHorizontal();
             }
@@ -50,7 +86,10 @@ public class GraphInteraction : EditorWindow
             }
         }
         EditorGUILayout.EndVertical();
+    }
 
+    private void DrawPathDeletionUI()
+    {
         // path deletion
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Path Deletion", EditorStyles.boldLabel);
@@ -67,7 +106,10 @@ public class GraphInteraction : EditorWindow
             }
         }
         EditorGUILayout.EndVertical();
-
+    }
+    
+    private void DrawPathEditingUI()
+    {
         // path editing
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Path Editing", EditorStyles.boldLabel);
@@ -128,6 +170,14 @@ public class GraphInteraction : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
+    private void DrawGraphCreationButton()
+    {
+        if (GUILayout.Button("Create Graph"))
+        {
+            ToolManager.ActivateTool(graphCreationTool);
+        }
+    }
+
     private void DrawPathCreationDropdown()
     {
         if (RuntimeSettingsData.onSurface)
@@ -152,7 +202,15 @@ public class GraphInteraction : EditorWindow
         }
     }
 
-    private void DrawCursorPositionConfirmationButton()
+    private void DrawGraphCreationCursorPositionConfirmationButton()
+    {
+        if(GUILayout.Button("Confirm Cursor Position"))
+        {
+            graphCreationTool.HandleCursorConfirmation();
+        }
+    }
+
+    private void DrawPathCreationCursorPositionConfirmationButton()
     {
         if(GUILayout.Button("Confirm Cursor Position"))
         {
@@ -165,6 +223,17 @@ public class GraphInteraction : EditorWindow
         }
     }
 
+    private void DrawCancelGraphCreationButton()
+    {
+        if (GUILayout.Button("Cancel"))
+        {
+            ToolManager.DeactivateTool();
+
+            // hide cursor position confirmation button again
+            RuntimeInteractionData.AskForGraphCreationCursorPositionConfirmation = false;
+        }
+    }
+
     private void DrawCancelPathCreationButton()
     {
         if (GUILayout.Button("Cancel"))
@@ -172,7 +241,7 @@ public class GraphInteraction : EditorWindow
             ToolManager.DeactivateTool();
 
             // hide cursor position confirmation button again
-            RuntimeInteractionData.AskForCursorPositionConfirmation = false;
+            RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation = false;
 
             Debug.Log("path creation cancelled, button pressed");
         }

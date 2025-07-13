@@ -11,7 +11,7 @@ public class PathCreationTool : ISceneInteractionTool
     public void StartInteraction()
     {
 
-        RuntimeInteractionData.AskForCursorPositionConfirmation = false;
+        RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation = false;
         RuntimeInteractionData.IsCreatingPath = true;
 
         GraphOperations.ToggleNodes(true);
@@ -84,10 +84,6 @@ public class PathCreationTool : ISceneInteractionTool
         hoveredObject = null;
     }
 
-    private static int RandomizeNumberOfPathPoints(int min, int max)
-    {
-        return UnityEngine.Random.Range(min, max + 1);
-    }
 
 
 
