@@ -7,13 +7,13 @@ public class HandleDeletionTool : ISceneInteractionTool
 
     public void StartInteraction()
     {
-        RuntimeInteractionData.IsDeletingHandle = true;
+        RuntimeInteractionData.isDeletingHandle = true;
         SceneRaycastListener.StartRaycastListener(OnHover, OnLeftClick, onMiss);
     }
 
     public void StopInteraction()
     {
-        RuntimeInteractionData.IsDeletingHandle = false;
+        RuntimeInteractionData.isDeletingHandle = false;
         SceneRaycastListener.StopRaycastListener();
     }
 

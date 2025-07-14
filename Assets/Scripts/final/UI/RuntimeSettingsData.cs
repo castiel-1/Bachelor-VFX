@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public static class RuntimeSettingsData
 {
     public enum PathType { Bezier, PathOnMesh }
@@ -18,4 +20,7 @@ public static class RuntimeSettingsData
     public static int numberOfWordsMax = 4;
 
     public static int historyDepth = 3;
+
+    // colour
+    public static Color textColor = Color.white;
 }

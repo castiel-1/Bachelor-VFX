@@ -24,6 +24,7 @@ public class InfluenceDisplayer : MonoBehaviour
         Debug.Log("influence spawned");
 
         GameObject instance = Instantiate(influence.Prefab, influence.Position, Quaternion.identity);
+        instance.name = influence.Name;
 
         spawnedInfluences.Add(influence, instance);
     }

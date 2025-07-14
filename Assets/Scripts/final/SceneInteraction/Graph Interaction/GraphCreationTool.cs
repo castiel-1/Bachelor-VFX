@@ -10,14 +10,11 @@ public class GraphCreationTool : ISceneInteractionTool
     public void StartInteraction()
     {
         RuntimeInteractionData.isCreatingGraph = true;
-        RuntimeInteractionData.AskForGraphCreationCursorPositionConfirmation = true;
     }
 
     public void StopInteraction()
     {
         RuntimeInteractionData.isCreatingGraph = false;
-        RuntimeInteractionData.AskForGraphCreationCursorPositionConfirmation = false;
-
         hasStartPosition = false;
     }
 

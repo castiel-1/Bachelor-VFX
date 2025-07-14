@@ -57,8 +57,15 @@ public class PathSentenceGenerator : MonoBehaviour
         ITextSizeStrategy textSizeStrategy = TextSizeStrategyFactory.CreateTextSizeStrategy();
         float[] sizes = textSizeStrategy.GetTextSizes(outputLength);
 
+        // add colour
+        Color[] colors = new Color[outputLength];
+        for (int i = 0; i < outputLength; i++)
+        {
+            colors[i] = RuntimeSettingsData.textColor;
+        }
+
         // create buffer
-        Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null);
+        Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null, colors);
         path.Sentence = sentence;
 
     }

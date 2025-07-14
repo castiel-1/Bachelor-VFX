@@ -32,9 +32,9 @@ public class SentenceBufferManager : MonoBehaviour
         HandleOperations.OnSplineUpdated -= UpdateSentence;
     }
 
-    public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections)
+    public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections, Color[] colors)
     {
-        var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normals, lineDirections);
+        var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normals, lineDirections, colors);
         sentenceStructDict.Add(sentence, letters);
 
         currentBufferIndex += sentence.Text.Length;

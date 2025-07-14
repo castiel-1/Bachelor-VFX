@@ -10,14 +10,14 @@ public class PathDeletionTool : ISceneInteractionTool
     public void StartInteraction()
     {
         GraphOperations.TogglePathPoints(true);
-        RuntimeInteractionData.IsDeletingPath = true;
+        RuntimeInteractionData.isDeletingPath = true;
         SceneRaycastListener.StartRaycastListener(OnHover, OnLeftClick, OnMiss);
     }
 
     public void StopInteraction()
     {
         GraphOperations.TogglePathPoints(false);
-        RuntimeInteractionData.IsDeletingPath = false;
+        RuntimeInteractionData.isDeletingPath = false;
         hoveredObject = null;
         SceneRaycastListener.StopRaycastListener();
     }

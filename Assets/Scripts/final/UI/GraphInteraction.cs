@@ -8,12 +8,18 @@ public class GraphInteraction : EditorWindow
     private string[] pathCreationOptionsNotOnSurface = new string[] { "Node to Cursor", "Node to Node"};
     private string[] pathCreationOptionsOnSurface = new string[] { "Node to Surface Point", "Node to Node" };
 
+    // foldouts
+    private bool showGraphinteractions = false;
+    private bool showPathInteractions = false;
+    private bool showInfluenceInteractions = false;
+
     // tools
     private GraphCreationTool graphCreationTool = new();
     private PathCreationTool pathCreationTool = new();
     private PathDeletionTool pathDeletionTool = new();
     private HandleCreationTool handleCreationTool = new();
     private HandleDeletionTool handleDeletionTool = new();
+    private InfluenceCreationTool influenceCreationTool = new();
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -23,11 +29,29 @@ public class GraphInteraction : EditorWindow
 
     private void OnGUI()
     {
-        DrawGraphCreationUI();
+        // foldout graph
+        showGraphinteractions = EditorGUILayout.Foldout(showGraphinteractions, "Graph Interaction", true);
+        if (showGraphinteractions)
+        {
+            DrawGraphCreationUI();
+        }
 
-        DrawPathCreationUI();
-        DrawPathDeletionUI();
-        DrawPathEditingUI();
+        // foldout path
+        showPathInteractions = EditorGUILayout.Foldout(showPathInteractions, "Path Interactions", true);
+        if (showPathInteractions)
+        {
+            DrawPathCreationUI();
+            DrawPathDeletionUI();
+            DrawPathEditingUI();
+        }
+
+        // foldout influence
+        showInfluenceInteractions = EditorGUILayout.Foldout(showInfluenceInteractions, "Influence Interactions", true);
+        if (showInfluenceInteractions)
+        {
+            DrawInfluenceCreationUI();
+        }
+    
     }
     private void DrawGraphCreationUI()
     {
@@ -37,7 +61,7 @@ public class GraphInteraction : EditorWindow
         {
             DrawGraphCreationButton();
 
-            if (RuntimeInteractionData.AskForGraphCreationCursorPositionConfirmation)
+            if (RuntimeInteractionData.isCreatingGraph)
             {
                 EditorGUILayout.BeginHorizontal("box");
                 {
@@ -45,10 +69,7 @@ public class GraphInteraction : EditorWindow
                     DrawGraphCreationCursorPositionConfirmationButton();
                 }
                 EditorGUILayout.EndHorizontal();
-            }
 
-            if (RuntimeInteractionData.isCreatingGraph)
-            {
                 DrawCancelGraphCreationButton();
             }
         }
@@ -69,7 +90,7 @@ public class GraphInteraction : EditorWindow
             // add path button
             DrawCreatePathButton();
 
-            if (RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation)
+            if (RuntimeInteractionData.askForPathCreationCursorPositionConfirmation)
             {
                 EditorGUILayout.BeginHorizontal();
                 {
@@ -79,7 +100,7 @@ public class GraphInteraction : EditorWindow
                 EditorGUILayout.EndHorizontal();
             }
 
-            if (RuntimeInteractionData.IsCreatingPath)
+            if (RuntimeInteractionData.isCreatingPath)
             {
                 // cancel path creation button
                 DrawCancelPathCreationButton();
@@ -99,7 +120,7 @@ public class GraphInteraction : EditorWindow
             // path deletion button
             DrawDeletePathButton();
 
-            if (RuntimeInteractionData.IsDeletingPath)
+            if (RuntimeInteractionData.isDeletingPath)
             {
                 // cancel path deletion button
                 DrawCancelToolUseButton();
@@ -119,7 +140,7 @@ public class GraphInteraction : EditorWindow
             // path editing button
             DrawPathEditingButton();
 
-            if (RuntimeInteractionData.IsEditingPath)
+            if (RuntimeInteractionData.isEditingPath)
             {
                 EditorGUILayout.BeginHorizontal();
                 {
@@ -130,7 +151,7 @@ public class GraphInteraction : EditorWindow
                 }
                 EditorGUILayout.EndHorizontal();
 
-                if (RuntimeInteractionData.IsCreatingHandle)
+                if (RuntimeInteractionData.isCreatingHandle)
                 {
                     EditorGUILayout.BeginHorizontal();
                     {
@@ -151,7 +172,7 @@ public class GraphInteraction : EditorWindow
                 }
                 EditorGUILayout.EndHorizontal();
 
-                if (RuntimeInteractionData.IsDeletingHandle)
+                if (RuntimeInteractionData.isDeletingHandle)
                 {
                     GUILayout.BeginHorizontal();
                     {
@@ -170,6 +191,24 @@ public class GraphInteraction : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
+    private void DrawInfluenceCreationUI()
+    {
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Influence Creation", EditorStyles.boldLabel);
+
+        DrawCreateInfluenceButton();
+
+        if (RuntimeInteractionData.isCreatingInfluence)
+        {
+            DrawInfluenceNameField();
+            DrawInfluenceModifierField();
+            DrawInfluenceRadiusField();
+            DrawInfluenceGameObjectField();
+            DrawInfluenceCreationConfirmationButton();
+            DrawCancelInfluenceCreationButton();
+        }
+
+    }
     private void DrawGraphCreationButton()
     {
         if (GUILayout.Button("Create Graph"))
@@ -228,9 +267,6 @@ public class GraphInteraction : EditorWindow
         if (GUILayout.Button("Cancel"))
         {
             ToolManager.DeactivateTool();
-
-            // hide cursor position confirmation button again
-            RuntimeInteractionData.AskForGraphCreationCursorPositionConfirmation = false;
         }
     }
 
@@ -241,7 +277,7 @@ public class GraphInteraction : EditorWindow
             ToolManager.DeactivateTool();
 
             // hide cursor position confirmation button again
-            RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation = false;
+            RuntimeInteractionData.askForPathCreationCursorPositionConfirmation = false;
 
             Debug.Log("path creation cancelled, button pressed");
         }
@@ -266,7 +302,7 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("path editing started");
 
-            RuntimeInteractionData.IsEditingPath = true;
+            RuntimeInteractionData.isEditingPath = true;
 
             // deactivate any active tool since we want to start editing the path so we don't want to have other tools active
             ToolManager.DeactivateTool();
@@ -275,6 +311,7 @@ public class GraphInteraction : EditorWindow
             GraphOperations.TogglePathPoints(true);
         }
     }
+
     private void DrawCancelPathEditingButton()
     {
         if (GUILayout.Button("Cancel"))
@@ -282,7 +319,7 @@ public class GraphInteraction : EditorWindow
             // debugging
             Debug.Log("cancel edit path button pressed");
 
-            RuntimeInteractionData.IsEditingPath = false;
+            RuntimeInteractionData.isEditingPath = false;
 
             ToolManager.DeactivateTool();
 
@@ -323,5 +360,50 @@ public class GraphInteraction : EditorWindow
             ToolManager.DeactivateTool();
         }
     }
+
+    private void DrawCreateInfluenceButton()
+    {
+        if (GUILayout.Button("Create Influence"))
+        {
+            ToolManager.ActivateTool(influenceCreationTool);
+        }
+    }
+
+    private void DrawInfluenceNameField()
+    {
+        RuntimeInteractionData.influenceName = EditorGUILayout.TextField("Name", RuntimeInteractionData.influenceName);
+    }
+
+    private void DrawInfluenceModifierField()
+    {
+        EditorGUILayout.LabelField("Prompt Modifier");
+        RuntimeInteractionData.influenceModifier = EditorGUILayout.TextArea(RuntimeInteractionData.influenceModifier, GUILayout.Height(60));
+    }
+
+    private void DrawInfluenceRadiusField()
+    {
+        RuntimeInteractionData.influenceRadius = EditorGUILayout.FloatField("Radius", RuntimeInteractionData.influenceRadius);
+    }
+
+    private void DrawInfluenceGameObjectField()
+    {
+        RuntimeInteractionData.influenceObject = (GameObject)EditorGUILayout.ObjectField("Game Object", RuntimeInteractionData.influenceObject, typeof (GameObject), true);
+    }
+    private void DrawInfluenceCreationConfirmationButton()
+    {
+        if(GUILayout.Button("Confirm Influence Parameters"))
+        {
+            influenceCreationTool.HandleInfluenceCreationConfirmation();
+        }
+    }
+    private void DrawCancelInfluenceCreationButton()
+    {
+        if (GUILayout.Button("Cancel"))
+        {
+            ToolManager.DeactivateTool();
+        }
+    }
+
+
 
 }

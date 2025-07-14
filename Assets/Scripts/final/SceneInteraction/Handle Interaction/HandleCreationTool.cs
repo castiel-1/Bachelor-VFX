@@ -8,13 +8,13 @@ public class HandleCreationTool : ISceneInteractionTool
 
     public void StartInteraction()
     {
-        RuntimeInteractionData.IsCreatingHandle = true;
+        RuntimeInteractionData.isCreatingHandle = true;
         SceneRaycastListener.StartRaycastListener(OnHover, OnLeftClick, OnMiss);
     }
 
     public void StopInteraction()
     {
-        RuntimeInteractionData.IsCreatingHandle = false;
+        RuntimeInteractionData.isCreatingHandle = false;
         SceneRaycastListener.StopRaycastListener();
     }
 

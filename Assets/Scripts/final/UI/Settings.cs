@@ -78,6 +78,7 @@ public class Settings : EditorWindow
 
         DrawTextSizeDropdown();
         DrawMinMaxNumberOfWordsField();
+        DrawColorPicker();
 
         EditorGUI.indentLevel--;
 
@@ -126,6 +127,11 @@ public class Settings : EditorWindow
         RuntimeSettingsData.numberOfWordsMax = EditorGUILayout.IntField("Maximum", RuntimeSettingsData.numberOfWordsMax);
 
         EditorGUI.indentLevel--;
+    }
+
+    private void DrawColorPicker()
+    {
+        RuntimeSettingsData.textColor = EditorGUILayout.ColorField("Text Colour", RuntimeSettingsData.textColor);
     }
 
     private void DrawLLMSettings()

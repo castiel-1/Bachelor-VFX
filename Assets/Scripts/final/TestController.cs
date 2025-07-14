@@ -44,8 +44,10 @@ public class TestController : MonoBehaviour
     
     void Start()
     {
+        /*
         SetUpBuffer();
         TestGraphAndSentenceCreation();
+        */
     }
 
     public void SetUpBuffer()
@@ -253,10 +255,6 @@ public class TestController : MonoBehaviour
         Instantiate(debugSphere, rayCastHit, Quaternion.identity);
     }
 
-    public void TestInfluence()
-    {
-        influenceManager.CreateInfluence(Vector3.zero, 1f, "test", debugSphere);
-    }
 
 
 }

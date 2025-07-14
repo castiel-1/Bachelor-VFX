@@ -25,6 +25,7 @@ public struct LetterStruct
     public Vector3 normal;
     public Vector3 lineDirection;
     public float size;
+    public Color color;
 }
 
 public class Buffer : MonoBehaviour

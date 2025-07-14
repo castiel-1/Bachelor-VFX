@@ -38,7 +38,7 @@ public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
             Debug.Log("start node has been selected: " + startNode);
 
             // make button appear that asks for confirmation
-            RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation = true;
+            RuntimeInteractionData.askForPathCreationCursorPositionConfirmation = true;
 
             // tell the controller that we are waiting for the cursor confirmation so we stop using left clicks in the scene
             waitingForCursorConfirmation = true;
@@ -70,7 +70,7 @@ public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
 
         pathCreationTool.StopInteraction();
 
-        RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation = false;
+        RuntimeInteractionData.askForPathCreationCursorPositionConfirmation = false;
         startNode = null;
         graph = null;
         waitingForCursorConfirmation = false;

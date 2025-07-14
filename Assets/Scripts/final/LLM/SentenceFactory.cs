@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public static class SentenceFactory
 {
-    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections)
+    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections, Color[] colors)
     {
         if(normals == null)
         {
@@ -32,7 +32,8 @@ public static class SentenceFactory
             {
                 fIndex = CharSet.Instance.GetCharIndexInSet(text[i]),
                 position = letterPositions[i],
-                size = sizes[i]
+                size = sizes[i],
+                color = colors[i]
             };
 
             letters[i] = letter;

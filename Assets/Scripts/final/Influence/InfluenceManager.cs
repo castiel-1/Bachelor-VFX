@@ -24,12 +24,12 @@ public class InfluenceManager : MonoBehaviour
             Instance = this;
         }
     }
-    public void CreateInfluence(Vector3 position, float radius, string promptModifier, GameObject prefab)
+    public void AddInfluence(Vector3 position, string name, string promptModifier, float radius, GameObject prefab)
     {
         // debugging
         Debug.Log("influence created");
 
-        Influence nextInfluence = new Influence(position, radius, promptModifier, prefab);
+        Influence nextInfluence = InfluenceFactory.CreateInfluence(position, radius, promptModifier, name, prefab);
         influences.Add(nextInfluence);
         OnInfluenceCreated?.Invoke(nextInfluence);
     }

@@ -11,8 +11,8 @@ public class PathCreationTool : ISceneInteractionTool
     public void StartInteraction()
     {
 
-        RuntimeInteractionData.AskForPathCreationCursorPositionConfirmation = false;
-        RuntimeInteractionData.IsCreatingPath = true;
+        RuntimeInteractionData.askForPathCreationCursorPositionConfirmation = false;
+        RuntimeInteractionData.isCreatingPath = true;
 
         GraphOperations.ToggleNodes(true);
 
@@ -28,7 +28,7 @@ public class PathCreationTool : ISceneInteractionTool
     public void StopInteraction()
     {
         GraphOperations.ToggleNodes(false);
-        RuntimeInteractionData.IsCreatingPath = false;
+        RuntimeInteractionData.isCreatingPath = false;
         SceneRaycastListener.StopRaycastListener();
         selectedStrategy = null;
         hoveredObject = null;
