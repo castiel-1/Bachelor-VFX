@@ -29,4 +29,7 @@ public static class RuntimeInteractionData
     public static float influenceRadius = 1f;
 
     public static GameObject influenceObject = null;
+
+    public static bool influenceVisible = true;
+    public static bool influenceRadiusVisible = true;
 }

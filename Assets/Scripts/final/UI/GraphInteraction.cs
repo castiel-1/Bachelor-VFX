@@ -50,20 +50,21 @@ public class GraphInteraction : EditorWindow
         if (showInfluenceInteractions)
         {
             DrawInfluenceCreationUI();
+            DrawInfluenceVisibilityUI();
         }
     
     }
     private void DrawGraphCreationUI()
     {
         EditorGUILayout.LabelField("Graph Creation", EditorStyles.boldLabel);
-        EditorGUILayout.BeginVertical();
+        EditorGUILayout.BeginVertical("box");
 
         {
             DrawGraphCreationButton();
 
             if (RuntimeInteractionData.isCreatingGraph)
             {
-                EditorGUILayout.BeginHorizontal("box");
+                EditorGUILayout.BeginHorizontal();
                 {
                     GUILayout.Space(40);
                     DrawGraphCreationCursorPositionConfirmationButton();
@@ -196,19 +197,40 @@ public class GraphInteraction : EditorWindow
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Influence Creation", EditorStyles.boldLabel);
 
-        DrawCreateInfluenceButton();
-
-        if (RuntimeInteractionData.isCreatingInfluence)
+        EditorGUILayout.BeginVertical("box");
         {
-            DrawInfluenceNameField();
-            DrawInfluenceModifierField();
-            DrawInfluenceRadiusField();
-            DrawInfluenceGameObjectField();
-            DrawInfluenceCreationConfirmationButton();
-            DrawCancelInfluenceCreationButton();
-        }
+            DrawCreateInfluenceButton();
 
+            if (RuntimeInteractionData.isCreatingInfluence)
+            {
+                DrawInfluenceNameField();
+                DrawInfluenceModifierField();
+                DrawInfluenceRadiusField();
+                DrawInfluenceGameObjectField();
+                DrawInfluenceCreationConfirmationButton();
+                DrawCancelInfluenceCreationButton();
+            }
+
+        }
+        EditorGUILayout.EndVertical();
     }
+
+    private void DrawInfluenceVisibilityUI()
+    {
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Influence Visibility", EditorStyles.boldLabel);
+        EditorGUILayout.BeginVertical("box");
+        {
+            DrawInfluenceVisibilityToggle();
+
+            if (RuntimeInteractionData.influenceVisible)
+            {
+                DrawInfluenceRadiusVisibilityToggle();
+            }
+        }
+        EditorGUILayout.EndVertical();
+    }
+
     private void DrawGraphCreationButton()
     {
         if (GUILayout.Button("Create Graph"))
@@ -404,6 +426,31 @@ public class GraphInteraction : EditorWindow
         }
     }
 
+    private void DrawInfluenceVisibilityToggle()
+    {
 
+        bool oldValue = RuntimeInteractionData.influenceVisible;
+
+        bool newValue = EditorGUILayout.Toggle("Show Influence", oldValue);
+
+        if (newValue != oldValue)
+        {
+            RuntimeInteractionData.influenceVisible = newValue;
+            InfluenceDisplayer.Instance.ToggleInfluenceVisibility(newValue);
+        }
+    }
+
+    private void DrawInfluenceRadiusVisibilityToggle()
+    {
+        bool oldValue = RuntimeInteractionData.influenceRadiusVisible;
+
+        bool newValue = EditorGUILayout.Toggle("Show Influence Radius", oldValue);
+
+        if (newValue != oldValue)
+        {
+            RuntimeInteractionData.influenceRadiusVisible = newValue;
+            InfluenceDisplayer.Instance.ToggleInfluenceRadiusVisibility(newValue);
+        }
+    }
 
 }

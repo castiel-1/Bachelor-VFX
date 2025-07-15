@@ -5,7 +5,22 @@ using UnityEngine;
 
 public class InfluenceDisplayer : MonoBehaviour
 {
+    public static InfluenceDisplayer Instance { get; private set; }
+
     private Dictionary<Influence, GameObject> spawnedInfluences = new();
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+
+    }
 
     private void OnEnable()
     {
@@ -52,5 +67,21 @@ public class InfluenceDisplayer : MonoBehaviour
         GameObject instance = spawnedInfluences[influence];
         Destroy(instance);
         spawnedInfluences.Remove(influence);
+    }
+
+    public void ToggleInfluenceVisibility(bool visible)
+    {
+        foreach(GameObject influenceGO in spawnedInfluences.Values)
+        {
+            influenceGO.SetActive(visible);
+        }
+    }
+
+    public void ToggleInfluenceRadiusVisibility(bool visible)
+    {
+        foreach (GameObject influenceGO in spawnedInfluences.Values)
+        {
+            influenceGO.transform.GetChild(0).gameObject.SetActive(visible);
+        }
     }
 }
