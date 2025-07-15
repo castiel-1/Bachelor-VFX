@@ -8,6 +8,10 @@ public static class SegmentInfluenceCalculator
         Vector3 p0 = path.StartNode.Position;
         Vector3 p3 = path.EndNode.Position;
 
+        //debugging
+        Debug.Log("start of path for influence calc: " + p0);
+        Debug.Log("end of path for influence calc: " + p3);
+
         Vector3 dir = p3 - p0;
 
         Vector3 p1 = p0 + (1f/3f) * dir;
@@ -31,16 +35,27 @@ public static class SegmentInfluenceCalculator
 
         foreach(var segment in segments)
         {
+            // debugging
+            Debug.Log("calcualting influence for segment: " +  segment);    
+
             Vector3 segStart = segment.Value.start;
             Vector3 segEnd = segment.Value.end;
 
             foreach(Influence influence in influences)
             {
+                // debugging
+                Debug.Log("influence with sphere interaction calculated");
+
                 Vector3 closestPoint = CalculateClosestPointToLineSegment(segStart, segEnd, influence.Position);
                 Vector3 closestPointToInfluenceCenter = closestPoint - influence.Position;
                 float distance = closestPointToInfluenceCenter.magnitude;
 
-                if(distance <= influence.Radius)
+                // debugging
+                Debug.Log("closest point to influence center: " + closestPointToInfluenceCenter);
+                Debug.Log("distance to center of sphere: " + distance);
+                Debug.Log("influence radius: " + influence.Radius);
+
+                if (distance <= influence.Radius)
                 {
                     result[segment.Key].Add(influence);
                 }

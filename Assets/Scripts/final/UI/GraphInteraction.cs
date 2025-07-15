@@ -385,7 +385,7 @@ public class GraphInteraction : EditorWindow
 
     private void DrawCreateInfluenceButton()
     {
-        if (GUILayout.Button("Create Influence"))
+        if (GUILayout.Button("Create Semantic Influence"))
         {
             ToolManager.ActivateTool(influenceCreationTool);
         }

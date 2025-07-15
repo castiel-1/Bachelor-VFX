@@ -44,10 +44,10 @@ public class TestController : MonoBehaviour
     
     void Start()
     {
-        /*
+        
         SetUpBuffer();
-        TestGraphAndSentenceCreation();
-        */
+       // TestGraphAndSentenceCreation();
+        
     }
 
     public void SetUpBuffer()

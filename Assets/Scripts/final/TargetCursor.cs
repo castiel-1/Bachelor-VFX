@@ -51,6 +51,9 @@ public class TargetCursor : MonoBehaviour
 
     public Vector3 GetCursorPosition()
     {
+        // debugging
+        Debug.Log("target cursor position requested: " +  cursorVisual.position);
+
         return cursorVisual.position;
     }
 }

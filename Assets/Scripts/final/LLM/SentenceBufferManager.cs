@@ -34,6 +34,11 @@ public class SentenceBufferManager : MonoBehaviour
 
     public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections, Color[] colors)
     {
+
+        // debugging
+        Debug.Log("add sentence in sentencebuffermanager called");
+        Debug.Log("size: " + sizes[0]);
+
         var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normals, lineDirections, colors);
         sentenceStructDict.Add(sentence, letters);
 
