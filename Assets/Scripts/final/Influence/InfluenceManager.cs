@@ -29,7 +29,7 @@ public class InfluenceManager : MonoBehaviour
         // debugging
         Debug.Log("influence created");
 
-        Influence nextInfluence = InfluenceFactory.CreateInfluence(position, radius, promptModifier, name, prefab);
+        Influence nextInfluence = InfluenceFactory.CreateSemanticInfluence(position, radius, promptModifier, name, prefab);
         influences.Add(nextInfluence);
         OnInfluenceCreated?.Invoke(nextInfluence);
     }
