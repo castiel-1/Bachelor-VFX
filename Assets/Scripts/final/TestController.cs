@@ -42,11 +42,24 @@ public class TestController : MonoBehaviour
     
     void Start()
     {
-        
         SetUpBuffer();
         // TestGraphAndSentenceCreation();
-        InfluenceManager.Instance.AddVisualInfluence("red", Vector3.one, 0.8f, null, UnityEngine.Color.red);
-        
+        InfluenceManager.Instance.AddVisualInfluence("red", Vector3.one, 5f, null, UnityEngine.Color.red);
+
+        Vector3[] pathPoints = new Vector3[]
+        {
+            new Vector3(0f, 0f, 0f),
+            new Vector3(1f, 0f, 0f),
+            new Vector3(2f, 0f, 0f),
+            new Vector3(3f, 0f, 0f),
+            new Vector3(4f, 0f, 0f)
+        };
+        UnityEngine.Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(pathPoints);
+
+        for(int i = 0; i < colors.Length; i++)
+        {
+            Debug.Log("colors: " +  colors[i]);
+        }
     }
 
     public void SetUpBuffer()
