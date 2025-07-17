@@ -1,19 +1,12 @@
 using UnityEngine;
 
-public class SemanticInfluence
+public class SemanticInfluence : Influence
 {
-    public Vector3 Position { get; }
-    public float Radius { get; }
     public string PromptModifier { get; }
-    public string Name { get; }
-    public GameObject Prefab { get; }
 
-    public SemanticInfluence(Vector3 position, float radius, string promptModifier, string name, GameObject prefab)
+    public SemanticInfluence(string name, Vector3 position, float radius, GameObject prefab, string promptModifier)
+        : base (name, position, radius, prefab)
     {
-        Position = position;
-        Radius = radius;
         PromptModifier = promptModifier;
-        Name = name;
-        Prefab = prefab;
     }
 }

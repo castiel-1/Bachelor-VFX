@@ -37,24 +37,37 @@ public class InfluenceDisplayer : MonoBehaviour
 
     private void OnEnable()
     {
-        InfluenceManager.OnSemanticInfluenceCreated += SpawnSemanticInfluence;
-        InfluenceManager.OnVisualInfluenceCreated += SpawnVisualInfluence;
-
-        InfluenceManager.OnSemanticInfluenceDeleted += DespawnSemanticInfluence;
-        InfluenceManager.OnVisualInfluenceDeleted += DespawnVisualInfluence;
+        InfluenceManager.OnInfluenceAdded += SpawnInfluence;
+        InfluenceManager.OnInfluenceDeleted += DespawnInfluence;
     }
 
     private void OnDisable()
     {
-        InfluenceManager.OnSemanticInfluenceCreated -= SpawnSemanticInfluence;
-        InfluenceManager.OnSemanticInfluenceDeleted -= DespawnSemanticInfluence;
+        InfluenceManager.OnInfluenceAdded -= SpawnInfluence;
+        InfluenceManager.OnInfluenceDeleted -= DespawnInfluence;
     }
 
-    public void SpawnSemanticInfluence(SemanticInfluence influence)
+    public void SpawnInfluence(Influence influence)
     {
-        // debugging
-        Debug.Log("influence spawned");
+        switch (influence)
+        {
+            case SemanticInfluence semanticInfluence:
+                GameObject semanticGO = SpawnSemanticInfluence((SemanticInfluence) influence);
+                InfluenceDestructionNotifier semanticNotifier = semanticGO.AddComponent<InfluenceDestructionNotifier>();
+                semanticNotifier.Influence = semanticInfluence;
+                spawnedSemanticInfluences.Add((SemanticInfluence) semanticInfluence, semanticGO);
+                break;
+            case VisualInfluence visualInfluence:
+                GameObject visualGO = SpawnVisualInfluence((VisualInfluence) visualInfluence);
+                InfluenceDestructionNotifier visualNotifier = visualGO.AddComponent<InfluenceDestructionNotifier>();
+                visualNotifier.Influence = visualInfluence;
+                spawnedVisualInfluences.Add(visualInfluence, visualGO);
+                break;
+        }
+    }
 
+    private GameObject SpawnSemanticInfluence(SemanticInfluence influence)
+    {
         GameObject instance = Instantiate(influence.Prefab, influence.Position, Quaternion.identity);
         instance.name = influence.Name;
         instance.transform.SetParent(semanticParentTransform);
@@ -63,10 +76,10 @@ public class InfluenceDisplayer : MonoBehaviour
         Material radiusMaterial = Resources.Load<Material>("Materials/semanticInfluenceRadiusM");
         GameObject radiusGO = SpawnRadius(influence.Radius, radiusMaterial, instance.transform);
 
-        spawnedSemanticInfluences.Add(influence, instance);
+        return instance;
     }
 
-    public void SpawnVisualInfluence(VisualInfluence influence)
+    private GameObject SpawnVisualInfluence(VisualInfluence influence)
     {
         GameObject instance = Instantiate(influence.Prefab, influence.Position, Quaternion.identity);
         instance.name = influence.Name;
@@ -84,7 +97,7 @@ public class InfluenceDisplayer : MonoBehaviour
         radiusMaterial.color = new Color(influence.Color.r, influence.Color.g, influence.Color.b, 0.4f);
         GameObject radiusGO = SpawnRadius(influence.Radius, radiusMaterial, instance.transform);
 
-        spawnedVisualInfluences.Add(influence, instance);
+        return instance;
     }
 
     private GameObject SpawnRadius(float radius, Material material, Transform parentInfluenceSphere)
@@ -114,7 +127,20 @@ public class InfluenceDisplayer : MonoBehaviour
         return radiusGO; 
     }
 
-    public void DespawnSemanticInfluence(SemanticInfluence influence)
+    public void DespawnInfluence(Influence influence)
+    {
+        switch (influence)
+        {
+            case SemanticInfluence semanticInfluence:
+                DespawnSemanticInfluence(semanticInfluence);
+                break;
+            case VisualInfluence visualInfluence:
+                DespawnVisualInfluence(visualInfluence);
+                break;
+        }
+    }
+
+    private void DespawnSemanticInfluence(SemanticInfluence influence)
     {
         // debugging
         Debug.Log("influence despawned");
@@ -124,7 +150,7 @@ public class InfluenceDisplayer : MonoBehaviour
         spawnedSemanticInfluences.Remove(influence);
     }
 
-    public void DespawnVisualInfluence(VisualInfluence influence)
+    private void DespawnVisualInfluence(VisualInfluence influence)
     {
         // debugging
         Debug.Log("visual influence despawned");
@@ -134,19 +160,29 @@ public class InfluenceDisplayer : MonoBehaviour
         spawnedVisualInfluences.Remove(influence);
     }
 
-    public void ToggleSemanticInfluenceVisibility(bool visible)
+    public void ToggleInfluenceVisibility(bool visible)
     {
-        foreach(GameObject influenceGO in spawnedSemanticInfluences.Values)
+        foreach(GameObject semanticInfluenceGO in spawnedSemanticInfluences.Values)
         {
-            influenceGO.SetActive(visible);
+            semanticInfluenceGO.SetActive(visible);
+        }
+
+        foreach (GameObject visualInfluenceGO in spawnedVisualInfluences.Values)
+        {
+            visualInfluenceGO.SetActive(visible);
         }
     }
 
-    public void ToggleSemanticInfluenceRadiusVisibility(bool visible)
+    public void ToggleInfluenceRadiusVisibility(bool visible)
     {
-        foreach (GameObject influenceGO in spawnedSemanticInfluences.Values)
+        foreach (GameObject semanticInfluenceGO in spawnedSemanticInfluences.Values)
         {
-            influenceGO.transform.GetChild(0).gameObject.SetActive(visible);
+            semanticInfluenceGO.transform.GetChild(0).gameObject.SetActive(visible);
+        }
+
+        foreach (GameObject visualInfluenceGO in spawnedVisualInfluences.Values)
+        {
+            visualInfluenceGO.transform.GetChild(0).gameObject.SetActive(visible);
         }
     }
 }

@@ -1,16 +1,13 @@
+using System;
 using UnityEngine;
 
 public class InfluenceDestructionNotifier : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public static event Action<Influence> OnInfluenceGODestroyed;
+    public Influence Influence { get; set; }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        OnInfluenceGODestroyed?.Invoke(Influence);
     }
 }

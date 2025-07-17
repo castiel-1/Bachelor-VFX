@@ -2,16 +2,14 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UIElements;
 
 public class InfluenceManager : MonoBehaviour
 {
     public static InfluenceManager Instance { get; private set; }
 
-    public static event Action<SemanticInfluence> OnSemanticInfluenceCreated;
-    public static event Action<SemanticInfluence> OnSemanticInfluenceDeleted;
-
-    public static event Action<VisualInfluence> OnVisualInfluenceCreated;
-    public static event Action<VisualInfluence> OnVisualInfluenceDeleted;
+    public static event Action<Influence> OnInfluenceAdded;
+    public static event Action<Influence> OnInfluenceDeleted;
 
     private List<SemanticInfluence> semanticInfluences = new List<SemanticInfluence>();
     public IReadOnlyList<SemanticInfluence> SemanticInfluences => semanticInfluences;
@@ -31,42 +29,53 @@ public class InfluenceManager : MonoBehaviour
             Instance = this;
         }
     }
-    public void AddSemanticInfluence(Vector3 position, string name, string promptModifier, float radius, GameObject prefab)
+
+    private void OnEnable()
+    {
+        InfluenceDestructionNotifier.OnInfluenceGODestroyed += DeleteInfluence;
+    }
+
+    private void OnDisable()
+    {
+        InfluenceDestructionNotifier.OnInfluenceGODestroyed -= DeleteInfluence;
+    }
+
+    public void AddSemanticInfluence(string name, Vector3 position, float radius, GameObject prefab, string promptModifier)
     {
         // debugging
         Debug.Log("semantci influence created");
 
-        SemanticInfluence nextInfluence = InfluenceFactory.CreateSemanticInfluence(position, radius, promptModifier, name, prefab);
+        SemanticInfluence nextInfluence = InfluenceFactory.CreateSemanticInfluence(name, position, radius, prefab, promptModifier);
         semanticInfluences.Add(nextInfluence);
-        OnSemanticInfluenceCreated?.Invoke(nextInfluence);
+        OnInfluenceAdded(nextInfluence);
     }
 
-    public void AddVisualInfluence(Vector3 position, string name, Color color, float radius, GameObject prefab)
+    public void AddVisualInfluence(string name, Vector3 position, float radius, GameObject prefab, Color color)
     {
         // debugging
         Debug.Log("visual influence created");
 
-        VisualInfluence nextInfluence = InfluenceFactory.CreateVisualInfluence(position, name, radius, color, prefab);
+        VisualInfluence nextInfluence = InfluenceFactory.CreateVisualInfluence(name, position, radius, prefab, color);
         visualInfluences.Add(nextInfluence);
-        OnVisualInfluenceCreated?.Invoke(nextInfluence);
+        OnInfluenceAdded(nextInfluence);
     }
 
-    public void DeleteSemanticInfluence(SemanticInfluence influence)
+    public void DeleteInfluence(Influence influence)
     {
         // debugging
-        Debug.Log("semantic influence deleted");
+        Debug.Log("influence deleted in manager");
 
-        semanticInfluences.Remove(influence);
-        OnSemanticInfluenceDeleted?.Invoke(influence);
-    }
+        switch (influence)
+        {
+            case SemanticInfluence semanticInfluence:
+                semanticInfluences.Remove(semanticInfluence);
+                break;
+            case VisualInfluence visualInfluence:
+                visualInfluences.Remove(visualInfluence);
+                break;
+        }
 
-    public void DeleteVisualInfluence(VisualInfluence influence)
-    {
-        // debugging
-        Debug.Log("visual influence deleted");
-
-        visualInfluences.Remove(influence);
-        OnVisualInfluenceDeleted?.Invoke(influence);
+        OnInfluenceDeleted?.Invoke(influence);
     }
 
 }

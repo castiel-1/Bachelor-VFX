@@ -20,16 +20,28 @@ public static class RuntimeInteractionData
 
     public static bool isDeletingHandle = false;
 
-    public static bool isCreatingInfluence = false;
-
+    // general influence creation
     public static string influenceName = "";
-
-    public static string influenceModifier = "";
 
     public static float influenceRadius = 0.8f;
 
     public static GameObject influenceObject = null;
 
+    // semantic influence creation
+    public static bool isCreatingSemanticInfluence = false;
+
+    public static string influenceModifier = "";
+
+
+    // visual influence creation
+    public static bool isCreatingVisualInfluence = false;
+
+    public static Color influenceColor = Color.white;
+
+    // influence visibility toggle
     public static bool influenceVisible = true;
+
     public static bool influenceRadiusVisible = true;
+
+
 }

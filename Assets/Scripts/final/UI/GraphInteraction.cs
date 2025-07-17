@@ -19,7 +19,8 @@ public class GraphInteraction : EditorWindow
     private PathDeletionTool pathDeletionTool = new();
     private HandleCreationTool handleCreationTool = new();
     private HandleDeletionTool handleDeletionTool = new();
-    private InfluenceCreationTool influenceCreationTool = new();
+    private SemanticInfluenceCreationTool semanticInfluenceCreationTool = new();
+    private VisualInfluenceCreationTool visualInfluenceCreationTool = new();
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -197,20 +198,37 @@ public class GraphInteraction : EditorWindow
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Influence Creation", EditorStyles.boldLabel);
 
+        // semantic influence creation
         EditorGUILayout.BeginVertical("box");
         {
-            DrawCreateInfluenceButton();
+            DrawCreateSemanticInfluenceButton();
 
-            if (RuntimeInteractionData.isCreatingInfluence)
+            if (RuntimeInteractionData.isCreatingSemanticInfluence)
             {
                 DrawInfluenceNameField();
                 DrawInfluenceModifierField();
                 DrawInfluenceRadiusField();
                 DrawInfluenceGameObjectField();
-                DrawInfluenceCreationConfirmationButton();
-                DrawCancelInfluenceCreationButton();
+                DrawSemanticInfluenceCreationConfirmationButton();
+                DrawCancelToolUseButton();
             }
+        }
+        EditorGUILayout.EndVertical();
 
+        // visual influence creation
+        EditorGUILayout.BeginVertical("box");
+        {
+            DrawCreateVisualInfluenceButton();
+
+            if (RuntimeInteractionData.isCreatingVisualInfluence)
+            {
+                DrawInfluenceNameField();
+                DrawInfluenceColorField();
+                DrawInfluenceRadiusField();
+                DrawInfluenceGameObjectField();
+                DrawVisualInfluenceCreationConfirmationButton();
+                DrawCancelToolUseButton();
+            }
         }
         EditorGUILayout.EndVertical();
     }
@@ -383,23 +401,25 @@ public class GraphInteraction : EditorWindow
         }
     }
 
-    private void DrawCreateInfluenceButton()
+    private void DrawCreateSemanticInfluenceButton()
     {
         if (GUILayout.Button("Create Semantic Influence"))
         {
-            ToolManager.ActivateTool(influenceCreationTool);
+            ToolManager.ActivateTool(semanticInfluenceCreationTool);
+        }
+    }
+
+    private void DrawCreateVisualInfluenceButton()
+    {
+        if (GUILayout.Button("Create Visual Influence"))
+        {
+            ToolManager.ActivateTool(visualInfluenceCreationTool);
         }
     }
 
     private void DrawInfluenceNameField()
     {
         RuntimeInteractionData.influenceName = EditorGUILayout.TextField("Name", RuntimeInteractionData.influenceName);
-    }
-
-    private void DrawInfluenceModifierField()
-    {
-        EditorGUILayout.LabelField("Prompt Modifier");
-        RuntimeInteractionData.influenceModifier = EditorGUILayout.TextArea(RuntimeInteractionData.influenceModifier, GUILayout.Height(60));
     }
 
     private void DrawInfluenceRadiusField()
@@ -411,19 +431,32 @@ public class GraphInteraction : EditorWindow
     {
         RuntimeInteractionData.influenceObject = (GameObject)EditorGUILayout.ObjectField("Game Object", RuntimeInteractionData.influenceObject, typeof (GameObject), true);
     }
-    private void DrawInfluenceCreationConfirmationButton()
+
+    private void DrawInfluenceModifierField()
+    {
+        EditorGUILayout.LabelField("Prompt Modifier");
+        RuntimeInteractionData.influenceModifier = EditorGUILayout.TextArea(RuntimeInteractionData.influenceModifier, GUILayout.Height(60));
+    }
+
+    private void DrawSemanticInfluenceCreationConfirmationButton()
     {
         if(GUILayout.Button("Confirm Influence Parameters"))
         {
-            influenceCreationTool.HandleInfluenceCreationConfirmation();
+            semanticInfluenceCreationTool.HandleInfluenceCreationConfirmation();
         }
     }
-    private void DrawCancelInfluenceCreationButton()
+
+    private void DrawVisualInfluenceCreationConfirmationButton()
     {
-        if (GUILayout.Button("Cancel"))
+        if (GUILayout.Button("Confirm Visual Influence Parameters"))
         {
-            ToolManager.DeactivateTool();
+            visualInfluenceCreationTool.HandleInfluenceCreationConfirmation();
         }
+    }
+
+    private void DrawInfluenceColorField()
+    {
+        RuntimeInteractionData.influenceColor = EditorGUILayout.ColorField("Text Colour", RuntimeInteractionData.influenceColor);
     }
 
     private void DrawInfluenceVisibilityToggle()
@@ -436,7 +469,7 @@ public class GraphInteraction : EditorWindow
         if (newValue != oldValue)
         {
             RuntimeInteractionData.influenceVisible = newValue;
-            InfluenceDisplayer.Instance.ToggleSemanticInfluenceVisibility(newValue);
+            InfluenceDisplayer.Instance.ToggleInfluenceVisibility(newValue);
         }
     }
 
@@ -449,7 +482,7 @@ public class GraphInteraction : EditorWindow
         if (newValue != oldValue)
         {
             RuntimeInteractionData.influenceRadiusVisible = newValue;
-            InfluenceDisplayer.Instance.ToggleSemanticInfluenceRadiusVisibility(newValue);
+            InfluenceDisplayer.Instance.ToggleInfluenceRadiusVisibility(newValue);
         }
     }
 

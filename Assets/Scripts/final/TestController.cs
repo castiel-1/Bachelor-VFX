@@ -45,7 +45,7 @@ public class TestController : MonoBehaviour
         
         SetUpBuffer();
         // TestGraphAndSentenceCreation();
-        InfluenceManager.Instance.AddVisualInfluence(Vector3.one, "red", UnityEngine.Color.red, 0.5f, null);
+        InfluenceManager.Instance.AddVisualInfluence("red", Vector3.one, 0.8f, null, UnityEngine.Color.red);
         
     }
 

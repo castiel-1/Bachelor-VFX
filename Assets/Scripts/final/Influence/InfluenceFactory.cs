@@ -3,7 +3,8 @@ using UnityEngine.UIElements;
 
 public static class InfluenceFactory
 {
-    public static SemanticInfluence CreateSemanticInfluence(Vector3 position, float radius, string promptModifier, string name, GameObject prefab)
+
+    public static SemanticInfluence CreateSemanticInfluence(string name, Vector3 position, float radius, GameObject prefab, string promptModifier)
     {
         // debugging
         Debug.Log("create semantic influence called in factory method");
@@ -27,12 +28,12 @@ public static class InfluenceFactory
             name = promptWords[0];
         }
 
-        SemanticInfluence influence = new SemanticInfluence(position, radius, promptModifier, name, prefab);
+        SemanticInfluence influence = new SemanticInfluence(name, position, radius, prefab, promptModifier);
 
         return influence;
     }
 
-    public static VisualInfluence CreateVisualInfluence(Vector3 position, string name, float radius, Color color, GameObject prefab)
+    public static VisualInfluence CreateVisualInfluence(string name, Vector3 position, float radius, GameObject prefab, Color color)
     {
         // use standard sphere if no gameObject chosen
         if (prefab == null)
@@ -40,7 +41,7 @@ public static class InfluenceFactory
             prefab = Resources.Load<GameObject>("Prefabs/finalPrefabs/visualInfluenceP");
         }
 
-        VisualInfluence visualInfluence = new VisualInfluence(position, radius, color, name, prefab);
+        VisualInfluence visualInfluence = new VisualInfluence(name, position, radius, prefab, color);
 
         return visualInfluence;
     }
