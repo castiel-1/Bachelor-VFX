@@ -31,8 +31,6 @@ public class TestController : MonoBehaviour
     public TargetCursor cursor;
     public GameObject debugSphere;
 
-    public InfluenceManager influenceManager;
-
     public LLMManager llmManager;
 
     public GraphManager graphManager;
@@ -46,7 +44,8 @@ public class TestController : MonoBehaviour
     {
         
         SetUpBuffer();
-       // TestGraphAndSentenceCreation();
+        // TestGraphAndSentenceCreation();
+        InfluenceManager.Instance.AddVisualInfluence(Vector3.one, "red", UnityEngine.Color.red, 0.5f, null);
         
     }
 

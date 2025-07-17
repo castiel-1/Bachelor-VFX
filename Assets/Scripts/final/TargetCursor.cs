@@ -7,7 +7,6 @@ public class TargetCursor : MonoBehaviour
 {
     public static TargetCursor Instance { get; private set; }
 
-    public Transform cursorVisual;
     public float maxDistance = 1000f;
 
     private void Awake()
@@ -30,7 +29,9 @@ public class TargetCursor : MonoBehaviour
             Debug.Log("you need to be in scene view, otherwise camera is null");
         }
 
-        Vector3 direction = (cursorVisual.position - cam.transform.position).normalized;
+        Vector3 cursorPosition = GetCursorPosition();
+
+        Vector3 direction = (cursorPosition - cam.transform.position).normalized;
 
         Ray ray = new Ray(cam.transform.position, direction);
 
@@ -51,9 +52,11 @@ public class TargetCursor : MonoBehaviour
 
     public Vector3 GetCursorPosition()
     {
-        // debugging
-        Debug.Log("target cursor position requested: " +  cursorVisual.position);
+        Transform cursorPrefabTransform = transform.GetChild(0);
 
-        return cursorVisual.position;
+        // debugging
+        Debug.Log("target cursor position requested: " + cursorPrefabTransform.position);
+
+        return cursorPrefabTransform.position;
     }
 }

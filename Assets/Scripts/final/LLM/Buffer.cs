@@ -47,12 +47,15 @@ public class Buffer : MonoBehaviour
     }
 
     // adds a sentence to the buffer beginning at startIndex
-    public void AddSentenceToBuffer(LetterStruct[] letterStructs, Sentence sentence)
+    public void AddSentenceToBuffer(LetterStruct[] letterStructs, Sentence sentence, Vector3 size)
     {
         // debugging
         Debug.Log("update buffer called");
 
         graphicsBuffer.SetData(letterStructs, 0, sentence.StartIndex, sentence.Text.Length);
+
+        visualEffect.SetVector3("Size", size);
+
         visualEffect.Reinit();
     }
 
@@ -61,6 +64,8 @@ public class Buffer : MonoBehaviour
     {
         LetterStruct[] emptyLetters = new LetterStruct[sentence.Text.Length];
         graphicsBuffer.SetData(emptyLetters, 0, sentence.StartIndex, sentence.Text.Length);
+
+        visualEffect.Reinit();
     }
 
     private void OnDestroy()

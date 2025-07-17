@@ -26,7 +26,7 @@ public static class RuntimeInteractionData
 
     public static string influenceModifier = "";
 
-    public static float influenceRadius = 1f;
+    public static float influenceRadius = 0.8f;
 
     public static GameObject influenceObject = null;
 

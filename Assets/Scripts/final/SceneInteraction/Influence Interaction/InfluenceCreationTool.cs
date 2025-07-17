@@ -16,7 +16,7 @@ public class InfluenceCreationTool : ISceneInteractionTool
     {
         Vector3 position = TargetCursor.Instance.GetCursorPosition();
 
-        InfluenceManager.Instance.AddInfluence(
+        InfluenceManager.Instance.AddSemanticInfluence(
             position, RuntimeInteractionData.influenceName,
             RuntimeInteractionData.influenceModifier,
             RuntimeInteractionData.influenceRadius,

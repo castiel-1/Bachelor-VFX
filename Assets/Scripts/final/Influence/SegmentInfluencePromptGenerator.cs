@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public static class SegmentInfluencePromptGenerator 
 {
-    public static string CalculateInfluencePrompt(Dictionary<string, List<Influence>> influencesPerSegment)
+    public static string CalculateInfluencePrompt(Dictionary<string, List<SemanticInfluence>> influencesPerSegment)
     {
         string prompt = "";
 

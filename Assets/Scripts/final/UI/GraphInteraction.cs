@@ -436,7 +436,7 @@ public class GraphInteraction : EditorWindow
         if (newValue != oldValue)
         {
             RuntimeInteractionData.influenceVisible = newValue;
-            InfluenceDisplayer.Instance.ToggleInfluenceVisibility(newValue);
+            InfluenceDisplayer.Instance.ToggleSemanticInfluenceVisibility(newValue);
         }
     }
 
@@ -449,7 +449,7 @@ public class GraphInteraction : EditorWindow
         if (newValue != oldValue)
         {
             RuntimeInteractionData.influenceRadiusVisible = newValue;
-            InfluenceDisplayer.Instance.ToggleInfluenceRadiusVisibility(newValue);
+            InfluenceDisplayer.Instance.ToggleSemanticInfluenceRadiusVisibility(newValue);
         }
     }
 

@@ -14,8 +14,8 @@ public static class FullPromptBuilder
         string historyPrompt = HistoryPromptGenerator.GenerateHistoryPrompt(allBranches);
 
         // build influence prompt
-        List<Influence> influences = (List<Influence>)influenceManager.Influences;
-        Dictionary<string, List<Influence>> influenceStrengths = SegmentInfluenceCalculator.CalculateInfluenceStrengths(path, influences);
+        List<SemanticInfluence> influences = (List<SemanticInfluence>)influenceManager.SemanticInfluences;
+        Dictionary<string, List<SemanticInfluence>> influenceStrengths = SegmentInfluenceCalculator.CalculateInfluenceStrengths(path, influences);
         string influencePrompt = SegmentInfluencePromptGenerator.CalculateInfluencePrompt(influenceStrengths);
 
         string fullPrompt = start + " " + historyPrompt + " " + influencePrompt;

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class SegmentInfluenceCalculator
 {
-    public static Dictionary<string, List<Influence>> CalculateInfluenceStrengths(Path path, List<Influence> influences)
+    public static Dictionary<string, List<SemanticInfluence>> CalculateInfluenceStrengths(Path path, List<SemanticInfluence> influences)
     {
         Vector3 p0 = path.StartNode.Position;
         Vector3 p3 = path.EndNode.Position;
@@ -26,11 +26,11 @@ public static class SegmentInfluenceCalculator
         };
 
         // output dictionary
-        Dictionary<string, List<Influence>> result = new()
+        Dictionary<string, List<SemanticInfluence>> result = new()
         {
-            { "beginning", new List<Influence>() },
-            { "middle",    new List<Influence>() },
-            { "end",       new List<Influence>() }
+            { "beginning", new List<SemanticInfluence>() },
+            { "middle",    new List<SemanticInfluence>() },
+            { "end",       new List<SemanticInfluence>() }
         };
 
         foreach(var segment in segments)
@@ -41,17 +41,17 @@ public static class SegmentInfluenceCalculator
             Vector3 segStart = segment.Value.start;
             Vector3 segEnd = segment.Value.end;
 
-            foreach(Influence influence in influences)
+            foreach(SemanticInfluence influence in influences)
             {
                 // debugging
                 Debug.Log("influence with sphere interaction calculated");
 
                 Vector3 closestPoint = CalculateClosestPointToLineSegment(segStart, segEnd, influence.Position);
-                Vector3 closestPointToInfluenceCenter = closestPoint - influence.Position;
-                float distance = closestPointToInfluenceCenter.magnitude;
+                float distance = (closestPoint - influence.Position).magnitude;
 
                 // debugging
-                Debug.Log("closest point to influence center: " + closestPointToInfluenceCenter);
+                Debug.Log("closest point to influence center: " +closestPoint);
+                Debug.Log("sphere center: " + influence.Position);
                 Debug.Log("distance to center of sphere: " + distance);
                 Debug.Log("influence radius: " + influence.Radius);
 
@@ -71,12 +71,18 @@ public static class SegmentInfluenceCalculator
         Vector3 lineDir = lineEnd - lineStart;
         Vector3 startToPoint = point - lineStart;
 
-        float lineLength = lineDir.magnitude;
 
         // t = how far along the line in percent the closest point is -> between 0 and 1 means it's on the line
-        float t = Vector3.Dot(lineDir, startToPoint) / (lineLength * lineLength);
+        float t = Vector3.Dot(lineDir, startToPoint) / lineDir.sqrMagnitude;
 
-        Vector3 closestPoint = lineStart + Mathf.Clamp01(t) * lineDir; // we clamp t to 0 or 1 because we want the point to stay on the line segment (and this works for the intersection calculation as well)
+        if(t < 0 || t > 1)
+        {
+            // debugging
+            Debug.Log("closest point not on line segment, so it's start or end point and irrelevant");
+            return lineStart;
+        }
+
+        Vector3 closestPoint = lineStart + t * lineDir;
 
         return closestPoint;
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 670865322911708237}
   - component: {fileID: 5629787587250618917}
   m_Layer: 0
-  m_Name: influenceP
+  m_Name: semanticInfluenceP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

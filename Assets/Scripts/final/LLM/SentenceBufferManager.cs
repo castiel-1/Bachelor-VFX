@@ -9,6 +9,7 @@ public class SentenceBufferManager : MonoBehaviour
 
     private Dictionary<Sentence, LetterStruct[]> sentenceStructDict = new();
     private int currentBufferIndex = 0;
+    private Vector3 maxSize = Vector3.zero;
 
     private void Awake()
     {
@@ -44,7 +45,9 @@ public class SentenceBufferManager : MonoBehaviour
 
         currentBufferIndex += sentence.Text.Length;
 
-        buffer.AddSentenceToBuffer(letters, sentence);
+        Vector3 size = CalculateMaxAndMinSize(letters);
+
+        buffer.AddSentenceToBuffer(letters, sentence, size);
 
         return sentence;
     }
@@ -67,6 +70,26 @@ public class SentenceBufferManager : MonoBehaviour
             letterStructs[i].position = path.pathPoints[i];
         }
 
-        buffer.AddSentenceToBuffer(letterStructs, sentence);
+        Vector3 size = CalculateMaxAndMinSize(letterStructs);
+
+        buffer.AddSentenceToBuffer(letterStructs, sentence, size);
+    }
+
+    // calculation for bounding box adjustment
+    private Vector3 CalculateMaxAndMinSize(LetterStruct[] letterStructs)
+    {
+        foreach(LetterStruct letter in letterStructs)
+        {
+            Vector3 absolutePosition = new Vector3
+            (
+                Mathf.Abs(letter.position.x),
+                Mathf.Abs(letter.position.y),
+                Mathf.Abs(letter.position.z)
+            );
+
+            maxSize = Vector3.Max(maxSize, absolutePosition);
+        }
+
+        return maxSize * 2 + (Vector3.one * 0.5f); // size from center from -max to +max with padding
     }
 }
