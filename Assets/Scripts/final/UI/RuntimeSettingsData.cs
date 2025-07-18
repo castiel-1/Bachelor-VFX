@@ -22,5 +22,5 @@ public static class RuntimeSettingsData
     public static int historyDepth = 3;
 
     // colour
-    public static Color textColor = Color.white;
+    public static Color uninfluencedTextColor = Color.white;
 }

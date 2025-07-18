@@ -131,7 +131,11 @@ public class Settings : EditorWindow
 
     private void DrawColorPicker()
     {
-        RuntimeSettingsData.textColor = EditorGUILayout.ColorField("Text Colour", RuntimeSettingsData.textColor);
+        EditorGUILayout.LabelField("Text Colour Without Influence");
+
+        EditorGUI.indentLevel++;
+            RuntimeSettingsData.uninfluencedTextColor = EditorGUILayout.ColorField(GUIContent.none, RuntimeSettingsData.uninfluencedTextColor);
+        EditorGUI.indentLevel--;
     }
 
     private void DrawLLMSettings()

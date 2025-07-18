@@ -7,13 +7,14 @@ public static class ColorInfluenceCalculator
 {
     public static Color[] CalculateColorInfluences(Vector3[] pathPoints)
     {
+        Color uninfluencedTextColor = RuntimeSettingsData.uninfluencedTextColor;
         Color[] colors = new Color[pathPoints.Length];
         List<VisualInfluence> colorInfluences = (List<VisualInfluence>) InfluenceManager.Instance.VisualInfluences;
 
         // debugging
         Debug.Log("number of color influences: " +  colorInfluences.Count);
 
-        // default colour is black if no colour influences are there
+        // default colour according to settings if no colour influences are there
         if(colorInfluences.Count == 0)
         {
             // debugging
@@ -21,7 +22,7 @@ public static class ColorInfluenceCalculator
 
             for (int i = 0; i < pathPoints.Length; i++)
             {
-                colors[i] = Color.black;
+                colors[i] = uninfluencedTextColor;
             }
 
             return colors;
@@ -55,7 +56,7 @@ public static class ColorInfluenceCalculator
             }
             else
             {
-                colors[i] = Color.black;
+                colors[i] = uninfluencedTextColor;
             }
         }
 

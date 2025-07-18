@@ -24,5 +24,7 @@ public class VisualInfluenceCreationTool : ISceneInteractionTool
                 RuntimeInteractionData.influenceObject,
                 RuntimeInteractionData.influenceColor
             );
+
+        StopInteraction();
     }
 }

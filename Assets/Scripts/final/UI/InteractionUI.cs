@@ -2,7 +2,7 @@ using Obi;
 using UnityEditor;
 using UnityEngine;
 
-public class GraphInteraction : EditorWindow
+public class InteractionUI : EditorWindow
 {
     // dropdowns
     private string[] pathCreationOptionsNotOnSurface = new string[] { "Node to Cursor", "Node to Node"};
@@ -25,7 +25,7 @@ public class GraphInteraction : EditorWindow
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
     {
-        GetWindow<GraphInteraction>("Graph Interaction");
+        GetWindow<InteractionUI>("Graph Interaction");
     }
 
     private void OnGUI()
@@ -205,11 +205,20 @@ public class GraphInteraction : EditorWindow
 
             if (RuntimeInteractionData.isCreatingSemanticInfluence)
             {
-                DrawInfluenceNameField();
-                DrawInfluenceModifierField();
-                DrawInfluenceRadiusField();
-                DrawInfluenceGameObjectField();
-                DrawSemanticInfluenceCreationConfirmationButton();
+                EditorGUI.indentLevel++;
+                    DrawInfluenceNameField();
+                    DrawInfluenceModifierField();
+                    DrawInfluenceRadiusField();
+                    DrawInfluenceGameObjectField();
+                EditorGUI.indentLevel--;
+
+                EditorGUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(15);
+                    DrawSemanticInfluenceCreationConfirmationButton();
+                }
+                EditorGUILayout.EndHorizontal();
+
                 DrawCancelToolUseButton();
             }
         }
@@ -222,11 +231,20 @@ public class GraphInteraction : EditorWindow
 
             if (RuntimeInteractionData.isCreatingVisualInfluence)
             {
-                DrawInfluenceNameField();
-                DrawInfluenceColorField();
-                DrawInfluenceRadiusField();
-                DrawInfluenceGameObjectField();
-                DrawVisualInfluenceCreationConfirmationButton();
+                EditorGUI.indentLevel++;
+                    DrawInfluenceNameField();
+                    DrawInfluenceColorField();
+                    DrawInfluenceRadiusField();
+                    DrawInfluenceGameObjectField();
+                EditorGUI.indentLevel--;
+
+                EditorGUILayout.BeginHorizontal();
+                {
+                    GUILayout.Space(15);
+                    DrawVisualInfluenceCreationConfirmationButton();
+                }
+                EditorGUILayout.EndHorizontal();
+
                 DrawCancelToolUseButton();
             }
         }

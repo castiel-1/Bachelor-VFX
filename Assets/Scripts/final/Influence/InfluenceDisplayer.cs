@@ -55,12 +55,16 @@ public class InfluenceDisplayer : MonoBehaviour
                 GameObject semanticGO = SpawnSemanticInfluence((SemanticInfluence) influence);
                 InfluenceDestructionNotifier semanticNotifier = semanticGO.AddComponent<InfluenceDestructionNotifier>();
                 semanticNotifier.Influence = semanticInfluence;
+                InfluencePositionTracker semanticPositionTracker = semanticGO.AddComponent<InfluencePositionTracker>();
+                semanticPositionTracker.Influence = semanticInfluence;
                 spawnedSemanticInfluences.Add((SemanticInfluence) semanticInfluence, semanticGO);
                 break;
             case VisualInfluence visualInfluence:
                 GameObject visualGO = SpawnVisualInfluence((VisualInfluence) visualInfluence);
                 InfluenceDestructionNotifier visualNotifier = visualGO.AddComponent<InfluenceDestructionNotifier>();
                 visualNotifier.Influence = visualInfluence;
+                InfluencePositionTracker visualPositionTracker = visualGO.AddComponent<InfluencePositionTracker>();
+                visualPositionTracker.Influence = visualInfluence;
                 spawnedVisualInfluences.Add(visualInfluence, visualGO);
                 break;
         }

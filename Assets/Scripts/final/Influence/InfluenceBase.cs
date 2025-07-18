@@ -3,7 +3,7 @@ using UnityEngine;
 public class Influence
 {
     public string Name { get; }
-    public Vector3 Position { get; }
+    public Vector3 Position { get; set; }
     public float Radius { get; }
     public GameObject Prefab { get; }
 
@@ -14,4 +14,5 @@ public class Influence
         Radius = radius;
         Prefab = prefab;
     }
+
 }
