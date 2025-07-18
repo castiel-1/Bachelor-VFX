@@ -24,6 +24,16 @@ public class GraphManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        GraphDestructionNotifier.OnGraphGODestroyed += DeleteGraph;
+    }
+
+    private void OnDisable()
+    {
+        GraphDestructionNotifier.OnGraphGODestroyed -= DeleteGraph;
+    }
+
     public Graph CreateGraph(Vector3 startPosition, Vector3 endPosition) // the position of the start and end node of the first path
     {
         // debugging
@@ -31,8 +41,11 @@ public class GraphManager : MonoBehaviour
 
         GameObject graphGO = Instantiate(graphPrefab);
         graphGO.name = "gaph_" + graphID;
-
+       
         Graph graph = graphGO.GetComponent<Graph>();
+
+        GraphDestructionNotifier notifier = graphGO.AddComponent<GraphDestructionNotifier>();
+        notifier.Graph = graph;
 
         graph.Initialize(graphID);
 
@@ -64,6 +77,16 @@ public class GraphManager : MonoBehaviour
 
     public void DeleteGraph(Graph graph)
     {
+        // debugging
+        Debug.Log("delete graph called");
+
+        // delete all sentences from buffer
+        foreach(Path path in graph.Paths)
+        {
+            SentenceBufferManager.instance.DeleteSentence(path.Sentence);
+        }
+
+        // delete graph
         foreach (var pair in graphs)
         {
             if (pair.Value == graph)
