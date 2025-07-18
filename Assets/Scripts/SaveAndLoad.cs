@@ -9,7 +9,10 @@ public static class SaveAndLoad
 
     public static void SaveScene()
     {
-        var currentScene = SceneManager.GetActiveScene();
+        // debugging
+        Debug.Log("scene saved");
+
+        Scene currentScene = SceneManager.GetActiveScene();
 
         string json = SceneSerialization.SerializeScene(currentScene);
 
@@ -18,4 +21,15 @@ public static class SaveAndLoad
         File.WriteAllText(fullPath, json);
     }
 
+    public static void LoadScene()
+    {
+        // debugging
+        Debug.Log("scene loaded");
+
+        string fullPath = System.IO.Path.Combine(Application.persistentDataPath, saveFileName);
+
+        string json = File.ReadAllText(fullPath);
+
+        SceneSerialization.ImportScene(json);
+    }
 }

@@ -9,7 +9,7 @@ public static class ColorInfluenceCalculator
     {
         Color uninfluencedTextColor = RuntimeSettingsData.uninfluencedTextColor;
         Color[] colors = new Color[pathPoints.Length];
-        List<VisualInfluence> colorInfluences = (List<VisualInfluence>) InfluenceManager.Instance.VisualInfluences;
+        List<ColorInfluence> colorInfluences = (List<ColorInfluence>) InfluenceManager.Instance.ColorInfluences;
 
         // debugging
         Debug.Log("number of color influences: " +  colorInfluences.Count);
@@ -34,7 +34,7 @@ public static class ColorInfluenceCalculator
             Color mixedColor = Color.black;
             float totalWeight = 0f;
 
-            foreach (VisualInfluence influence in colorInfluences)
+            foreach (ColorInfluence influence in colorInfluences)
             {
                 float distance = Vector3.Distance(point, influence.Position);
 

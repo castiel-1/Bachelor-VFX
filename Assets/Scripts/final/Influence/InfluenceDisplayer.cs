@@ -8,10 +8,10 @@ public class InfluenceDisplayer : MonoBehaviour
     public static InfluenceDisplayer Instance { get; private set; }
 
     private Dictionary<SemanticInfluence, GameObject> spawnedSemanticInfluences = new();
-    private Dictionary<VisualInfluence, GameObject> spawnedVisualInfluences = new();
+    private Dictionary<ColorInfluence, GameObject> spawnedColorInfluences = new();
 
     private Transform semanticParentTransform;
-    private Transform visualParentTransform;
+    private Transform colorParentTransform;
 
     private void Awake()
     {
@@ -32,7 +32,7 @@ public class InfluenceDisplayer : MonoBehaviour
 
         GameObject visualGO = new GameObject("Visual Influences");
         visualGO.transform.SetParent(rootGO.transform, false);
-        visualParentTransform = visualGO.transform;
+        colorParentTransform = visualGO.transform;
     }
 
     private void OnEnable()
@@ -59,13 +59,13 @@ public class InfluenceDisplayer : MonoBehaviour
                 semanticPositionTracker.Influence = semanticInfluence;
                 spawnedSemanticInfluences.Add((SemanticInfluence) semanticInfluence, semanticGO);
                 break;
-            case VisualInfluence visualInfluence:
-                GameObject visualGO = SpawnVisualInfluence((VisualInfluence) visualInfluence);
-                InfluenceDestructionNotifier visualNotifier = visualGO.AddComponent<InfluenceDestructionNotifier>();
-                visualNotifier.Influence = visualInfluence;
-                InfluencePositionTracker visualPositionTracker = visualGO.AddComponent<InfluencePositionTracker>();
-                visualPositionTracker.Influence = visualInfluence;
-                spawnedVisualInfluences.Add(visualInfluence, visualGO);
+            case ColorInfluence colorInfluence:
+                GameObject colorGO = SpawnColorInfluence((ColorInfluence) colorInfluence);
+                InfluenceDestructionNotifier colorNotifier = colorGO.AddComponent<InfluenceDestructionNotifier>();
+                colorNotifier.Influence = colorInfluence;
+                InfluencePositionTracker colorPositionTracker = colorGO.AddComponent<InfluencePositionTracker>();
+                colorPositionTracker.Influence = colorInfluence;
+                spawnedColorInfluences.Add(colorInfluence, colorGO);
                 break;
         }
     }
@@ -83,11 +83,11 @@ public class InfluenceDisplayer : MonoBehaviour
         return instance;
     }
 
-    private GameObject SpawnVisualInfluence(VisualInfluence influence)
+    private GameObject SpawnColorInfluence(ColorInfluence influence)
     {
         GameObject instance = Instantiate(influence.Prefab, influence.Position, Quaternion.identity);
         instance.name = influence.Name;
-        instance.transform.SetParent(visualParentTransform);
+        instance.transform.SetParent(colorParentTransform);
 
         // changing material colour 
         Material baseVisualMaterial = Resources.Load<Material>("Materials/visualInfluenceM");
@@ -138,8 +138,8 @@ public class InfluenceDisplayer : MonoBehaviour
             case SemanticInfluence semanticInfluence:
                 DespawnSemanticInfluence(semanticInfluence);
                 break;
-            case VisualInfluence visualInfluence:
-                DespawnVisualInfluence(visualInfluence);
+            case ColorInfluence visualInfluence:
+                DespawnColorInfluence(visualInfluence);
                 break;
         }
     }
@@ -154,14 +154,14 @@ public class InfluenceDisplayer : MonoBehaviour
         spawnedSemanticInfluences.Remove(influence);
     }
 
-    private void DespawnVisualInfluence(VisualInfluence influence)
+    private void DespawnColorInfluence(ColorInfluence influence)
     {
         // debugging
         Debug.Log("visual influence despawned");
 
-        GameObject instance = spawnedVisualInfluences[influence];
+        GameObject instance = spawnedColorInfluences[influence];
         Destroy(instance);
-        spawnedVisualInfluences.Remove(influence);
+        spawnedColorInfluences.Remove(influence);
     }
 
     public void ToggleInfluenceVisibility(bool visible)
@@ -171,9 +171,9 @@ public class InfluenceDisplayer : MonoBehaviour
             semanticInfluenceGO.SetActive(visible);
         }
 
-        foreach (GameObject visualInfluenceGO in spawnedVisualInfluences.Values)
+        foreach (GameObject colorInfluenceGO in spawnedColorInfluences.Values)
         {
-            visualInfluenceGO.SetActive(visible);
+            colorInfluenceGO.SetActive(visible);
         }
     }
 
@@ -184,9 +184,9 @@ public class InfluenceDisplayer : MonoBehaviour
             semanticInfluenceGO.transform.GetChild(0).gameObject.SetActive(visible);
         }
 
-        foreach (GameObject visualInfluenceGO in spawnedVisualInfluences.Values)
+        foreach (GameObject colorInfluenceGO in spawnedColorInfluences.Values)
         {
-            visualInfluenceGO.transform.GetChild(0).gameObject.SetActive(visible);
+            colorInfluenceGO.transform.GetChild(0).gameObject.SetActive(visible);
         }
     }
 }

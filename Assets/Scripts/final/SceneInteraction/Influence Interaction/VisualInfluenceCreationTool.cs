@@ -16,7 +16,7 @@ public class VisualInfluenceCreationTool : ISceneInteractionTool
     {
         Vector3 position = TargetCursor.Instance.GetCursorPosition();
 
-        InfluenceManager.Instance.AddVisualInfluence
+        InfluenceManager.Instance.AddColorInfluence
             (
                 RuntimeInteractionData.influenceName,
                 position,

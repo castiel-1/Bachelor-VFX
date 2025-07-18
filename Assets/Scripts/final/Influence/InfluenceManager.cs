@@ -15,8 +15,8 @@ public class InfluenceManager : MonoBehaviour
     public IReadOnlyList<SemanticInfluence> SemanticInfluences => semanticInfluences;
 
 
-    private List<VisualInfluence> visualInfluences = new List<VisualInfluence>();
-    public IReadOnlyList<VisualInfluence> VisualInfluences => visualInfluences;
+    private List<ColorInfluence> colorInfluences = new List<ColorInfluence>();
+    public IReadOnlyList<ColorInfluence> ColorInfluences => colorInfluences;
 
     private void Awake()
     {
@@ -50,13 +50,13 @@ public class InfluenceManager : MonoBehaviour
         OnInfluenceAdded(nextInfluence);
     }
 
-    public void AddVisualInfluence(string name, Vector3 position, float radius, GameObject prefab, Color color)
+    public void AddColorInfluence(string name, Vector3 position, float radius, GameObject prefab, Color color)
     {
         // debugging
-        Debug.Log("visual influence created");
+        Debug.Log("color influence created");
 
-        VisualInfluence nextInfluence = InfluenceFactory.CreateVisualInfluence(name, position, radius, prefab, color);
-        visualInfluences.Add(nextInfluence);
+        ColorInfluence nextInfluence = InfluenceFactory.CreateColorInfluence(name, position, radius, prefab, color);
+        colorInfluences.Add(nextInfluence);
         OnInfluenceAdded(nextInfluence);
     }
 
@@ -70,8 +70,8 @@ public class InfluenceManager : MonoBehaviour
             case SemanticInfluence semanticInfluence:
                 semanticInfluences.Remove(semanticInfluence);
                 break;
-            case VisualInfluence visualInfluence:
-                visualInfluences.Remove(visualInfluence);
+            case ColorInfluence colorInfluence:
+                colorInfluences.Remove(colorInfluence);
                 break;
         }
 

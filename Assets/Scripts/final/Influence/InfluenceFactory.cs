@@ -32,7 +32,7 @@ public static class InfluenceFactory
         return influence;
     }
 
-    public static VisualInfluence CreateVisualInfluence(string name, Vector3 position, float radius, GameObject prefab, Color color)
+    public static ColorInfluence CreateColorInfluence(string name, Vector3 position, float radius, GameObject prefab, Color color)
     {
         // use standard sphere if no gameObject chosen
         if (prefab == null)
@@ -40,7 +40,7 @@ public static class InfluenceFactory
             prefab = Resources.Load<GameObject>("Prefabs/finalPrefabs/visualInfluenceP");
         }
 
-        VisualInfluence visualInfluence = new VisualInfluence(name, position, radius, prefab, color);
+        ColorInfluence visualInfluence = new ColorInfluence(name, position, radius, prefab, color);
 
         return visualInfluence;
     }
