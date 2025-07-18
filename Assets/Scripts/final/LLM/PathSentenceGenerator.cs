@@ -58,11 +58,7 @@ public class PathSentenceGenerator : MonoBehaviour
         float[] sizes = textSizeStrategy.GetTextSizes(outputLength);
 
         // add colour
-        Color[] colors = new Color[outputLength];
-        for (int i = 0; i < outputLength; i++)
-        {
-            colors[i] = RuntimeSettingsData.textColor;
-        }
+        Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(pathPointPositions.ToArray());
 
         // create buffer
         Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null, colors);

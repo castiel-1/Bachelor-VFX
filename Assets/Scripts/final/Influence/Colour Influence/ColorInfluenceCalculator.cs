@@ -8,10 +8,13 @@ public static class ColorInfluenceCalculator
     public static Color[] CalculateColorInfluences(Vector3[] pathPoints)
     {
         Color[] colors = new Color[pathPoints.Length];
-        VisualInfluence[] colorInfluences = InfluenceManager.Instance.VisualInfluences.ToArray();
+        List<VisualInfluence> colorInfluences = (List<VisualInfluence>) InfluenceManager.Instance.VisualInfluences;
+
+        // debugging
+        Debug.Log("number of color influences: " +  colorInfluences.Count);
 
         // default colour is black if no colour influences are there
-        if(colorInfluences.Length == 0)
+        if(colorInfluences.Count == 0)
         {
             // debugging
             Debug.Log("no color influences found");
@@ -20,54 +23,42 @@ public static class ColorInfluenceCalculator
             {
                 colors[i] = Color.black;
             }
-        }
 
+            return colors;
+        }
 
         for(int i = 0; i < pathPoints.Length; i++)
         {
-            Color? color = null; // null to begin with because if there is only one influence color we want that to show cleanly and not be muddy with black
+            Vector3 point = pathPoints[i];
+            Color mixedColor = Color.black;
+            float totalWeight = 0f;
 
-            for (int j = 0; j < colorInfluences.Length; j++)
+            foreach (VisualInfluence influence in colorInfluences)
             {
-                if (IsPointInSphere(pathPoints[i], colorInfluences[j].Position, colorInfluences[j].Radius))
+                float distance = Vector3.Distance(point, influence.Position);
+
+                // if point is in sphere
+                if (distance <= influence.Radius)
                 {
-                    // if there is no color, first influence defines color
-                    if(color == null)
-                    {
-                        color = colorInfluences[j].Color;
-                    }
-                    // otherwise mix colors
-                    else
-                    {
-                        color = Color.Lerp(color.Value, colorInfluences[j].Color, 0.5f);
-                    }
-                }
-                else
-                {
-                    color = Color.black;
+                    // Debugging
+                    Debug.Log("point in sphere");
+
+                    float weight = 1f - (distance / influence.Radius);
+                    mixedColor += influence.Color * weight;
+                    totalWeight += weight;
                 }
             }
 
-            colors[i] = color.Value;
+            if (totalWeight > 0f)
+            {
+                colors[i] = mixedColor / totalWeight;
+            }
+            else
+            {
+                colors[i] = Color.black;
+            }
         }
 
         return colors;
-    }
-
-    private static bool IsPointInSphere(Vector3 point, Vector3 center, float radius)
-    {
-        float result = Mathf.Pow((point.x - center.x), 2) + Mathf.Pow((point.y - center.y), 2) + Mathf.Pow((point.z - center.z), 2);
-
-        float radiusSquared = Mathf.Pow(radius, 2);
-
-        if(result <= radiusSquared)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-
     }
 }
