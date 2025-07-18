@@ -16,6 +16,15 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.cinemachine": {
+      "version": "3.1.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.splines": "2.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.collab-proxy": {
       "version": "2.6.0",
       "depth": 0,
@@ -111,11 +120,27 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.performance.profile-analyzer": {
       "version": "1.2.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.properties": {
+      "version": "2.1.0-exp.3",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework.performance": "2.8.0-preview"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
@@ -165,11 +190,32 @@
         "com.unity.modules.terrain": "1.0.0"
       }
     },
+    "com.unity.runtime-scene-serialization": {
+      "version": "https://github.com/needle-mirror/com.unity.runtime-scene-serialization.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.properties": "2.0.0-exp.13",
+        "com.unity.serialization": "2.0.0-exp.13",
+        "com.unity.nuget.mono-cecil": "1.10.1"
+      },
+      "hash": "820fe982fb23e0a44fb9655d453ca21bbb03de55"
+    },
     "com.unity.searcher": {
       "version": "4.9.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.serialization": {
+      "version": "3.1.2",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.7.2",
+        "com.unity.collections": "2.4.2"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.settings-manager": {
@@ -187,6 +233,17 @@
         "com.unity.render-pipelines.core": "17.0.3",
         "com.unity.searcher": "4.9.2"
       }
+    },
+    "com.unity.splines": {
+      "version": "2.6.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0",
+        "com.unity.mathematics": "1.2.1",
+        "com.unity.settings-manager": "1.0.3"
+      },
+      "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
       "version": "1.4.5",
@@ -258,6 +315,15 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.xr.core-utils": {
+      "version": "https://github.com/needle-mirror/com.unity.xr.core-utils.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.xr": "1.0.0"
+      },
+      "hash": "b714a16309260370d4a39ea3047e0adf0a041887"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

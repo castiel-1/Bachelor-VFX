@@ -1798,7 +1798,6 @@ MonoBehaviour:
   pathCalculator: {fileID: 1131724143}
   cursor: {fileID: 1086905048}
   debugSphere: {fileID: 7232164320203899052, guid: c1e4483202ff3674eb6fc39a7b9a888d, type: 3}
-  influenceManager: {fileID: 483343565}
   llmManager: {fileID: 585925875}
   graphManager: {fileID: 1590821652}
   buffer: {fileID: 136878442}

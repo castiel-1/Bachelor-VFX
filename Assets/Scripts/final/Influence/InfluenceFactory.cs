@@ -3,7 +3,6 @@ using UnityEngine.UIElements;
 
 public static class InfluenceFactory
 {
-
     public static SemanticInfluence CreateSemanticInfluence(string name, Vector3 position, float radius, GameObject prefab, string promptModifier)
     {
         // debugging
