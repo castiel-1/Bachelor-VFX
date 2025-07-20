@@ -54,11 +54,6 @@ public class InteractionUI : EditorWindow
             DrawInfluenceVisibilityUI();
         }
 
-        // save button
-        EditorGUILayout.Space();
-        DrawSaveButton();
-        DrawLoadButton();
-    
     }
     private void DrawGraphCreationUI()
     {
@@ -506,22 +501,6 @@ public class InteractionUI : EditorWindow
         {
             RuntimeInteractionData.influenceRadiusVisible = newValue;
             InfluenceDisplayer.Instance.ToggleInfluenceRadiusVisibility(newValue);
-        }
-    }
-
-    private void DrawSaveButton()
-    {
-        if(GUILayout.Button("Save Scene"))
-        {
-            SaveAndLoad.SaveScene();
-        }
-    }
-
-    private void DrawLoadButton()
-    {
-        if(GUILayout.Button("Load Scene"))
-        {
-            SaveAndLoad.LoadScene();
         }
     }
 

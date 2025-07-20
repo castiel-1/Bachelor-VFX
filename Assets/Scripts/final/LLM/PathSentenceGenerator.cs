@@ -12,11 +12,13 @@ public class PathSentenceGenerator : MonoBehaviour
     private void OnEnable()
     {
         GraphOperations.OnPathCreated += HandlePathCreated;
+        GraphOperations.OnPathRecreated += HandlePathRecreated;
     }
 
     private void OnDisable()
     {
         GraphOperations.OnPathCreated -= HandlePathCreated;
+        GraphOperations.OnPathRecreated -= HandlePathRecreated;
     }
 
     public async void HandlePathCreated(Path path, Graph graph)
@@ -35,7 +37,7 @@ public class PathSentenceGenerator : MonoBehaviour
         // debugging
         Debug.Log("llm output received in handle path created");
         Debug.Log(llmOutput);
-       
+
         // caluclate pathPoints
         List<Vector3> pathPointPositions = SplineCalculator.CalculateSplinePoints(path.StartNode.Position, path.EndNode.Position, outputLength);
 
@@ -64,6 +66,28 @@ public class PathSentenceGenerator : MonoBehaviour
         Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null, colors);
         path.Sentence = sentence;
 
+    }
+
+    public void HandlePathRecreated(Path path, Graph graph, string sentenceText)
+    {
+        // debugging
+        Debug.Log("creating handle on start node...");
+        Handle startHandle = HandleOperations.CreateHandleOnNode(path.StartNode, path, true);
+
+        // debugging
+        Debug.Log("creating handle on end node...");
+        Handle endHandle = HandleOperations.CreateHandleOnNode(path.EndNode, path, false);
+
+        // calculate sizes
+        ITextSizeStrategy textSizeStrategy = TextSizeStrategyFactory.CreateTextSizeStrategy();
+        float[] sizes = textSizeStrategy.GetTextSizes(path.pathPoints.Count);
+
+        // add colour
+        Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(path.pathPoints.ToArray());
+
+        // create buffer
+        Sentence sentence = SentenceBufferManager.instance.AddSentence(sentenceText, path.pathPoints, sizes, null, null, colors);
+        path.Sentence = sentence;
     }
 
     private int RandomizeNumberOfWords(int min, int max)

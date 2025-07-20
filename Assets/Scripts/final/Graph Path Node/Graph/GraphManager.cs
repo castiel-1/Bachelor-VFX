@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Esper.ESave;
+using Esper.ESave.SavableObjects;
 using UnityEngine;
 
 public class GraphManager : MonoBehaviour
 {
     public static GraphManager Instance { get; private set; }
+    private List<Graph> graphs = new();
+    public IReadOnlyList<Graph> Graphs => graphs;
 
     private int graphID = 0;
-    private Dictionary<int, Graph> graphs = new();
+
+    private Dictionary<int, Graph> graphsWithID = new();
 
     public GameObject graphPrefab; // this holds a graph script and a graphDisplayer script
 
@@ -49,7 +53,11 @@ public class GraphManager : MonoBehaviour
 
         graph.Initialize(graphID);
 
-        graphs.Add(graphID, graph);
+        GameObject parent = GameObject.Find("UserCreation");
+        graph.transform.SetParent(parent.transform);
+
+        graphsWithID.Add(graphID, graph);
+        graphs.Add(graph);
 
         graphID++;
 
@@ -60,42 +68,36 @@ public class GraphManager : MonoBehaviour
         return graph;
     }
 
-    // debugging - this has been more or less replaced with reference based lookup but can still be useful for debugging so it stays here
-    public Graph GetGraph(int graphID)
-    {
-        return graphs[graphID];
-    }
-
-    // debugging - this has been more or less replaced with reference based deletion but can still be useful for debugging so it stays here
-    public void DeleteGraph(int graphID)
-    {
-        Graph graph = graphs[graphID];
-        graphs.Remove(graphID);
-
-        Destroy(graph.gameObject);
-    }
-
     public void DeleteGraph(Graph graph)
     {
         // debugging
         Debug.Log("delete graph called");
 
-        // delete all sentences from buffer
-        foreach(Path path in graph.Paths)
+        if( graph!= null)
         {
-            SentenceBufferManager.instance.DeleteSentence(path.Sentence);
-        }
-
-        // delete graph
-        foreach (var pair in graphs)
-        {
-            if (pair.Value == graph)
+            // delete all sentences from buffer
+            foreach (Path path in graph.Paths)
             {
-                graphs.Remove(pair.Key);
-                Destroy(graph.gameObject);
-                return;
+                SentenceBufferManager.instance.DeleteSentence(path.Sentence);
+            }
+
+            // delete graph
+            foreach (var pair in graphsWithID)
+            {
+                if (pair.Value == graph)
+                {
+                    graphsWithID.Remove(pair.Key);
+                    graphs.Remove(graph);
+                    Destroy(graph.gameObject);
+                    return;
+                }
             }
         }
 
     }
+    public List<Graph> GetGraphs()
+    {
+        return graphs;
+    }
+
 }
