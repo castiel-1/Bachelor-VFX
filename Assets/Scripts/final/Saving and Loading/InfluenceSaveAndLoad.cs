@@ -40,7 +40,7 @@ public static class InfluenceSaveAndLoad
             colorInfluenceSaveData.position = colorInfluence.Position;
             colorInfluenceSaveData.radius = colorInfluence.Radius;
             colorInfluenceSaveData.prefabName = colorInfluence.Prefab.name;
-            colorInfluenceSaveData.color = colorInfluence.Color;
+            colorInfluenceSaveData.color = colorInfluence.Color.ToSavable();
 
             colorInfluenceSaveDataList.Add(colorInfluenceSaveData);
         }
@@ -58,7 +58,7 @@ public static class InfluenceSaveAndLoad
 
         foreach(SemanticInfluenceSaveData semanticInfluence in semanticInfluences)
         {
-            GameObject prefab = Resources.Load<GameObject>($"/Prefabs/finalsPrefabs/{semanticInfluence.prefabName}");
+            GameObject prefab = Resources.Load<GameObject>($"Prefabs/finalsPrefabs/{semanticInfluence.prefabName}");
 
             InfluenceManager.Instance.AddSemanticInfluence(semanticInfluence.name, semanticInfluence.position, semanticInfluence.radius, prefab, semanticInfluence.promptModifier);
         }
@@ -73,9 +73,9 @@ public static class InfluenceSaveAndLoad
 
         foreach(ColorInfluenceSaveData colorInfluence in colorInfluences)
         {
-            GameObject prefab = Resources.Load<GameObject>($"/Prefabs/finalsPrefabs/{colorInfluence.prefabName}");
+            GameObject prefab = Resources.Load<GameObject>($"Prefabs/finalsPrefabs/{colorInfluence.prefabName}");
 
-            InfluenceManager.Instance.AddColorInfluence(colorInfluence.name, colorInfluence.position, colorInfluence.radius, prefab, colorInfluence.color);
+            InfluenceManager.Instance.AddColorInfluence(colorInfluence.name, colorInfluence.position, colorInfluence.radius, prefab, colorInfluence.color.colorValue);
         }
 
         // debugging

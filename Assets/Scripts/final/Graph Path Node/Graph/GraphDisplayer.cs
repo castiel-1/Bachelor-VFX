@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class GraphDisplayer : MonoBehaviour
 {
@@ -72,6 +73,7 @@ public class GraphDisplayer : MonoBehaviour
         {
             GameObject nextPoint = Instantiate(pointPrefab, path.pathPoints[i], Quaternion.identity, pathParent.transform);
             nextPoint.AddComponent<PathPointComponent>().Initialize(path, graph, i);
+            SceneVisibilityManager.instance.DisablePicking(nextPoint, false);
 
             pointObjects.Add(nextPoint);
         }
@@ -124,6 +126,8 @@ public class GraphDisplayer : MonoBehaviour
         nodeGO.name = "Node_" + node.ID;
         nodeGO.AddComponent<NodeComponent>().Initialize(node, graph);
         nodeGO.SetActive(false);
+
+        SceneVisibilityManager.instance.DisablePicking(nodeGO, false); // makes it so this object can't be selected 
 
         nodeObjects.Add(node, nodeGO);
     }

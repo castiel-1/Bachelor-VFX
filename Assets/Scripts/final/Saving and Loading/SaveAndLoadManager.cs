@@ -10,7 +10,7 @@ public class SaveAndLoadManager : MonoBehaviour
     private SaveFileSetup saveFileSetup;
     private SaveFile saveFile;
 
-    int numGraphs;
+    private string graphCountSaveKey = "graphCountSaveKey";
     private string graphSaveKeyStart = "graphSaveKey";
     private string semanticInfluencesSaveKey = "semanticInfluencesSaveKey";
     private string colorInfluencesSaveKey = "colorInfluencesSaveKey";
@@ -37,7 +37,7 @@ public class SaveAndLoadManager : MonoBehaviour
     {
         // save graphs
         List<Graph> graphs = GraphManager.Instance.GetGraphs();
-        numGraphs = graphs.Count;
+        saveFile.AddOrUpdateData(graphCountSaveKey, graphs.Count);
 
         foreach(Graph graph in graphs)
         {
@@ -58,14 +58,16 @@ public class SaveAndLoadManager : MonoBehaviour
 
     public void LoadScene()
     {
+        // load influences
+        InfluenceSaveAndLoad.LoadSemanticInfluences(semanticInfluencesSaveKey, saveFile);
+        InfluenceSaveAndLoad.LoadColorInfluences(colorInfluencesSaveKey, saveFile);
+
         // load graphs
+        int numGraphs = saveFile.GetData<int>(graphCountSaveKey);
+
         for (int i = 0; i < numGraphs; i++)
         {
             GraphSaveAndLoad.LoadGraph($"{graphSaveKeyStart}_{i}", saveFile);
         }
-
-        // load influences
-        InfluenceSaveAndLoad.LoadSemanticInfluences(semanticInfluencesSaveKey, saveFile);
-        InfluenceSaveAndLoad.LoadColorInfluences(colorInfluencesSaveKey, saveFile);
     }
 }

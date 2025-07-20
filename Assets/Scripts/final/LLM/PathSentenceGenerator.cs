@@ -71,6 +71,10 @@ public class PathSentenceGenerator : MonoBehaviour
     public void HandlePathRecreated(Path path, Graph graph, string sentenceText)
     {
         // debugging
+        Debug.Log("handle path recreated called");
+
+
+        // debugging
         Debug.Log("creating handle on start node...");
         Handle startHandle = HandleOperations.CreateHandleOnNode(path.StartNode, path, true);
 

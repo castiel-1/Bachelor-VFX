@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using Obi;
 using UnityEditor;
 using UnityEngine;
 
@@ -103,6 +104,7 @@ public class InfluenceDisplayer : MonoBehaviour
         Material radiusMaterial = new Material(baseMaterial); // clone base material so colour changes can be made per visual influence
         radiusMaterial.color = new Color(influence.Color.r, influence.Color.g, influence.Color.b, 0.4f);
         GameObject radiusGO = SpawnRadius(influence.Radius, radiusMaterial, instance.transform);
+        radiusGO.layer = LayerMask.NameToLayer("Ignore Raycast");
 
         return instance;
     }

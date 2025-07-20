@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Node
 {
-    public int ID { get; }
+    public int ID { get; set; }
     public Vector3 Position { get; set; }
     public List<Path> Incoming {  get; }
     public List<Path> Outgoing { get; }

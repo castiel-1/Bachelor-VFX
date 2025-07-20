@@ -37,7 +37,7 @@ public static class InfluenceFactory
         // use standard sphere if no gameObject chosen
         if (prefab == null)
         {
-            prefab = Resources.Load<GameObject>("Prefabs/finalPrefabs/visualInfluenceP");
+            prefab = Resources.Load<GameObject>("Prefabs/finalPrefabs/colorInfluenceP");
         }
 
         ColorInfluence visualInfluence = new ColorInfluence(name, position, radius, prefab, color);

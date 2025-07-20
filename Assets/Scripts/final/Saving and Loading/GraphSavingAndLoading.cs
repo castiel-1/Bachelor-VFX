@@ -7,7 +7,13 @@ public static class GraphSaveAndLoad
 {
     public static void SaveGraph(Graph graph, string graphSaveKey, SaveFile saveFile)
     {
+        // debugging
+        Debug.Log("graph save key: " + graphSaveKey);
+
         GraphSaveData graphSaveData = ConvertToGraphSaveData(graph);
+
+        Debug.Log("graph save data: " + graphSaveData);
+
         saveFile.AddOrUpdateData(graphSaveKey, graphSaveData);
         saveFile.Save();
 
@@ -23,16 +29,22 @@ public static class GraphSaveAndLoad
         graphSaveData.NodeID = graph.NodeID;
 
         // convert list of nodes
+        List<NodeSaveData> nodes = new();
+
         foreach (Node node in graph.Nodes)
         {
             NodeSaveData nodeSaveData = new NodeSaveData();
             nodeSaveData.ID = node.ID;
             nodeSaveData.position = node.Position;
 
-            graphSaveData.Nodes.Add(nodeSaveData);
+            nodes.Add(nodeSaveData);
         }
 
+        graphSaveData.Nodes = nodes;
+
         // convert list of paths
+        List<PathSaveData> paths = new();
+
         foreach (Path path in graph.Paths)
         {
             PathSaveData pathSaveData = new PathSaveData();
@@ -49,8 +61,11 @@ public static class GraphSaveAndLoad
 
             pathSaveData.sentenceText = path.Sentence.Text;
 
-            graphSaveData.Paths.Add(pathSaveData);
+            paths.Add(pathSaveData);
         }
+
+        graphSaveData.Paths = paths;
+
         return graphSaveData;
     }
 
@@ -59,22 +74,22 @@ public static class GraphSaveAndLoad
         GraphSaveData graphSaveData = saveFile.GetData<GraphSaveData>(graphSaveKey);
 
         // create graph
-        List<NodeSaveData> nodes = graphSaveData.Nodes;
-
-        Vector3 startPosition = FindNodeByID(graphSaveData, 0).position;
-        Vector3 endPosition = FindNodeByID(graphSaveData, 1).position;
-
-        Graph graph = GraphManager.Instance.CreateGraph(startPosition, endPosition);
+        Graph graph = GraphManager.Instance.RecreateGraph();
 
         // create paths
+        Dictionary<int, Node> nodesByID = new();
+        foreach(NodeSaveData nodeSaveData in graphSaveData.Nodes)
+        {
+            Node node = GraphOperations.CreateNode(graph, nodeSaveData.position);
+            node.ID = nodeSaveData.ID;
+            nodesByID.Add(nodeSaveData.ID, node);
+        }
+
         foreach(PathSaveData path in graphSaveData.Paths)
         {
             // start and end node
-            Vector3 startNodePosition = FindNodeByID(graphSaveData, path.startNodeID).position;
-            Vector3 endNodePosition = FindNodeByID(graphSaveData, path.endNodeID).position;
-
-            Node startNode = GraphOperations.CreateNode(graph, startNodePosition);
-            Node endNode = GraphOperations.CreateNode(graph, endNodePosition);
+            Node startNode = nodesByID[path.startNodeID];
+            Node endNode = nodesByID[path.endNodeID];
 
             // pathPoints
             List<Vector3> pathPoints = new();
@@ -87,20 +102,5 @@ public static class GraphSaveAndLoad
 
             GraphOperations.RecreatePath(graph, startNode, endNode, path.sentenceText, pathPoints);  
         }
-    }
-
-    private static NodeSaveData FindNodeByID(GraphSaveData graph, int ID)
-    {
-        foreach (NodeSaveData node in graph.Nodes)
-        {
-            if (node.ID == ID)
-            {
-                return node;
-            }
-        }
-
-        // debugging
-        Debug.Log("node not found by ID");
-        return null;
     }
 }

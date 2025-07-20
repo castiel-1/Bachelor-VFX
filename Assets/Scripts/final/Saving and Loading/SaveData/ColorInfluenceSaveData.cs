@@ -9,5 +9,5 @@ public class ColorInfluenceSaveData
     public SavableVector position;
     public float radius;
     public string prefabName;
-    public Color color;
+    public SavableVector color;
 }

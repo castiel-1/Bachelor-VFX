@@ -12,8 +12,6 @@ public class GraphManager : MonoBehaviour
 
     private int graphID = 0;
 
-    private Dictionary<int, Graph> graphsWithID = new();
-
     public GameObject graphPrefab; // this holds a graph script and a graphDisplayer script
 
     private void Awake()
@@ -56,14 +54,39 @@ public class GraphManager : MonoBehaviour
         GameObject parent = GameObject.Find("UserCreation");
         graph.transform.SetParent(parent.transform);
 
-        graphsWithID.Add(graphID, graph);
         graphs.Add(graph);
 
         graphID++;
 
         Node startNode = GraphOperations.CreateNode(graph, startPosition);
         Node endNode = GraphOperations.CreateNode(graph, endPosition);
+
         GraphOperations.CreatePath(graph, startNode, endNode);
+
+        return graph;
+    }
+
+    public Graph RecreateGraph()
+    {
+        // debugging
+        Debug.Log("recreating graph");
+
+        GameObject graphGO = Instantiate(graphPrefab);
+        graphGO.name = "gaph_" + graphID;
+
+        Graph graph = graphGO.GetComponent<Graph>();
+
+        GraphDestructionNotifier notifier = graphGO.AddComponent<GraphDestructionNotifier>();
+        notifier.Graph = graph;
+
+        graph.Initialize(graphID);
+
+        GameObject parent = GameObject.Find("UserCreation");
+        graph.transform.SetParent(parent.transform);
+
+        graphs.Add(graph);
+
+        graphID++;
 
         return graph;
     }
@@ -82,16 +105,9 @@ public class GraphManager : MonoBehaviour
             }
 
             // delete graph
-            foreach (var pair in graphsWithID)
-            {
-                if (pair.Value == graph)
-                {
-                    graphsWithID.Remove(pair.Key);
-                    graphs.Remove(graph);
-                    Destroy(graph.gameObject);
-                    return;
-                }
-            }
+            graphs.Remove(graph);
+            Destroy(graph.gameObject);
+            return;
         }
 
     }

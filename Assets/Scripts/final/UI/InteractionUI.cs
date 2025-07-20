@@ -12,6 +12,7 @@ public class InteractionUI : EditorWindow
     private bool showGraphinteractions = false;
     private bool showPathInteractions = false;
     private bool showInfluenceInteractions = false;
+    private bool showSaveAndLoad = false;
 
     // tools
     private GraphCreationTool graphCreationTool = new();
@@ -54,12 +55,33 @@ public class InteractionUI : EditorWindow
             DrawInfluenceVisibilityUI();
         }
 
+        // scene saving and loading
+        showSaveAndLoad = EditorGUILayout.Foldout(showSaveAndLoad, "Save And Load Scene", true);
+        if(showSaveAndLoad)
+        {
+            DrawSaveAndLoadUI();
+        }
+
+    }
+
+    private void DrawSaveAndLoadUI()
+    {
+        EditorGUILayout.BeginVertical("box");
+        {
+            DrawSaveSceneButton();
+        }
+        EditorGUILayout.EndVertical();
+
+        EditorGUILayout.BeginVertical("box");
+        {
+            DrawLoadSceneButton();
+        }
+        EditorGUILayout.EndVertical();
+
     }
     private void DrawGraphCreationUI()
     {
-        EditorGUILayout.LabelField("Graph Creation", EditorStyles.boldLabel);
         EditorGUILayout.BeginVertical("box");
-
         {
             DrawGraphCreationButton();
 
@@ -75,7 +97,6 @@ public class InteractionUI : EditorWindow
                 DrawCancelGraphCreationButton();
             }
         }
-
         EditorGUILayout.EndVertical();
     }
 
@@ -501,6 +522,22 @@ public class InteractionUI : EditorWindow
         {
             RuntimeInteractionData.influenceRadiusVisible = newValue;
             InfluenceDisplayer.Instance.ToggleInfluenceRadiusVisibility(newValue);
+        }
+    }
+
+    private void DrawSaveSceneButton()
+    {
+        if(GUILayout.Button("Save Scene"))
+        {
+            SaveAndLoadManager.Instance.SaveScene();
+        }
+    }
+
+    private void DrawLoadSceneButton()
+    {
+        if(GUILayout.Button("Load Scene"))
+        {
+            SaveAndLoadManager.Instance.LoadScene();
         }
     }
 
