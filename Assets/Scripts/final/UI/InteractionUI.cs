@@ -21,7 +21,7 @@ public class InteractionUI : EditorWindow
     private HandleCreationTool handleCreationTool = new();
     private HandleDeletionTool handleDeletionTool = new();
     private SemanticInfluenceCreationTool semanticInfluenceCreationTool = new();
-    private VisualInfluenceCreationTool visualInfluenceCreationTool = new();
+    private ColorInfluenceCreationTool visualInfluenceCreationTool = new();
 
     [MenuItem("Window/Graph Interaction")]
     public static void ShowWindow()
@@ -333,7 +333,7 @@ public class InteractionUI : EditorWindow
         if(GUILayout.Button("Confirm Cursor Position"))
         {
             
-            if(PathCreationTool.SelectedStrategy is NodeToCursorPathCreationStrategy nodeToCursorStrategy)
+            if(PathCreationTool.selectedStrategy is NodeToCursorPathCreationStrategy nodeToCursorStrategy)
             {
                 nodeToCursorStrategy.HandleCursorPositionConfirmation();
             }

@@ -11,12 +11,9 @@ public class InfluenceManager : MonoBehaviour
     public static event Action<Influence> OnInfluenceAdded;
     public static event Action<Influence> OnInfluenceDeleted;
 
-    private List<SemanticInfluence> semanticInfluences = new List<SemanticInfluence>();
-    public IReadOnlyList<SemanticInfluence> SemanticInfluences => semanticInfluences;
+    public List<SemanticInfluence> SemanticInfluences { get; private set; } = new List<SemanticInfluence>();
 
-
-    private List<ColorInfluence> colorInfluences = new List<ColorInfluence>();
-    public IReadOnlyList<ColorInfluence> ColorInfluences => colorInfluences;
+    public List<ColorInfluence> ColorInfluences { get; private set; } = new List<ColorInfluence>();
 
     private void Awake()
     {
@@ -46,7 +43,7 @@ public class InfluenceManager : MonoBehaviour
         Debug.Log("semantci influence created");
 
         SemanticInfluence nextInfluence = InfluenceFactory.CreateSemanticInfluence(name, position, radius, prefab, promptModifier);
-        semanticInfluences.Add(nextInfluence);
+        SemanticInfluences.Add(nextInfluence);
         OnInfluenceAdded(nextInfluence);
     }
 
@@ -56,7 +53,7 @@ public class InfluenceManager : MonoBehaviour
         Debug.Log("color influence created");
 
         ColorInfluence nextInfluence = InfluenceFactory.CreateColorInfluence(name, position, radius, prefab, color);
-        colorInfluences.Add(nextInfluence);
+        ColorInfluences.Add(nextInfluence);
         OnInfluenceAdded(nextInfluence);
     }
 
@@ -68,10 +65,10 @@ public class InfluenceManager : MonoBehaviour
         switch (influence)
         {
             case SemanticInfluence semanticInfluence:
-                semanticInfluences.Remove(semanticInfluence);
+                SemanticInfluences.Remove(semanticInfluence);
                 break;
             case ColorInfluence colorInfluence:
-                colorInfluences.Remove(colorInfluence);
+                ColorInfluences.Remove(colorInfluence);
                 break;
         }
 

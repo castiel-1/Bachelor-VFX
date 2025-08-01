@@ -5,8 +5,7 @@ public class PathCreationTool : ISceneInteractionTool
 {
     private GameObject hoveredObject;
 
-    private static IPathCreationStrategy selectedStrategy;
-    public static IPathCreationStrategy SelectedStrategy => selectedStrategy;
+    public static IPathCreationStrategy selectedStrategy;
 
     public void StartInteraction()
     {
@@ -37,7 +36,7 @@ public class PathCreationTool : ISceneInteractionTool
     public void OnHover(RaycastHit hitInfo)
     {
         // don't do hover effect when we are waiting for cursor confirmation
-        if (selectedStrategy is NodeToCursorPathCreationStrategy cursorStrategy && cursorStrategy.IsAwaitingCursorConfirmation)
+        if (selectedStrategy is NodeToCursorPathCreationStrategy cursorStrategy && cursorStrategy.waitingForCursorConfirmation)
         {
             hoveredObject = null;
             return;
@@ -57,7 +56,7 @@ public class PathCreationTool : ISceneInteractionTool
     public bool OnLeftClick(RaycastHit hitInfo)
     {
         // if we are waiting for the cursor position confirmation we stop using left click
-        if (selectedStrategy is NodeToCursorPathCreationStrategy cursorStrategy && cursorStrategy.IsAwaitingCursorConfirmation)
+        if (selectedStrategy is NodeToCursorPathCreationStrategy cursorStrategy && cursorStrategy.waitingForCursorConfirmation)
         {
             return false;
         }

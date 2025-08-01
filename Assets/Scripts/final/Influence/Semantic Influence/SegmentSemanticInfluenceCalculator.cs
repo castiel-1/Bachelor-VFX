@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class SegmentInfluenceCalculator
+public static class SegmentSemanticInfluenceCalculator
 {
-    public static Dictionary<string, List<SemanticInfluence>> CalculateInfluenceStrengths(Path path, List<SemanticInfluence> influences)
+    public static Dictionary<string, List<SemanticInfluence>> CalculateSemanticInfluenceStrengths(Path path, List<SemanticInfluence> influences)
     {
         Vector3 p0 = path.StartNode.Position;
         Vector3 p3 = path.EndNode.Position;

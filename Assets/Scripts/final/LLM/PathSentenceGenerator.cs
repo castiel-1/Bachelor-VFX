@@ -28,7 +28,7 @@ public class PathSentenceGenerator : MonoBehaviour
 
         // get full prompt
         int numWords = RandomizeNumberOfWords(RuntimeSettingsData.numberOfWordsMin, RuntimeSettingsData.numberOfWordsMax);
-        string prompt = FullPromptBuilder.BuildPrompt(graph, path, numWords, RuntimeSettingsData.historyDepth, InfluenceManager.Instance);
+        string prompt = FullPromptBuilder.BuildPrompt(graph, path, numWords, RuntimeSettingsData.historyDepth);
 
         // call llm
         string llmOutput = await llmManager.PromptLLM(prompt);
@@ -63,7 +63,7 @@ public class PathSentenceGenerator : MonoBehaviour
         Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(pathPointPositions.ToArray());
 
         // create buffer
-        Sentence sentence = SentenceBufferManager.instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null, colors);
+        Sentence sentence = SentenceBufferManager.Instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null, colors);
         path.Sentence = sentence;
 
     }
@@ -90,7 +90,7 @@ public class PathSentenceGenerator : MonoBehaviour
         Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(path.pathPoints.ToArray());
 
         // create buffer
-        Sentence sentence = SentenceBufferManager.instance.AddSentence(sentenceText, path.pathPoints, sizes, null, null, colors);
+        Sentence sentence = SentenceBufferManager.Instance.AddSentence(sentenceText, path.pathPoints, sizes, null, null, colors);
         path.Sentence = sentence;
     }
 

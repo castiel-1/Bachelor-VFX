@@ -30,9 +30,23 @@ public struct LetterStruct
 
 public class Buffer : MonoBehaviour
 {
+    public static Buffer Instance { get; private set; }
+
     public VisualEffect visualEffect;
 
     private GraphicsBuffer graphicsBuffer;
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     // create graphics buffer
     public void SetUpBuffer(int numLetterStructs)
@@ -47,7 +61,7 @@ public class Buffer : MonoBehaviour
     }
 
     // adds a sentence to the buffer beginning at startIndex
-    public void AddSentenceToBuffer(LetterStruct[] letterStructs, Sentence sentence, Vector3 size)
+    public void AddSentenceToBuffer(LetterStruct[] letterStructs, Sentence sentence, Vector3 size) // size for bounding box of vfx graph
     {
         // debugging
         Debug.Log("update buffer called");

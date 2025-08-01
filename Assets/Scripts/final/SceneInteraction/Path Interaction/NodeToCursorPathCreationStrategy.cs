@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class NodeToCursorPathCreationStrategy : IPathCreationStrategy
 {
+    public bool waitingForCursorConfirmation = false;
+
     private Node startNode;
     private Graph graph;
-    private bool waitingForCursorConfirmation = false;
     private PathCreationTool pathCreationTool;
-    public bool IsAwaitingCursorConfirmation => waitingForCursorConfirmation;
 
     public NodeToCursorPathCreationStrategy(PathCreationTool tool)
     {

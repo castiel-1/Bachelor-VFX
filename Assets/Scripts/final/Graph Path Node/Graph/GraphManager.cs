@@ -8,8 +8,6 @@ public class GraphManager : MonoBehaviour
 {
     public static GraphManager Instance { get; private set; }
     private List<Graph> graphs = new();
-    public IReadOnlyList<Graph> Graphs => graphs;
-
     private int graphID = 0;
 
     public GameObject graphPrefab; // this holds a graph script and a graphDisplayer script
@@ -51,7 +49,7 @@ public class GraphManager : MonoBehaviour
 
         graph.Initialize(graphID);
 
-        GameObject parent = GameObject.Find("UserCreation");
+        GameObject parent = GameObject.Find("User Creation");
         graph.transform.SetParent(parent.transform);
 
         graphs.Add(graph);
@@ -101,7 +99,7 @@ public class GraphManager : MonoBehaviour
             // delete all sentences from buffer
             foreach (Path path in graph.Paths)
             {
-                SentenceBufferManager.instance.DeleteSentence(path.Sentence);
+                SentenceBufferManager.Instance.DeleteSentence(path.Sentence);
             }
 
             // delete graph

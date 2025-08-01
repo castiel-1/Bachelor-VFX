@@ -9,12 +9,9 @@ public class GraphDisplayer : MonoBehaviour
     public GameObject nodePrefab;
     public GameObject handlePrefab;
 
+    public Dictionary<Path, List<GameObject>> pathPointObjects = new();
+
     private Graph graph;
-
-    private LineRenderer lineRenderer;
-    private Dictionary<Path, List<GameObject>> pathPointObjects = new();
-
-    public Dictionary<Path, List<GameObject>> PathObjects => pathPointObjects; //  make it accessible but read only
 
     private Dictionary<Path, GameObject> pathObjects = new();
     private Dictionary<Node, GameObject> nodeObjects = new();

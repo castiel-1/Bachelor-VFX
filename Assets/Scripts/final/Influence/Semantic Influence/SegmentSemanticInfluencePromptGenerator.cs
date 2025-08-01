@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
-public static class SegmentInfluencePromptGenerator 
+public static class SegmentSemanticInfluencePromptGenerator 
 {
     public static string CalculateInfluencePrompt(Dictionary<string, List<SemanticInfluence>> influencesPerSegment)
     {
@@ -28,7 +28,11 @@ public static class SegmentInfluencePromptGenerator
                 // debugging
                 Debug.Log("there is only one influence in this segment");
 
-                segmentPrompt += " " + influencesPerSegment[segment][0].PromptModifier + ". ";
+                segmentPrompt += " '" + influencesPerSegment[segment][0].PromptModifier + "'. ";
+            }
+            else if(numInfluencesPerSegment == 2)
+            {
+                segmentPrompt += " '" + influencesPerSegment[segment][0].PromptModifier + "' and" + " '" + influencesPerSegment[segment][1].PromptModifier + "'. ";
             }
             else
             {
@@ -37,17 +41,12 @@ public static class SegmentInfluencePromptGenerator
 
                 for (int i = 0; i < numInfluencesPerSegment; i++)
                 {
-                    string part = influencesPerSegment[segment][i].PromptModifier;
+                    string part = "'" + influencesPerSegment[segment][i].PromptModifier + "'";
 
                     // if it is the last influence in the list
                     if (i == numInfluencesPerSegment - 1)
                     {
                         segmentPrompt += " and " + part + ". ";
-                    }
-                    // if it is the first influence in the list
-                    else if (i == 0)
-                    {
-                        segmentPrompt += " " + part + ". ";
                     }
                     else
                     {

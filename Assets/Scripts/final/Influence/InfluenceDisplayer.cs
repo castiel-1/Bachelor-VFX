@@ -27,7 +27,7 @@ public class InfluenceDisplayer : MonoBehaviour
 
         GameObject rootGO = new GameObject("Influences");
 
-        GameObject parent = GameObject.Find("UserCreation");
+        GameObject parent = GameObject.Find("User Creation");
         rootGO.transform.SetParent(parent.transform);
 
         GameObject semanticGO = new GameObject("Semantic Influences");

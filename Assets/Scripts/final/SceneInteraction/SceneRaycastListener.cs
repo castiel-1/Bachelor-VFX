@@ -5,9 +5,9 @@ using UnityEngine;
 
 public static class SceneRaycastListener
 {
-    public static Action<RaycastHit> OnHover;
-    public static Func<RaycastHit, bool> OnLeftClick; // the bool is false when left click should not be used
-    public static Action OnMiss;
+    private static Action<RaycastHit> OnHover;
+    private static Func<RaycastHit, bool> OnLeftClick; // the bool is false when left click should not be used
+    private static Action OnMiss;
 
     public static bool isListening = false; // expose to other scripts that the SceneRaycastListener is currently active
 

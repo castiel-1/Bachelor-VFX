@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class VisualInfluenceCreationTool : ISceneInteractionTool
+public class ColorInfluenceCreationTool : ISceneInteractionTool
 {
     public void StartInteraction()
     {

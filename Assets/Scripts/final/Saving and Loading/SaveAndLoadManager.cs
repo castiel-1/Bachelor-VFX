@@ -46,10 +46,10 @@ public class SaveAndLoadManager : MonoBehaviour
         }
 
         // save influences
-        List<SemanticInfluence> semanticInfluences = new List<SemanticInfluence>(InfluenceManager.Instance.SemanticInfluences);
-        InfluenceSaveAndLoad.SaveSemanticInfluences(semanticInfluences, semanticInfluencesSaveKey, saveFile);   
+        List<SemanticInfluence> semanticInfluences = InfluenceManager.Instance.SemanticInfluences;
+        InfluenceSaveAndLoad.SaveSemanticInfluences(semanticInfluences, semanticInfluencesSaveKey, saveFile);
 
-        List<ColorInfluence> colorInfluences = new List<ColorInfluence>(InfluenceManager.Instance.ColorInfluences);
+        List<ColorInfluence> colorInfluences = InfluenceManager.Instance.ColorInfluences;
         InfluenceSaveAndLoad.SaveColorInfluences(colorInfluences, colorInfluencesSaveKey, saveFile);
 
         // debugging

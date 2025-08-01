@@ -40,8 +40,8 @@ public static class InfluenceFactory
             prefab = Resources.Load<GameObject>("Prefabs/finalPrefabs/colorInfluenceP");
         }
 
-        ColorInfluence visualInfluence = new ColorInfluence(name, position, radius, prefab, color);
+        ColorInfluence colorInfluence = new ColorInfluence(name, position, radius, prefab, color);
 
-        return visualInfluence;
+        return colorInfluence;
     }
 }

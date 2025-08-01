@@ -27,11 +27,11 @@ public static class HistoryPromptGenerator
 
             if(i == allBranches.Count - 1)
             {
-                prompt += "' " + branchText + "'.";
+                prompt += "'" + branchText.Trim() + "'.";
             }
             else
             {
-                prompt += "' " + branchText + "' and ";
+                prompt += "'" + branchText.Trim() + "' and ";
             }
 
         }

@@ -32,7 +32,7 @@ public class PathDeletionTool : ISceneInteractionTool
             Path path = hoveredObject.GetComponent<PathPointComponent>().Path;
             Graph graph = hoveredObject.GetComponent<PathPointComponent>().Graph;
             GraphDisplayer graphDisplayer = graph.GetComponent<GraphDisplayer>();
-            List<GameObject> pathPoints = graphDisplayer.PathObjects[path];
+            List<GameObject> pathPoints = graphDisplayer.pathPointObjects[path];
 
             Handles.color = UnityEngine.Color.red;
 

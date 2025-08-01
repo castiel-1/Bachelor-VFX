@@ -40,25 +40,11 @@ public class Settings : EditorWindow
 
         EditorGUI.indentLevel++;
 
-        DrawPathTypeDropdown();
-        DrawCreationModeDropdown();
         DrawGravityToggle();
 
         EditorGUI.indentLevel--;
     }
     
-    // path type dropdown
-    private void DrawPathTypeDropdown()
-    {
-        RuntimeSettingsData.pathType = (RuntimeSettingsData.PathType) (EditorGUILayout.Popup("Path Type", (int) RuntimeSettingsData.pathType, pathTypeOptions));
-    }
-
-    // creation mode dropdown
-    private void DrawCreationModeDropdown()
-    {
-        RuntimeSettingsData.creationMode = (RuntimeSettingsData.CreationMode) EditorGUILayout.Popup("Creation Mode", (int) RuntimeSettingsData.creationMode, pathCreationModeOptions);
-    }
-
     // gravity toggle
     private void DrawGravityToggle()
     {

@@ -3,9 +3,7 @@ using UnityEngine;
 
 public class SentenceBufferManager : MonoBehaviour
 {
-    public static SentenceBufferManager instance;
-
-    public Buffer buffer;
+    public static SentenceBufferManager Instance { get; private set; }
 
     private Dictionary<Sentence, LetterStruct[]> sentenceStructDict = new();
     private int currentBufferIndex = 0;
@@ -13,13 +11,13 @@ public class SentenceBufferManager : MonoBehaviour
 
     private void Awake()
     {
-        if(instance != null && instance != this)
+        if(Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
         else
         {
-            instance = this;
+            Instance = this;
         }
     }
 
@@ -47,7 +45,7 @@ public class SentenceBufferManager : MonoBehaviour
 
         Vector3 size = CalculateMaxAndMinSize(letters);
 
-        buffer.AddSentenceToBuffer(letters, sentence, size);
+        Buffer.Instance.AddSentenceToBuffer(letters, sentence, size);
 
         return sentence;
     }
@@ -55,7 +53,7 @@ public class SentenceBufferManager : MonoBehaviour
     public void DeleteSentence(Sentence sentence)
     {
         sentenceStructDict.Remove(sentence);
-        buffer.DeleteSentenceFromBuffer(sentence);
+        Buffer.Instance.DeleteSentenceFromBuffer(sentence);
     }
 
     public void UpdateSentence(Path path)
@@ -72,7 +70,7 @@ public class SentenceBufferManager : MonoBehaviour
 
         Vector3 size = CalculateMaxAndMinSize(letterStructs);
 
-        buffer.AddSentenceToBuffer(letterStructs, sentence, size);
+        Buffer.Instance.AddSentenceToBuffer(letterStructs, sentence, size);
     }
 
     // calculation for bounding box adjustment

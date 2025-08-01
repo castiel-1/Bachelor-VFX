@@ -9,7 +9,7 @@ public static class ColorInfluenceCalculator
     {
         Color uninfluencedTextColor = RuntimeSettingsData.uninfluencedTextColor;
         Color[] colors = new Color[pathPoints.Length];
-        List<ColorInfluence> colorInfluences = (List<ColorInfluence>) InfluenceManager.Instance.ColorInfluences;
+        List<ColorInfluence> colorInfluences = InfluenceManager.Instance.ColorInfluences;
 
         // debugging
         Debug.Log("number of color influences: " +  colorInfluences.Count);
