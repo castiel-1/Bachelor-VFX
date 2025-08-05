@@ -81,6 +81,23 @@ public class GraphDisplayer : MonoBehaviour
             nextPoint.AddComponent<PathPointComponent>().Initialize(path, graph, i);
             SceneVisibilityManager.instance.DisablePicking(nextPoint, false);
 
+            // make points textsize : 1,5 so they are nicely sized
+            float textSize;
+            if(RuntimeSettingsData.textSizeMode == RuntimeSettingsData.TextSizeMode.OneSize)
+            {
+                textSize = RuntimeSettingsData.textSizeMin;
+            }
+            else
+            {
+                textSize = (RuntimeSettingsData.textSizeMax - RuntimeSettingsData.textSizeMin) / 2f;
+            }
+            float sphereRadius = textSize / 1.5f;
+
+            // debugging
+            Debug.Log("point prefab sphere radius: " + sphereRadius);
+
+            nextPoint.transform.localScale = new Vector3(sphereRadius, sphereRadius, sphereRadius);
+
             pointObjects.Add(nextPoint);
         }
 
