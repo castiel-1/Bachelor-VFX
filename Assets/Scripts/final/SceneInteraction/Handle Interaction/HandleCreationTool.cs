@@ -40,7 +40,7 @@ public class HandleCreationTool : ISceneInteractionTool
         {
             Path path = pathPointComp.Path;
             int pathPointIndex = pathPointComp.PointIndex;
-            HandleOperations.CreateHandleOnPath(position, path, pathPointIndex);
+            HandleManager.Instance.CreateHandleOnPath(position, path, pathPointIndex);
 
             useLeftClick = true;
         }

@@ -11,10 +11,7 @@ public class HandleOnPathComponent : MonoBehaviour
     {
         Path = path;
         Handle = handle;
-    }
 
-    private void Start()
-    {
         lastPosition = transform.position;
     }
 
@@ -27,7 +24,7 @@ public class HandleOnPathComponent : MonoBehaviour
             lastPosition = transform.position;
             Handle.Position = transform.position;
 
-            HandleOperations.UpdateSpline(Path);
+            HandleManager.Instance.UpdateSpline(Path);
         }
     }
 

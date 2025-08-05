@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using UnityEditor.Experimental.GraphView;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class PathSentenceGenerator : MonoBehaviour
 {
     public GraphManager graphManager;
     public LLMManager llmManager;
+
 
     private void OnEnable()
     {
@@ -49,11 +52,11 @@ public class PathSentenceGenerator : MonoBehaviour
 
         // debugging
         Debug.Log("creating handle on start node...");
-        Handle startHandle = HandleOperations.CreateHandleOnNode(path.StartNode, path, true);
+        Handle startHandle = HandleManager.Instance.CreateHandleOnNode(path.StartNode, path, true);
 
         // debugging
         Debug.Log("creating handle on end node...");
-        Handle endHandle = HandleOperations.CreateHandleOnNode(path.EndNode, path, false);
+        Handle endHandle = HandleManager.Instance.CreateHandleOnNode(path.EndNode, path, false);
 
         // calculate sizes
         ITextSizeStrategy textSizeStrategy = TextSizeStrategyFactory.CreateTextSizeStrategy();
@@ -73,14 +76,22 @@ public class PathSentenceGenerator : MonoBehaviour
         // debugging
         Debug.Log("handle path recreated called");
 
+        // caluclate pathPoints
+        List<Vector3> pathPointPositions = SplineCalculator.CalculateSplinePoints(path.StartNode.Position, path.EndNode.Position, sentenceText.Length);
+
+        // debugging
+        Debug.Log("number of pathPoints at calculation: " + pathPointPositions.Count);
+
+        // add path points (which raises event to spawn them as well)
+        GraphOperations.AddPathPoints(graph, path, pathPointPositions);
 
         // debugging
         Debug.Log("creating handle on start node...");
-        Handle startHandle = HandleOperations.CreateHandleOnNode(path.StartNode, path, true);
+        Handle startHandle = HandleManager.Instance.CreateHandleOnNode(path.StartNode, path, true);
 
         // debugging
         Debug.Log("creating handle on end node...");
-        Handle endHandle = HandleOperations.CreateHandleOnNode(path.EndNode, path, false);
+        Handle endHandle = HandleManager.Instance.CreateHandleOnNode(path.EndNode, path, false);
 
         // calculate sizes
         ITextSizeStrategy textSizeStrategy = TextSizeStrategyFactory.CreateTextSizeStrategy();
@@ -92,6 +103,7 @@ public class PathSentenceGenerator : MonoBehaviour
         // create buffer
         Sentence sentence = SentenceBufferManager.Instance.AddSentence(sentenceText, path.pathPoints, sizes, null, null, colors);
         path.Sentence = sentence;
+
     }
 
     private int RandomizeNumberOfWords(int min, int max)

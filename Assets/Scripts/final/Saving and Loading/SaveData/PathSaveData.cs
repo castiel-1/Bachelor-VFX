@@ -7,6 +7,6 @@ public class PathSaveData
 {
     public int startNodeID;
     public int endNodeID;
-    public List<SavableVector> pathPoints;
+    public List<HandleSaveData> handles;
     public string sentenceText;
 }

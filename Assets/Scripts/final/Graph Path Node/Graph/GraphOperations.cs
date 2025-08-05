@@ -37,15 +37,13 @@ public static class GraphOperations
         return nextPath;
     }
 
-    public static Path RecreatePath(Graph graph, Node startNode, Node endNode, string sentenceText, List<Vector3> pathPointPositions)
+    public static Path RecreatePath(Graph graph, Node startNode, Node endNode, string sentenceText)
     {
         Path nextPath = new Path(startNode, endNode);
         graph.Paths.Add(nextPath);
 
         startNode.Outgoing.Add(nextPath);
         endNode.Incoming.Add(nextPath);
-
-        AddPathPoints(graph, nextPath, pathPointPositions);
 
         OnPathRecreated?.Invoke(nextPath, graph, sentenceText);
 

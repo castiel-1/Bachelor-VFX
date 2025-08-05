@@ -79,7 +79,7 @@ public class GraphManager : MonoBehaviour
 
         graph.Initialize(graphID);
 
-        GameObject parent = GameObject.Find("UserCreation");
+        GameObject parent = GameObject.Find("User Creation");
         graph.transform.SetParent(parent.transform);
 
         graphs.Add(graph);

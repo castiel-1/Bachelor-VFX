@@ -7,7 +7,8 @@ public class HandleOnNodeComponent : MonoBehaviour
 {
     public Node Node { get; private set; }
     public Handle Handle { get; private set; }
-    public Vector3 lastPosition;
+
+    private Vector3 lastPosition;
 
     public event Action<Node> OnHandleMoved;
 
@@ -35,7 +36,7 @@ public class HandleOnNodeComponent : MonoBehaviour
 
             foreach(Path path in connectedPaths)
             {
-                HandleOperations.UpdateSpline(path);
+                HandleManager.Instance.UpdateSpline(path);
             }
 
             OnHandleMoved?.Invoke(Node);

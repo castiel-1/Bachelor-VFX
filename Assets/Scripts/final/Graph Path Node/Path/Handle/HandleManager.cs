@@ -4,18 +4,33 @@ using System.Collections.Generic;
 using UnityEditor;
 using System.Linq;
 
-public static class HandleOperations
+public class HandleManager : MonoBehaviour
 {
     public static event Action<Handle, Path> OnHandleOnPathCreated;
     public static event Action<Handle, Node> OnHandleOnNodeCreated;
     public static event Action<Handle> OnHandleOnNodeDestroyed;
     public static event Action<Handle> OnHandleOnPathDestroyed;
+    public static event Action<Handle, Vector3, Path> OnHandleOnPathRecreated;
     public static event Action<bool> OnToggleAllHandles;
     public static event Action<Path> OnSplineUpdated;
 
-    private static Dictionary<Node, Handle> nodeHandleDict = new();
+    public static HandleManager Instance { get; private set; }
 
-    public static Handle CreateHandleOnPath(Vector3 position, Path path, int pathPointIndex)
+    private Dictionary<Node, Handle> nodeHandleDict = new();
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
+    public Handle CreateHandleOnPath(Vector3 position, Path path, int pathPointIndex)
     {
         Handle nextHandle = new Handle(position);
 
@@ -46,6 +61,9 @@ public static class HandleOperations
             if(pathPointIndex >= currentStartIndex && pathPointIndex < currentEndIndex)
             {
                 path.HandlesWithIndeces[nextHandle] = pathPointIndex;
+                // debugging
+                Debug.Log("handle index when creating it: " + pathPointIndex);
+
                 goto Finish;
             }
 
@@ -62,7 +80,14 @@ public static class HandleOperations
         return nextHandle;
     }
 
-    public static Handle CreateHandleOnNode(Node node, Path path, bool isStartNode)
+    public void MoveRecreatedHandleOnPath(Handle handle, Vector3 position, Path path)
+    {
+        handle.Position = position;
+
+        OnHandleOnPathRecreated?.Invoke(handle, position, path);
+    }
+
+    public Handle CreateHandleOnNode(Node node, Path path, bool isStartNode)
     {
         // debugging
         Debug.Log("number of path points in create handle: " + path.pathPoints.Count);
@@ -113,7 +138,7 @@ public static class HandleOperations
         return nextHandle;
     }
 
-    public static void DeleteHandleOnPath(Handle handle, Path path)
+    public void DeleteHandleOnPath(Handle handle, Path path)
     {
         path.HandlesWithIndeces.Remove(handle);
 
@@ -122,7 +147,7 @@ public static class HandleOperations
         OnHandleOnPathDestroyed?.Invoke(handle);
     }
 
-    public static void DeleteHandleOnNode(Node node, Path path)
+    public void DeleteHandleOnNode(Node node, Path path)
     {
         Handle handle = nodeHandleDict[node];
         path.HandlesWithIndeces.Remove(handle);
@@ -130,10 +155,10 @@ public static class HandleOperations
         OnHandleOnNodeDestroyed?.Invoke(handle);
     }
 
-    public static void UpdateSpline(Path path)
+    public void UpdateSpline(Path path)
     {
         // debugging
-        Debug.Log("number of path points in update spline: " + path.pathPoints.Count);
+        Debug.Log("updating spline");
 
         List<(Handle, int)> handlesAndIndices = path.HandlesWithIndeces
             .OrderBy(kv => kv.Value)
@@ -197,7 +222,7 @@ public static class HandleOperations
         OnSplineUpdated?.Invoke(path);
     }
 
-    public static void ToggleAllHandles(bool active)
+    public void ToggleAllHandles(bool active)
     {
         OnToggleAllHandles?.Invoke(active);
     }

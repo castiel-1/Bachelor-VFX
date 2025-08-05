@@ -2,6 +2,8 @@ using Esper.ESave.SavableObjects;
 using Esper.ESave;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Unity.VisualScripting;
 
 public static class GraphSaveAndLoad 
 {
@@ -51,13 +53,37 @@ public static class GraphSaveAndLoad
             pathSaveData.startNodeID = path.StartNode.ID;
             pathSaveData.endNodeID = path.EndNode.ID;
 
-            List<SavableVector> savablePathPoints = new();
-            foreach (Vector3 pathPoint in path.pathPoints)
+            List<HandleSaveData> savableHandles = new();
+
+            // debugging
+            Debug.Log("handles with indeces:" + path.HandlesWithIndeces.Values.Count);
+            Debug.Log("path handle index: " + path.HandlesWithIndeces.Values.ToList()[0]);
+            Debug.Log("path handle index: " + path.HandlesWithIndeces.Values.ToList()[1]);
+            Debug.Log("path handle index: " + path.HandlesWithIndeces.Values.ToList()[2]);
+
+            foreach (Handle handle in path.HandlesWithIndeces.Keys)
             {
-                SavableVector savableVector = pathPoint;
-                savablePathPoints.Add(savableVector);
+                int handleIndex = path.HandlesWithIndeces[handle];
+
+                // without adding handles on start and end node
+                //debugging
+                Debug.Log("path points count:" + path.pathPoints.Count);
+
+                if ((handleIndex != 0) && (handleIndex != path.pathPoints.Count))
+                {
+                    // debugging
+                    Debug.Log("added savable handle with index: " + handleIndex);
+
+                    HandleSaveData savableHandle = new HandleSaveData();
+                    savableHandle.position = handle.Position;
+                    savableHandle.index = path.HandlesWithIndeces[handle];
+                    savableHandles.Add(savableHandle);
+                }
             }
-            pathSaveData.pathPoints = savablePathPoints;
+            // debugging
+            Debug.Log("savables handles length:" + savableHandles.Count);
+
+            pathSaveData.handles = savableHandles;
 
             pathSaveData.sentenceText = path.Sentence.Text;
 
@@ -91,16 +117,33 @@ public static class GraphSaveAndLoad
             Node startNode = nodesByID[path.startNodeID];
             Node endNode = nodesByID[path.endNodeID];
 
-            // pathPoints
-            List<Vector3> pathPoints = new();
 
-            foreach(SavableVector pathPoint in path.pathPoints)
+            Path recreatedPath = GraphOperations.RecreatePath(graph, startNode, endNode, path.sentenceText);
+
+            // debugging
+            Debug.Log("recreated Path num points: " + recreatedPath.pathPoints.Count);
+
+            // handles
+            List<Handle> recreatedHandles = new();
+
+            // recreate the handles
+            foreach(HandleSaveData handle in path.handles)
             {
-                Vector3 convertedPathPoint = pathPoint;
-                pathPoints.Add(convertedPathPoint);
+                // debugging
+                Debug.Log("handle index: " + handle.index);
+
+                Handle recreatedHandle = HandleManager.Instance.CreateHandleOnPath(recreatedPath.pathPoints[handle.index], recreatedPath, handle.index);
+                recreatedHandles.Add(recreatedHandle);
             }
 
-            GraphOperations.RecreatePath(graph, startNode, endNode, path.sentenceText, pathPoints);  
+            // move the handles
+            for (int j = 0; j < recreatedHandles.Count; j++)
+            {
+                Handle handle = recreatedHandles[j];
+                Vector3 position = path.handles[j].position;
+                HandleManager.Instance.MoveRecreatedHandleOnPath(handle, position, recreatedPath);
+            }
+
         }
     }
 }

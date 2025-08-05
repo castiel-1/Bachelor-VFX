@@ -23,10 +23,10 @@ public class InteractionUI : EditorWindow
     private SemanticInfluenceCreationTool semanticInfluenceCreationTool = new();
     private ColorInfluenceCreationTool visualInfluenceCreationTool = new();
 
-    [MenuItem("Window/Graph Interaction")]
+    [MenuItem("Window/Interaction UI")]
     public static void ShowWindow()
     {
-        GetWindow<InteractionUI>("Graph Interaction");
+        GetWindow<InteractionUI>("Interaction UI");
     }
 
     private void OnGUI()
@@ -386,7 +386,7 @@ public class InteractionUI : EditorWindow
             // deactivate any active tool since we want to start editing the path so we don't want to have other tools active
             ToolManager.DeactivateTool();
 
-            HandleOperations.ToggleAllHandles(true);
+            HandleManager.Instance.ToggleAllHandles(true);
             GraphOperations.TogglePathPoints(true);
         }
     }
@@ -402,7 +402,7 @@ public class InteractionUI : EditorWindow
 
             ToolManager.DeactivateTool();
 
-            HandleOperations.ToggleAllHandles(false);
+            HandleManager.Instance.ToggleAllHandles(false);
             GraphOperations.TogglePathPoints(false);
         }
     }

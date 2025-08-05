@@ -39,7 +39,7 @@ public class HandleDeletionTool : ISceneInteractionTool
             Handle handle = handleComponent.Handle;
             Path path = handleComponent.Path;
             useLeftClick = true;
-            HandleOperations.DeleteHandleOnPath(handle, path);
+            HandleManager.Instance.DeleteHandleOnPath(handle, path);
         }
         else
         {

@@ -426,7 +426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 331701010}
   m_Layer: 0
-  m_Name: UserCreation
+  m_Name: User Creation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -734,7 +734,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83c526878743b3f45adef089efd30d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buffer: {fileID: 136878442}
 --- !u!1 &748822266
 GameObject:
   m_ObjectHideFlags: 0

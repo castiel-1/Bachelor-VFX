@@ -23,12 +23,12 @@ public class SentenceBufferManager : MonoBehaviour
 
     private void OnEnable()
     {
-        HandleOperations.OnSplineUpdated += UpdateSentence;
+        HandleManager.OnSplineUpdated += UpdateSentence;
         GraphOperations.OnPathDeleted += DeleteSentence;
     }
     private void OnDisable()
     {
-        HandleOperations.OnSplineUpdated -= UpdateSentence;
+        HandleManager.OnSplineUpdated -= UpdateSentence;
     }
 
     public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections, Color[] colors)
