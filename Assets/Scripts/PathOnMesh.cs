@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathOnMesh : MonoBehaviour
@@ -8,6 +9,9 @@ public class PathOnMesh : MonoBehaviour
     public Vector3 stepDirection;
     public float originalStepSize;
     public GraphicsInfoBuffer buffer;
+
+    public float noiseScale = 1.0f;
+    public float maxRotationAngle = 20f;
 
     public MeshManager meshManager;
 
@@ -36,7 +40,7 @@ public class PathOnMesh : MonoBehaviour
     void Start()
     {
         // create path
-        Vector3[] path = CreatePath();
+        Vector3[] path = CreatePath(20);
 
         // Debugging
         Debug.Log("number of points in path:" + path.Length);
@@ -49,15 +53,21 @@ public class PathOnMesh : MonoBehaviour
         {
             Instantiate(startPointP, point, quaternion.identity);
         }
+
+        var lr = gameObject.AddComponent<LineRenderer>();
+        lr.positionCount = path.Length;
+        lr.SetPositions(path);
+        lr.startWidth = 0.02f;
+        lr.endWidth = 0.02f;
+        lr.material = new Material(Shader.Find("Sprites/Default"));
+        lr.startColor = Color.red;
+        lr.endColor = Color.red;
     }
 
     // calculate one path
-    public Vector3[] CreatePath()
+    public Vector3[] CreatePath(int numPathPoints)
     {
-
-        // set up path array
-        int numPoints = buffer.text.Length;
-        Vector3[] path = new Vector3[numPoints];
+        Vector3[] path = new Vector3[numPathPoints];
 
         // set up currentStepSize
         currentStepSize = originalStepSize;
@@ -89,7 +99,7 @@ public class PathOnMesh : MonoBehaviour
         Vector3 edge = Vector3.zero;
 
         // for as many letters as we want to display (starting at 2 because of startPoint)
-        for (int i = 1; i < numPoints; i++)
+        for (int i = 1; i < numPathPoints; i++)
         {
 
             // calculate next point (either on the triangle or on an edge)
@@ -129,7 +139,7 @@ public class PathOnMesh : MonoBehaviour
                 var cornerNextTriangle = GetNeighbouringTriangleLastCorner(info.edge, info.lastCorner);
                 var orderedEdge = GetEdgeOrderOnTriangle(info.edge.Item1, info.edge.Item2, cornerNextTriangle);
                 edge = orderedEdge.Item2 - orderedEdge.Item1;
-                step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, edge);
+                step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, edge, i);
 
                 // calculate next theoretical point
                 nextTheoreticalPoint = startPoint + step;
@@ -163,12 +173,12 @@ public class PathOnMesh : MonoBehaviour
                 if (edge != Vector3.zero)
                 {
                     // calculate step with edge
-                    step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, edge);
+                    step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, edge, i);
                 }
                 else
                 {
                     // calculate step without edge
-                    step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint);
+                    step = GetStepVector(previousStepDirection, normal, currentStepSize, startPoint, null, i);
                 }
 
                 // calculate next theoretical point
@@ -180,6 +190,14 @@ public class PathOnMesh : MonoBehaviour
             }
         }
 
+        GameObject meshGO = meshManager.meshGO;
+        Transform meshTransform = meshGO.transform;
+
+        for (int i = 0; i < path.Length; i++)
+        {
+            path[i] = meshTransform.TransformPoint(path[i]);
+        }
+
         return path;
     }
 
@@ -187,8 +205,9 @@ public class PathOnMesh : MonoBehaviour
     public (Vector3, Vector3, Vector3) GetRandomTriangleOnMesh()
     {
         // Debugging
-        int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
-        //int rand = 50;
+        Debug.Log("sorted triangles length: " + sortedTrianglesDict.Keys.Count);
+        //int rand = UnityEngine.Random.Range(0, sortedTrianglesDict.Keys.Count);
+        int rand = 12;
 
         var key = sortedTrianglesDict.Keys.ElementAt(rand);
         return (key.Item1, key.Item2, key.Item3);
@@ -226,9 +245,18 @@ public class PathOnMesh : MonoBehaviour
 
     // returns step vector parallel to triangle and with stepsize as length 
     // IMPORTANT: EDGE NEEDS TO BE THE CORRECT ORIENTATION WHEN HANDED TO THIS FUNCTION
-    public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize, Vector3 startPoint, Vector3? edge = null)
+    public Vector3 GetStepVector(Vector3 direction, Vector3 normal, float stepSize, Vector3 startPoint, Vector3? edge = null, int stepIndex = 0)
     {
-        Vector3 projected = direction - (Vector3.Dot(direction, normal) * normal);
+        
+        // Compute smooth noise-based angle
+        float noiseValue = Mathf.PerlinNoise(stepIndex * noiseScale, 0f); // 0..1
+        float angle = Mathf.Lerp(-maxRotationAngle, maxRotationAngle, noiseValue); // -max..+max
+
+        // Rotate direction around triangle normal
+        Quaternion rotation = Quaternion.AngleAxis(angle, normal);
+        Vector3 rotatedDirection = rotation * direction;
+        
+        Vector3 projected = rotatedDirection - (Vector3.Dot(rotatedDirection, normal) * normal);
 
 
         // TODO this should no longer be needed since we are now using the previous stepdireciton instead of a global one

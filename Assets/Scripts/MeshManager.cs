@@ -10,7 +10,9 @@ using UnityEngine.UIElements;
 
 public class MeshManager : MonoBehaviour
 {
-    public Mesh mesh;
+    public GameObject meshGO;
+
+    private Mesh mesh;
 
     private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
@@ -19,82 +21,14 @@ public class MeshManager : MonoBehaviour
 
     public void Awake()
     {
+        mesh = meshGO.GetComponent<MeshFilter>().mesh;
+
         vertices = mesh.vertices;
         triangles = mesh.triangles;
-        
+
         triangleDict = CreateNeighbouringTrianglesDict();
         sortedTrianglesDict = CreateSortedTrianglesDictionary();
-
-        /*
-        // Debugging
-        foreach (var key in triangleDict.Keys)
-        {
-            Debug.Log(key + ": " + triangleDict[key].Count);
-        }*/
-
-        /*
-        // Debugging
-        Debug.Log("number of edges in dict: " + triangleDict.Keys.Count);
-
-        // Debugging
-        Debug.Log("mesh dictionary created");
-
-
-        // Debugging
-        Debug.Log("SortedTrianglesDict: ");
-
-        foreach(var key in sortedTrianglesDict.Keys)
-        {
-            Debug.Log(key + ": " + sortedTrianglesDict[key] + "\n");
-        }*/
-
-        /*
-        // Debugging
-
-        foreach(var key in triangleDict.Keys)
-        {
-
-            GameObject lineObject = new GameObject("LineRendererObject");
-            LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-
-            lineRenderer.startWidth = 0.005f;
-            lineRenderer.endWidth = 0.005f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer.positionCount = 2;
-
-            lineRenderer.SetPosition(0, key.Item1);
-            lineRenderer.SetPosition(1, key.Item2);
-
-        }
-        */
-
-
-        //Debugging
-
-        /*
-        foreach (var entry in triangleDict)
-        {
-            (Vector3 v1, Vector3 v2) = entry.Key;
-            List<Vector3> neighbors = entry.Value;
-
-            string neighborStr = string.Join(", ", neighbors);
-            Debug.Log($"Edge: ({v1} -> {v2}) | Adjacent Vertices: {neighborStr}");
-        } 
-
-        Debug.Log("number of edges: " + triangleDict.Keys.Count);
-        */
     }
-
-    // debugging mesh
-    /*private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        foreach(Vector3 vertex in vertices)
-        {
-            Gizmos.DrawSphere(vertex, 0.02f);
-        }
-    }*/
-
 
     public Dictionary<(Vector3, Vector3), List<Vector3>> CreateNeighbouringTrianglesDict()
     {
