@@ -8,9 +8,20 @@ using Unity.VisualScripting;
 
 public class PathSentenceGenerator : MonoBehaviour
 {
-    public GraphManager graphManager;
-    public LLMManager llmManager;
+    public static PathSentenceGenerator Instance { get; private set; }
 
+    private void Awake()
+    {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+      
+    }
 
     private void OnEnable()
     {
@@ -34,7 +45,7 @@ public class PathSentenceGenerator : MonoBehaviour
         string prompt = FullPromptBuilder.BuildPrompt(graph, path, numWords, RuntimeSettingsData.historyDepth);
 
         // call llm
-        string llmOutput = await llmManager.PromptLLM(prompt);
+        string llmOutput = await LLMManager.Instance.PromptLLM(prompt);
         int outputLength = llmOutput.Length;
 
         // debugging

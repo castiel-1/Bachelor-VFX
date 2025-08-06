@@ -8,7 +8,20 @@ using UnityEngine;
 
 public class LLMManager : MonoBehaviour
 {
+    public static LLMManager Instance { get; private set; }
     public LLMCharacter llm;
+
+    private void Awake()
+    {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
 
     public async Task<string> PromptLLM(string prompt)
     {
