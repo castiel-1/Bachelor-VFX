@@ -1,63 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Hierarchy;
 using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
-using UnityEngine.Rendering.HighDefinition;
-using UnityEngine.Rendering.VirtualTexturing;
-using static PathOnMesh;
 
 public class PathOnMesh : MonoBehaviour
 {
-    /* THE PLAN IS SIMPLE
-    
-      1) we pick a point on the mesh from the dictionary
-      2) calculate normal vector with triangle corners
-      3) calculate step vector
-      4) make step
-      5) if(intersection with next triangle)
-            find intersection, remember how much of step is done, get corners of new triangle and go to 2)
-         else 
-            place point according to step, go to 4)
-
-      */
-
     public Vector3 stepDirection;
     public float originalStepSize;
     public GraphicsInfoBuffer buffer;
 
-   // private bool HadIntersection = false;
-   // private (Vector3, Vector3) intersectionEdge = (Vector3.zero, Vector3.zero);
-
     public MeshManager meshManager;
 
-    private Vector3[] path;
     private List<Vector3> debugPath = new List<Vector3>();
     private Dictionary<(Vector3, Vector3), List<Vector3>> triangleDict = new Dictionary<(Vector3, Vector3), List<Vector3>>();
     private Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)> sortedTrianglesDict = new Dictionary<(Vector3, Vector3, Vector3), (Vector3, Vector3, Vector3)>();
     private float currentStepSize;
     private Vector3 previousStepDirection;
 
-
-    // Debugging
-    private List<IntersectionInfo> intersectionInfos = new List<IntersectionInfo>();
-
-    // Debugging
-    public GameObject startPointP;
-    public GameObject nextTheoreticalPointP;
-    public GameObject nextPointP;
-
     // struct for intersection information
     public struct IntersectionInfo
     {
-        // Debugging
         public Vector3 startPoint;
-        public Vector3 nextTheoreticalPoint;
-
-
         public Vector3 nextPoint;
         public (Vector3, Vector3) edge;
         public Vector3 lastCorner;
@@ -66,12 +29,14 @@ public class PathOnMesh : MonoBehaviour
     }
 
     // Debugging
-    private int count = 0;
+    public GameObject startPointP;
+    public GameObject nextTheoreticalPointP;
+    public GameObject nextPointP;
 
     void Start()
     {
         // create path
-        CreatePath();
+        Vector3[] path = CreatePath();
 
         // Debugging
         Debug.Log("number of points in path:" + path.Length);
@@ -79,122 +44,20 @@ public class PathOnMesh : MonoBehaviour
         {
             Debug.Log(point);
         }
-    }
 
-    // Debugging
-    public bool Visualize(int stepCount, LineRenderer lineRenderer2, LineRenderer lineRenderer3, bool previousHadIntersection)
-    {
-
-        // draw start point red
-        IntersectionInfo currentInfo = intersectionInfos[stepCount];
-        Instantiate(startPointP, currentInfo.startPoint, quaternion.identity);
-
-
-        // draw step vector blue to yellow
-        GameObject lineObject = new GameObject("LineRendererObject");
-        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-
-        lineRenderer.startWidth = 0.005f;
-        lineRenderer.endWidth = 0.005f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.positionCount = 2;
-        lineRenderer.startColor = Color.blue;
-        lineRenderer.endColor = Color.yellow;
-
-        lineRenderer.SetPosition(0, currentInfo.startPoint);
-        lineRenderer.SetPosition(1, currentInfo.nextTheoreticalPoint);
-
-
-        if (previousHadIntersection)
-        {
-            // draw previous edge
-            lineRenderer3.startWidth = 0.005f;
-            lineRenderer3.endWidth = 0.005f;
-            lineRenderer3.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer3.positionCount = 2;
-            lineRenderer3.startColor = Color.red;
-            lineRenderer3.endColor = Color.red;
-
-            lineRenderer3.SetPosition(0, currentInfo.edge.Item1);
-            lineRenderer3.SetPosition(1, currentInfo.edge.Item1 + (currentInfo.edge.Item2 - currentInfo.edge.Item1));
-        }
-
-        if (currentInfo.hasIntersection)
-        {
-            // draw next triangle
-
-            lineRenderer2.startWidth = 0.005f;
-            lineRenderer2.endWidth = 0.005f;
-            lineRenderer2.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer2.positionCount = 4;
-            lineRenderer2.startColor = Color.green;
-            lineRenderer2.endColor = Color.green;
-
-            var newTriangle = GetNeighbouringTriangle(currentInfo.edge, currentInfo.lastCorner);
-
-            lineRenderer2.SetPosition(0, newTriangle.Item1);
-            lineRenderer2.SetPosition(1, newTriangle.Item2);
-            lineRenderer2.SetPosition(2, newTriangle.Item3);
-            lineRenderer2.SetPosition(3, newTriangle.Item1);
-
-            previousHadIntersection = true;
-        }
-        else
-        {
-            previousHadIntersection = false;
-        }
-
-        // draw next point orange
-        Instantiate(nextPointP, currentInfo.nextPoint, quaternion.identity);
-
-        // Debugging
-        Debug.Log("has intersection: " + currentInfo.hasIntersection);
-        Debug.Log("step left: " + currentInfo.newStepSize);
-        Debug.Log("startPoint: " + currentInfo.startPoint);
-        Debug.Log("edge that we intersected with before: " + currentInfo.edge.Item1 + ", " + currentInfo.edge.Item2);
-
-        return previousHadIntersection;
-    }
-
-    
-    // Debugging display of path
-    private void OnDrawGizmos()
-    {
-
-        // display points
-        Gizmos.color = Color.red;
         foreach (Vector3 point in path)
         {
-            Gizmos.DrawSphere(point, 0.008f);
-        }
-
-        Gizmos.color = Color.blue;
-        // display all points
-        foreach (Vector3 point in debugPath)
-        {
-            Gizmos.DrawSphere(point, 0.008f);
-        }
-
-        // draw lines between points
-        Gizmos.color = Color.green;
-        for (int i = 0; i < path.Length - 1; i++)
-        {
-            Gizmos.DrawLine(path[i], path[i + 1]);
-        }
-
-        for (int i = 0; i < debugPath.Count - 1; i++)
-        {
-            Gizmos.DrawLine(debugPath[i], debugPath[i + 1]);
+            Instantiate(startPointP, point, quaternion.identity);
         }
     }
 
     // calculate one path
-    public void CreatePath()
+    public Vector3[] CreatePath()
     {
 
         // set up path array
         int numPoints = buffer.text.Length;
-        path = new Vector3[numPoints];
+        Vector3[] path = new Vector3[numPoints];
 
         // set up currentStepSize
         currentStepSize = originalStepSize;
@@ -225,9 +88,6 @@ public class PathOnMesh : MonoBehaviour
         // set up edge for step calculation
         Vector3 edge = Vector3.zero;
 
-        // Debugging
-        int j = 0;
-
         // for as many letters as we want to display (starting at 2 because of startPoint)
         for (int i = 1; i < numPoints; i++)
         {
@@ -237,19 +97,6 @@ public class PathOnMesh : MonoBehaviour
 
             // update previousStepDirection
             previousStepDirection = (info.nextPoint - info.startPoint).normalized;
-
-            // Debugging
-            intersectionInfos.Add(info);
-
-            // Debugging
-            count++;
-            j++;
-
-            if (j >= 5000)
-            {
-                Debug.Log("ERROR more than " + j + " times in loop");
-                return;
-            }
 
             // update startPoint
             startPoint = info.nextPoint;
@@ -332,6 +179,8 @@ public class PathOnMesh : MonoBehaviour
 
             }
         }
+
+        return path;
     }
 
     // used to get a random start triangle
@@ -372,21 +221,6 @@ public class PathOnMesh : MonoBehaviour
 
         Vector3 normal = Vector3.Cross(edge1, edge2).normalized;
 
-        /*
-        // Debugging
-        GameObject lineObject = new GameObject("LineRendererObject");
-        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-
-        lineRenderer.startWidth = 0.005f;
-        lineRenderer.endWidth = 0.005f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.positionCount = 2;
-
-        Vector3 centre = (a + b + c) / 3f;
-        lineRenderer.SetPosition(0, centre);
-        lineRenderer.SetPosition(1, centre + normal*0.06f);
-        */
-
         return normal;
     }
 
@@ -415,37 +249,14 @@ public class PathOnMesh : MonoBehaviour
             // get inward pointing normal of edge
             Vector3 inwardNormal = math.cross(edge.Value, normal);
 
-            /*
-            // Debugging
-            GameObject lineObject = new GameObject("LineRendererObject");
-            LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
-
-            lineRenderer.startWidth = 0.005f;
-            lineRenderer.endWidth = 0.005f;
-            lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-            lineRenderer.positionCount = 2;
-            lineRenderer.startColor = Color.blue;
-            lineRenderer.endColor = Color.yellow;
-
-            lineRenderer.SetPosition(0, startPoint);
-            lineRenderer.SetPosition(1, startPoint + inwardNormal.normalized * 0.06f);
-            */
-
             float dot = Vector3.Dot(step, inwardNormal);
 
             // if the dot product is greater than zero we need to flip the step vector
             if(dot > 0)
             {
-                // Debugging
-                Debug.Log("step was flipped");
-
-                
                 // we mirror vector along the edge we just came from so it still points in the correct direction while going into the triangle
                 Vector3 projection = (math.dot(step, edge.Value) / math.dot(edge.Value, edge.Value)) * edge.Value;
                 step = 2f * projection - step;
-
-                // Debugging - this should no longer be needed and was replaced
-                //step = -step;
             }
 
         }
@@ -538,7 +349,6 @@ public class PathOnMesh : MonoBehaviour
         IntersectionInfo info = new IntersectionInfo()
         {
             startPoint = sv1,
-            nextTheoreticalPoint = sv2,
             hasIntersection = false,
             nextPoint = sv1 + sv,
         };
@@ -603,7 +413,6 @@ public class PathOnMesh : MonoBehaviour
             IntersectionInfo intersectionInfo = new IntersectionInfo()
             {
                 startPoint = sv1,
-                nextTheoreticalPoint = sv2,
                 hasIntersection = true,
                 newStepSize = remainingStep,
                 nextPoint = nextPoint,
