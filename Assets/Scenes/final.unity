@@ -616,8 +616,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10df666fc85e87f498618b2f0e5eaa9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphManager: {fileID: 1590821652}
-  llmManager: {fileID: 585925875}
 --- !u!1 &585925873
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,7 +835,7 @@ Transform:
   m_GameObject: {fileID: 748822266}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.227238, y: -0.46418017, z: -5.5532146}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1772,7 +1770,10 @@ VisualEffect:
     m_Vector2f:
       m_Array: []
     m_Vector3f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: 0, y: 1, z: 0}
+        m_Name: Rotation
+        m_Overridden: 1
     m_Vector4f:
       m_Array: []
     m_Uint:

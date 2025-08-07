@@ -58,6 +58,7 @@ public class Buffer : MonoBehaviour
             System.Runtime.InteropServices.Marshal.SizeOf(typeof(LetterStruct)));
 
         visualEffect.SetGraphicsBuffer("LetterBuffer", graphicsBuffer);
+
     }
 
     // adds a sentence to the buffer beginning at startIndex

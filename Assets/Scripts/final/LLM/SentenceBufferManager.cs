@@ -31,14 +31,14 @@ public class SentenceBufferManager : MonoBehaviour
         HandleManager.OnSplineUpdated -= UpdateSentence;
     }
 
-    public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections, Color[] colors)
+    public Sentence AddSentence(string text, List<Vector3> letterPositions, float[] sizes, Vector3 normal, Vector3[] lineDirections, Color[] colors)
     {
 
         // debugging
         Debug.Log("add sentence in sentencebuffermanager called");
         Debug.Log("size: " + sizes[0]);
 
-        var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normals, lineDirections, colors);
+        var (sentence, letters) = SentenceFactory.CreateSentence(text, currentBufferIndex, letterPositions, sizes, normal, lineDirections, colors);
         sentenceStructDict.Add(sentence, letters);
 
         currentBufferIndex += sentence.Text.Length;
@@ -58,14 +58,21 @@ public class SentenceBufferManager : MonoBehaviour
 
     public void UpdateSentence(Path path)
     {
+
+        // debugging
+        Debug.Log("updating path and sentence: " + path.StartNode + path.EndNode);
+
         Sentence sentence = path.Sentence;
         var letterStructs = sentenceStructDict[sentence];
 
         Debug.Log("num letterstructs: " + letterStructs.Length + ", num pathPoints: " + path.pathPoints.Count);
 
+        Vector3[] lineDirections = OrientationOperations.CalculateLineDirections(path.pathPoints.ToArray());
+
         for(int i = 0; i < letterStructs.Length; i++)
         {
             letterStructs[i].position = path.pathPoints[i];
+            letterStructs[i].lineDirection = lineDirections[i];
         }
 
         Vector3 size = CalculateMaxAndMinSize(letterStructs);

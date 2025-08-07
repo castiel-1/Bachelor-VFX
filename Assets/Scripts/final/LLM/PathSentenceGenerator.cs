@@ -12,7 +12,7 @@ public class PathSentenceGenerator : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance != null && Instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
         }
@@ -20,7 +20,7 @@ public class PathSentenceGenerator : MonoBehaviour
         {
             Instance = this;
         }
-      
+
     }
 
     private void OnEnable()
@@ -76,8 +76,11 @@ public class PathSentenceGenerator : MonoBehaviour
         // add colour
         Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(pathPointPositions.ToArray());
 
+        // caluclate line directions
+        Vector3[] lineDirections = OrientationOperations.CalculateLineDirections(pathPointPositions.ToArray());
+
         // create buffer
-        Sentence sentence = SentenceBufferManager.Instance.AddSentence(llmOutput, path.pathPoints, sizes, null, null, colors);
+        Sentence sentence = SentenceBufferManager.Instance.AddSentence(llmOutput, path.pathPoints, sizes, RuntimeSettingsData.rotation, lineDirections, colors);
         path.Sentence = sentence;
 
     }
@@ -111,8 +114,11 @@ public class PathSentenceGenerator : MonoBehaviour
         // add colour
         Color[] colors = ColorInfluenceCalculator.CalculateColorInfluences(path.pathPoints.ToArray());
 
+        // caluclate line directions
+        Vector3[] lineDirections = OrientationOperations.CalculateLineDirections(pathPointPositions.ToArray());
+
         // create buffer
-        Sentence sentence = SentenceBufferManager.Instance.AddSentence(sentenceText, path.pathPoints, sizes, null, null, colors);
+        Sentence sentence = SentenceBufferManager.Instance.AddSentence(sentenceText, path.pathPoints, sizes, RuntimeSettingsData.rotation, lineDirections, colors);
         path.Sentence = sentence;
 
     }
@@ -121,4 +127,5 @@ public class PathSentenceGenerator : MonoBehaviour
     {
         return UnityEngine.Random.Range(min, max + 1);
     }
+
 }

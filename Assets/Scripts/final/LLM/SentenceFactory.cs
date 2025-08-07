@@ -4,19 +4,13 @@ using System.Collections.Generic;
 
 public static class SentenceFactory
 {
-    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, List<Vector3> letterPositions, float[] sizes, Vector3[] normals, Vector3[] lineDirections, Color[] colors)
+    public static (Sentence, LetterStruct[]) CreateSentence(string text, int startIndex, List<Vector3> letterPositions, float[] sizes, Vector3 normal, Vector3[] lineDirections, Color[] colors)
     {
-        if(normals == null)
-        {
-            normals = new Vector3[text.Length];
-            for (int i = 0; i < text.Length; i++)
-            {
-                normals[i] = Vector3.up;
-            }
-        }
-
         if(lineDirections == null)
         {
+            // debugging
+            Debug.Log("line directions null");
+
             lineDirections = new Vector3[text.Length];
             for (int i = 0; i < text.Length; i++)
             {
@@ -32,9 +26,12 @@ public static class SentenceFactory
             {
                 fIndex = CharSet.Instance.GetCharIndexInSet(text[i]),
                 position = letterPositions[i],
+                lineDirection = lineDirections[i],
+                normal = normal,
                 size = sizes[i],
                 color = colors[i]
             };
+            Debug.Log("normal: " + normal);
 
             letters[i] = letter;
         }

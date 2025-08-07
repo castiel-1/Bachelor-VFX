@@ -1,24 +1,30 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.VFX;
 
 public class Settings : EditorWindow
 {
+    private VisualEffect visualEffect;
+
     // foldouts
     private bool showPathSettings = false;
     private bool showTextSettings = false;
     private bool showLLMSettings = false;
 
-    // dropdowns
-    private string[] pathTypeOptions = new string[] { "Bezier", "Path On Mesh" };
-
-    private string[] pathCreationModeOptions = new string[] { "Manual", "Auto" };
-
     private string[] textSizeOptions = new string[] { "One Size", "Random", "Growing", "Shrinking", "Wave" };
+
+    // toggle
+    private bool previousFaceCameraPlane = RuntimeSettingsData.faceCameraPlane;
 
     [MenuItem("Window/Prototype Settings")]
     public static void ShowWindow()
     {
         GetWindow<Settings>("Prototype Settings");
+    }
+
+    private void OnEnable()
+    {
+        visualEffect = GameObject.Find("lettersVFX").GetComponent<VisualEffect>();
     }
 
     private void OnGUI()
@@ -65,6 +71,13 @@ public class Settings : EditorWindow
         DrawTextSizeDropdown();
         DrawMinMaxNumberOfWordsField();
         DrawColorPicker();
+        DrawTextOrientationToggle();
+        if(!RuntimeSettingsData.faceCameraPlane)
+        {
+            EditorGUI.indentLevel++;
+            DrawTextOrientationInputFields();
+            EditorGUI.indentLevel--;
+        }
 
         EditorGUI.indentLevel--;
 
@@ -124,6 +137,17 @@ public class Settings : EditorWindow
         EditorGUI.indentLevel--;
     }
 
+    private void DrawTextOrientationToggle()
+    {
+        RuntimeSettingsData.faceCameraPlane = EditorGUILayout.Toggle("Face Camera Plane", RuntimeSettingsData.faceCameraPlane);
+
+        if(RuntimeSettingsData.faceCameraPlane != previousFaceCameraPlane)
+        {
+            visualEffect.SetBool("FaceCameraPlane", RuntimeSettingsData.faceCameraPlane);
+            previousFaceCameraPlane = RuntimeSettingsData.faceCameraPlane;
+        }
+    }
+
     private void DrawLLMSettings()
     {
         // foldout
@@ -144,6 +168,11 @@ public class Settings : EditorWindow
     private void DrawHistoryDepthField()
     {
         RuntimeSettingsData.historyDepth = EditorGUILayout.IntField("History Prompt Depth", RuntimeSettingsData.historyDepth);
+    }
+
+    private void DrawTextOrientationInputFields()
+    {
+        RuntimeSettingsData.rotation = EditorGUILayout.Vector3Field("rotation", RuntimeSettingsData.rotation);
     }
 }
 

@@ -19,4 +19,8 @@ public static class RuntimeSettingsData
 
     // colour
     public static Color uninfluencedTextColor = Color.white;
+
+    // orientation
+    public static bool faceCameraPlane;
+    public static Vector3 rotation = Vector3.up;
 }
